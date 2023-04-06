@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { StyleSheet, View, Text, StatusBar } from "react-native";
-import Login from "./Auth/Login";
+import SignUP from "./Auth/SignUp";
 import Onboarding from "./pages/Onboarding";
+import Profile from "./pages/Profile";
 
 const Main = () => {
     const [routeflag, setRouteflag] = useState("onboarding");
@@ -13,7 +14,9 @@ const Main = () => {
     return (
         <View style={styles.container}>
             <StatusBar />
-            {routeflag === "onboarding" ? (<Onboarding setflag={setflag} />) : routeflag === "register" ? (<Login setflag={setflag} />) : (null)}
+            {routeflag === "onboarding" && <Onboarding setflag={setflag} />}
+            {routeflag === "SignUp" && <SignUP setflag={setflag} />}
+            {routeflag === "profile" && <Profile setflag={setflag} />}
         </View>
     );
 };
