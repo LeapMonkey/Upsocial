@@ -3,11 +3,49 @@ import { LinearGradient } from "expo-linear-gradient";
 import { StyleSheet, View, Text, Image, TouchableOpacity, ScrollView, Dimensions } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { Video, ResizeMode } from "expo-av";
+import GestureRecognizer, { swipeDirections } from 'react-native-swipe-gestures';
 
 const Onboarding = (props) => {
     const video = useRef(null);
     const [status, setStatus] = useState({});
     const [touched, settouched] = useState(false);
+    const [videoFinished, setvideoFinished] = useState(false);
+    const [gestureName, setgestureName] = useState("none");
+    const [count, setCount] = useState(0);
+
+    const VideoDatas = [
+        require("../../assets/video/onboardingVideo.mp4"),
+        require("../../assets/video/onboardingVideo.mp4"),
+        require("../../assets/video/onboardingVideo.mp4"),
+        require("../../assets/video/onboardingVideo.mp4"),
+        require("../../assets/video/onboardingVideo.mp4"),
+    ]
+
+    const config = {
+        velocityThreshold: 0.3,
+        directionalOffsetThreshold: 80
+    };
+
+    const onSwipe = (gestureName, gestureState) => {
+        const { SWIPE_UP, SWIPE_DOWN, SWIPE_LEFT, SWIPE_RIGHT } = swipeDirections;
+        setgestureName(gestureName);
+        switch (gestureName) {
+            case SWIPE_UP:
+                settouched(true);
+                setCount(count + 1);
+                if (count == 4) setvideoFinished(true);
+                break;
+            case SWIPE_DOWN:
+                settouched(false);
+                break;
+            case SWIPE_LEFT:
+                settouched(false);
+                break;
+            case SWIPE_RIGHT:
+                settouched(false);
+                break;
+        }
+    }
 
     return (
         <View style={styles.container}>
@@ -25,23 +63,33 @@ const Onboarding = (props) => {
                 <View style={{ position: "relative" }}>
                     <Video
                         ref={video}
-                        style={styles.logoImage}
-                        source={touched ? require('../../assets/video/advertising.mp4') : require('../../assets/video/onboardingVideo.mp4')}
+                        style={styles.VideoWidget}
+                        source={{ uri: "https://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4" }}
                         isLooping
+                        shouldPlay
                         useNativeControls
-                        resizeMode={ResizeMode.CONTAIN}
+                        resizeMode={ResizeMode.STRETCH}
                         onPlaybackStatusUpdate={status => setStatus(() => status)}
                         onLoad={() => { video.current.playAsync() }}
                     />
-                    {!touched && <View style={styles.gifview} onTouchMove={() => settouched(true)}>
-                        <Text style={styles.ScrollText}>Scroll</Text>
+                    {!videoFinished && <View style={styles.gifview}>
+                        <GestureRecognizer
+                            onSwipe={(direction, state) => onSwipe(direction, state)}
+                            config={config}
+                        >
+                            <Image
+                                style={styles.scrollGif}
+                                source={require("../../assets/ScrollTop.gif")}
+                            />
+                            <Text style={styles.ScrollText}>Scroll</Text>
+                        </GestureRecognizer>
                     </View>}
                 </View>
-                <LinearGradient colors={['#1e2452', '#1e247f']} style={styles.bottomsection}>
+                {videoFinished && (<LinearGradient colors={['#1e2452', '#1e247f']} style={styles.bottomsection}>
                     <TouchableOpacity style={styles.bottombtn} onPress={() => props.setflag("SignUp")}>
                         <Text style={styles.bottombtntext}>Get Started</Text>
                     </TouchableOpacity>
-                </LinearGradient>
+                </LinearGradient>)}
             </ScrollView>
         </View>
     );
@@ -68,11 +116,9 @@ const styles = StyleSheet.create({
         height: 30,
         width: 120
     },
-    logoImage: {
+    VideoWidget: {
         width: "100%",
-        height: Dimensions.get("window").height + 40,
-        backgroundColor: "#1e2452",
-        marginTop: -60
+        height: Dimensions.get("window").height,
     },
     bottomsection: {
         justifyContent: "center",
@@ -101,6 +147,11 @@ const styles = StyleSheet.create({
         left: "50%",
         transform: [{ translateX: -50 }, { translateY: -50 }]
     },
+    scrollGif: {
+        width: 120,
+        height: 150,
+        transform: [{ rotateX: '180deg' }, { translateX: -15 }]
+    },
     gifstyle: {
         width: 100,
         height: 100,
@@ -110,7 +161,9 @@ const styles = StyleSheet.create({
     ScrollText: {
         textTransform: "uppercase",
         fontSize: 24,
-        color: "#fff"
+        fontWeight: "bold",
+        color: "#fff",
+        marginTop: 20,
     }
 });
 

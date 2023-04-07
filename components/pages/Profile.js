@@ -102,7 +102,7 @@ const Profile = (props) => {
                                         source={require('../../assets/video/onboardingVideo.mp4')}
                                         isLooping
                                         useNativeControls
-                                        resizeMode={ResizeMode.CONTAIN}
+                                        resizeMode={ResizeMode.STRETCH}
                                         onPlaybackStatusUpdate={status => setStatus(() => status)}
                                         onLoad={() => { video.current.playAsync() }}
                                     />
