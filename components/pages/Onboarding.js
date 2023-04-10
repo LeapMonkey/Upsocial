@@ -28,11 +28,13 @@ const Onboarding = (props) => {
 
     const onSwipe = (gestureName, gestureState) => {
         const { SWIPE_UP, SWIPE_DOWN, SWIPE_LEFT, SWIPE_RIGHT } = swipeDirections;
+        console.log(gestureName, gestureState)
         setgestureName(gestureName);
         switch (gestureName) {
             case SWIPE_UP:
                 settouched(true);
                 setCount(count + 1);
+                console.log(count)
                 if (count == 4) setvideoFinished(true);
                 break;
             case SWIPE_DOWN:

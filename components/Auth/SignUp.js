@@ -1,11 +1,33 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { TextInput, StyleSheet, View, Text, Image, ScrollView, TouchableOpacity } from "react-native";
+import { connect } from "react-redux";
+import { registerUser } from "../Actions/authAction";
 
 const SignUP = (props) => {
 
     const [isLogin, SetIsLogin] = useState(false);
+
+    const [username, setUsername] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+
+    useEffect(() => {
+        console.log(props.auth.isAuthenticated ? "true" : "false");
+        console.log(props.auth.user);
+        SetIsLogin(props.auth.isAuthenticated);
+    }, [props.auth.isAuthenticated]);
+
+    const UserRegister = (e) => {
+        e.preventDefault();
+        const userData = {
+            username: username,
+            email: email,
+            password: password,
+        };
+        props.registerUser(userData);
+    }
 
     return (
         <LinearGradient
@@ -44,19 +66,19 @@ const SignUP = (props) => {
                 <View style={styles.TextGroupView}>
                     <View style={styles.TextView}>
                         <TextInput placeholder="Username" placeholderTextColor="#adb2b6"
-                            style={styles.TextInput} />
+                            style={styles.TextInput} onChangeText={(e) => setUsername(e)} />
                     </View>
                     <View style={styles.TextView}>
                         <TextInput placeholder="Email" placeholderTextColor="#adb2b6"
-                            style={styles.TextInput} />
+                            style={styles.TextInput} onChangeText={(e) => setEmail(e)} />
                     </View>
                     <View style={styles.TextView}>
                         <TextInput placeholder="Password" placeholderTextColor="#adb2b6"
                             secureTextEntry={true}
-                            style={styles.TextInput} />
+                            style={styles.TextInput} onChangeText={(e) => setPassword(e)} />
                     </View>
                     <View style={styles.TextView}>
-                        <TouchableOpacity style={styles.regbtn}>
+                        <TouchableOpacity style={styles.regbtn} onPress={UserRegister}>
                             <Text style={styles.regbtntext}>SIGN UP</Text>
                         </TouchableOpacity>
                     </View>
@@ -246,4 +268,8 @@ const styles = StyleSheet.create({
     },
 });
 
-export default SignUP;
+const mapStateToProps = (state) => ({
+    auth: state.auth
+});
+
+export default connect(mapStateToProps, { registerUser })(SignUP);

@@ -6,7 +6,7 @@ import Profile from "./pages/Profile";
 import Home from "./pages/Home";
 
 const Main = () => {
-    const [routeflag, setRouteflag] = useState("onboarding");
+    const [routeflag, setRouteflag] = useState("SignUp");
 
     const setflag = (flag) => {
         setRouteflag(flag);
