@@ -15,10 +15,10 @@ const Onboarding = (props) => {
 
     const VideoDatas = [
         require("../../assets/video/onboardingVideo.mp4"),
-        require("../../assets/video/onboardingVideo.mp4"),
-        require("../../assets/video/onboardingVideo.mp4"),
-        require("../../assets/video/onboardingVideo.mp4"),
-        require("../../assets/video/onboardingVideo.mp4"),
+        require("../../assets/video/advertising.mp4"),
+        require("../../assets/video/bunny1.mp4"),
+        require("../../assets/video/bunny2.mp4"),
+        require("../../assets/video/bunny3.webm"),
     ]
 
     const config = {
@@ -66,7 +66,7 @@ const Onboarding = (props) => {
                     <Video
                         ref={video}
                         style={styles.VideoWidget}
-                        source={{ uri: "https://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4" }}
+                        source={VideoDatas[count]}
                         isLooping
                         shouldPlay
                         useNativeControls
@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         backgroundColor: "#9c26b0",
         borderRadius: 5,
-        marginTop: 10,
+        marginTop: 50,
         marginBottom: 100
     },
     bottombtntext: {

@@ -34,7 +34,7 @@ const Profile = (props) => {
                     >
                         <View style={styles.subContainer}>
                             <View style={styles.backArrow}>
-                                <TouchableOpacity onPress={() => props.setflag("onboarding")}>
+                                <TouchableOpacity>
                                     <Ionicons name="arrow-back-sharp" color="#fff" size={30} />
                                 </TouchableOpacity>
                             </View>

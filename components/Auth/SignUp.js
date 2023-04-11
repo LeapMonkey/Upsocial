@@ -3,21 +3,23 @@ import { LinearGradient } from "expo-linear-gradient";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { TextInput, StyleSheet, View, Text, Image, ScrollView, TouchableOpacity } from "react-native";
 import { connect } from "react-redux";
-import { registerUser } from "../Actions/authAction";
+import { loginUser } from "../Actions/authAction";
+import axios from "axios";
+import { apiURL } from "../config/config";
+import Notification from "../Actions/Notification";
 
 const SignUP = (props) => {
 
     const [isLogin, SetIsLogin] = useState(false);
 
+    // User Register
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
-    useEffect(() => {
-        console.log(props.auth.isAuthenticated ? "true" : "false");
-        console.log(props.auth.user);
-        SetIsLogin(props.auth.isAuthenticated);
-    }, [props.auth.isAuthenticated]);
+    // User Login
+    const [uEmail, setUEmail] = useState("");
+    const [uPassword, setUPassword] = useState("");
 
     const UserRegister = (e) => {
         e.preventDefault();
@@ -26,7 +28,24 @@ const SignUP = (props) => {
             email: email,
             password: password,
         };
-        props.registerUser(userData);
+        axios
+            .post(apiURL + "/api/Upsocial/users/register", userData)
+            .then((res) => {
+                Notification(res.data.msg);
+                SetIsLogin(true)
+            })
+            .catch((err) => {
+                console.error(err)
+            });
+    }
+
+    const UserLogin = (e) => {
+        e.preventDefault();
+        const userData = {
+            email: uEmail,
+            password: uPassword
+        };
+        props.loginUser(userData);
     }
 
     return (
@@ -125,11 +144,11 @@ const SignUP = (props) => {
                 </View>
                 <View style={styles.TextGroupView}>
                     <View style={styles.TextView}>
-                        <TextInput placeholder="Email" placeholderTextColor="#adb2b6"
+                        <TextInput placeholder="Email" placeholderTextColor="#adb2b6" onChangeText={(e) => setUEmail(e)}
                             style={styles.TextInput} />
                     </View>
                     <View style={styles.TextView}>
-                        <TextInput placeholder="Password" placeholderTextColor="#adb2b6"
+                        <TextInput placeholder="Password" placeholderTextColor="#adb2b6" onChangeText={(e) => setUPassword(e)}
                             secureTextEntry={true}
                             style={styles.TextInput} />
                     </View>
@@ -139,7 +158,7 @@ const SignUP = (props) => {
                         </TouchableOpacity>
                     </View>
                     <View style={styles.TextView}>
-                        <TouchableOpacity style={styles.regbtn} onPress={() => props.setflag("profile")}>
+                        <TouchableOpacity style={styles.regbtn} onPress={UserLogin}>
                             <Text style={styles.regbtntext}>SIGN IN</Text>
                         </TouchableOpacity>
                     </View>
@@ -272,4 +291,4 @@ const mapStateToProps = (state) => ({
     auth: state.auth
 });
 
-export default connect(mapStateToProps, { registerUser })(SignUP);
+export default connect(mapStateToProps, { loginUser })(SignUP);

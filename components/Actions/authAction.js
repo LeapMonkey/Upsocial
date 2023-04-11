@@ -1,13 +1,15 @@
 import { CLEAR_ERRORS, GET_ERRORS, LOADING_DATA, SET_USERS } from "./constants";
 import { apiURL } from "../config/config";
 import axios from "axios";
+import Notification from "./Notification";
 
 // Login user
 export const loginUser = (userData) => (dispatch) => {
     dispatch(setLoadingdata(true));
     axios
-        .post(apiURL + "api/users/login", userData)
+        .post(apiURL + "/api/Upsocial/users/login", userData)
         .then((res) => {
+            Notification("Login Success!");
             dispatch({
                 type: SET_USERS,
                 payload: res.data,
@@ -29,6 +31,7 @@ export const registerUser = (userData) => (dispatch) => {
     axios
         .post(apiURL + "/api/Upsocial/users/register", userData)
         .then((res) => {
+            console.log(res.data);
             dispatch({
                 type: SET_USERS,
                 payload: res.data,

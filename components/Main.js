@@ -1,24 +1,14 @@
 import React, { useState } from "react";
-import { StyleSheet, View, Text, StatusBar } from "react-native";
-import SignUP from "./Auth/SignUp";
-import Onboarding from "./pages/Onboarding";
+import { StyleSheet, View, StatusBar } from "react-native";
+import { connect } from "react-redux";
 import Profile from "./pages/Profile";
-import Home from "./pages/Home";
+import Dashboard from "./pages/Dashboard";
 
-const Main = () => {
-    const [routeflag, setRouteflag] = useState("SignUp");
-
-    const setflag = (flag) => {
-        setRouteflag(flag);
-    }
-
+const Main = (props) => {
     return (
         <View style={styles.container}>
             <StatusBar />
-            {routeflag === "onboarding" && <Onboarding setflag={setflag} />}
-            {routeflag === "SignUp" && <SignUP setflag={setflag} />}
-            {routeflag === "profile" && <Profile setflag={setflag} />}
-            {routeflag === "home" && <Home />}
+            {props.auth.isAuthenticated ? <Profile /> : <Dashboard />}
         </View>
     );
 };
@@ -29,4 +19,8 @@ const styles = StyleSheet.create({
     },
 });
 
-export default Main;
+const mapStateToProps = (state) => ({
+    auth: state.auth
+});
+
+export default connect(mapStateToProps, {})(Main);
