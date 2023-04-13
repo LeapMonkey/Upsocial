@@ -288,7 +288,7 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = (state) => ({
-    auth: state.auth
+    auth: state.auth,
 });
 
 export default connect(mapStateToProps, { loginUser })(SignUP);

@@ -13,16 +13,14 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 import { Video, ResizeMode } from "expo-av";
 
 const Profile = (props) => {
-    const [dataSource, setDataSource] = useState([]);
     const video = useRef(null);
     const [status, setStatus] = useState({});
 
-    useState(() => {
-        let items = Array.apply(null, Array(7)).map((v, i) => {
-            return { id: i, src: 'http://placehold.it/200x200?text=' + (i + 1) };
-        });
-        setDataSource(items);
-    }, []);
+    const dataSource = [
+        require('../../assets/video/onboardingVideo.mp4'),
+        require('../../assets/video/onboardingVideo.mp4'),
+        require('../../assets/video/onboardingVideo.mp4'),
+    ];
 
     return (
         <View style={styles.container}>
@@ -34,7 +32,7 @@ const Profile = (props) => {
                     >
                         <View style={styles.subContainer}>
                             <View style={styles.backArrow}>
-                                <TouchableOpacity>
+                                <TouchableOpacity onPress={() => props.setName("home")}>
                                     <Ionicons name="arrow-back-sharp" color="#fff" size={30} />
                                 </TouchableOpacity>
                             </View>
@@ -99,12 +97,11 @@ const Profile = (props) => {
                                         key={key}
                                         ref={video}
                                         style={styles.VideoItem}
-                                        source={require('../../assets/video/onboardingVideo.mp4')}
+                                        source={item}
                                         isLooping
                                         useNativeControls
                                         resizeMode={ResizeMode.STRETCH}
                                         onPlaybackStatusUpdate={status => setStatus(() => status)}
-                                        onLoad={() => { video.current.playAsync() }}
                                     />
                                 )
                             })}
@@ -244,6 +241,7 @@ const styles = StyleSheet.create({
         height: Dimensions.get("window").width * 0.25,
         marginBottom: 10,
         borderRadius: 10,
+        marginHorizontal: 2,
     },
 });
 

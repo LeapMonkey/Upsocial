@@ -1,14 +1,23 @@
 import React, { useState } from "react";
-import { StyleSheet, View, StatusBar } from "react-native";
+import { StyleSheet, View, StatusBar, Image } from "react-native";
 import { connect } from "react-redux";
-import Profile from "./pages/Profile";
+import ProfileManage from "./pages/ProfileManage";
 import Dashboard from "./pages/Dashboard";
 
 const Main = (props) => {
     return (
         <View style={styles.container}>
             <StatusBar />
-            {props.auth.isAuthenticated ? <Profile /> : <Dashboard />}
+            <ProfileManage />
+            {/* {props.auth.isAuthenticated ? <ProfileManage /> : <Dashboard />}
+            {props.loading.loading && (
+                <View style={styles.loadingView}>
+                    <Image
+                        source={require("../assets/loading.gif")}
+                        style={{ width: 140, height: 140 }}
+                    />
+                </View>
+            )} */}
         </View>
     );
 };
@@ -17,10 +26,22 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
+    loadingView: {
+        position: "absolute",
+        top: 0,
+        left: 0,
+        backgroundColor: "rgba(0, 0, 0, 0.6)",
+        width: "100%",
+        height: "100%",
+        justifyContent: "center",
+        alignItems: "center",
+        zIndex: 10000,
+    },
 });
 
 const mapStateToProps = (state) => ({
-    auth: state.auth
+    auth: state.auth,
+    loading: state.loading
 });
 
 export default connect(mapStateToProps, {})(Main);

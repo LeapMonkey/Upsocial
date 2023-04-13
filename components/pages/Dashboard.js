@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { View } from 'react-native';
 import Onboarding from './Onboarding';
 import SignUp from '../Auth/SignUp';
 

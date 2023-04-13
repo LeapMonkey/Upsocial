@@ -30,28 +30,28 @@ const Home = (props) => {
                     <Video
                         ref={TopVideo}
                         style={{ width: "100%", height: Dimensions.get("window").height * 0.5 }}
-                        source={{ uri: "https://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4" }}
+                        source={require("../../assets/video/elonmusk.mp4")}
                         isLooping
-                        shouldPlay
                         useNativeControls
                         resizeMode={ResizeMode.STRETCH}
                         onPlaybackStatusUpdate={status => setStatus(() => status)}
-                        onLoad={() => { TopVideo.current.playAsync() }}
                     />
                 </View>
                 <View style={{ flexDirection: "row", gap: 20, marginHorizontal: 20, marginVertical: 10, backgroundColor: "#000" }}>
-                    <View style={{ flexDirection: "column", alignItems: "center", gap: 5 }}>
-                        <View style={{ color: "#fff", fontWeight: "bold" }}>
-                            <Image
-                                source={require("../../assets/logos/fox.png")}
-                                style={{
-                                    height: 50,
-                                    width: 80
-                                }}
-                            />
+                    <TouchableOpacity onPress={() => props.setName("profile")}>
+                        <View style={{ flexDirection: "column", alignItems: "center", gap: 5 }}>
+                            <View style={{ color: "#fff", fontWeight: "bold" }}>
+                                <Image
+                                    source={require("../../assets/logos/fox.png")}
+                                    style={{
+                                        height: 50,
+                                        width: 80
+                                    }}
+                                />
+                            </View>
+                            <Text style={{ color: "#fff", fontWeight: "bold" }}>Fox News</Text>
                         </View>
-                        <Text style={{ color: "#fff", fontWeight: "bold" }}>Fox News</Text>
-                    </View>
+                    </TouchableOpacity>
                     <View style={{ flex: 1, flexDirection: "column", gap: 10 }}>
                         <Text style={{ color: "#fff", fontWeight: "bold" }}>Elon Musk Lanunches Another rocket into space making history again</Text>
                         <Text style={{ color: "#5a5a5a", fontWeight: "bold" }}>333k views | 3,784 UPs | 11 hours ago</Text>
@@ -70,13 +70,11 @@ const Home = (props) => {
                         <Video
                             ref={HotVideo1}
                             style={{ width: "100%", height: "100%" }}
-                            source={{ uri: "https://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4" }}
+                            source={require("../../assets/video/introduction.mp4")}
                             isLooping
-                            shouldPlay
                             useNativeControls
                             resizeMode={ResizeMode.STRETCH}
                             onPlaybackStatusUpdate={status => setStatus(() => status)}
-                            onLoad={() => { HotVideo1.current.playAsync() }}
                         />
                     </View>
                     <View style={{
@@ -86,13 +84,11 @@ const Home = (props) => {
                         <Video
                             ref={HotVideo2}
                             style={{ width: "100%", height: "100%" }}
-                            source={{ uri: "https://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4" }}
+                            source={require("../../assets/video/introduction.mp4")}
                             isLooping
-                            shouldPlay
                             useNativeControls
                             resizeMode={ResizeMode.STRETCH}
                             onPlaybackStatusUpdate={status => setStatus(() => status)}
-                            onLoad={() => { HotVideo2.current.playAsync() }}
                         />
                     </View>
                     <View style={{
@@ -102,23 +98,31 @@ const Home = (props) => {
                         <Video
                             ref={HotVideo3}
                             style={{ width: "100%", height: "100%" }}
-                            source={{ uri: "https://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4" }}
+                            source={require("../../assets/video/introduction.mp4")}
                             isLooping
-                            shouldPlay
                             useNativeControls
                             resizeMode={ResizeMode.STRETCH}
                             onPlaybackStatusUpdate={status => setStatus(() => status)}
-                            onLoad={() => { HotVideo3.current.playAsync() }}
                         />
                     </View>
 
                 </View>
                 <View style={{ flexDirection: "row", height: 200, justifyContent: "center", gap: 20 }}>
-                    <Ionicons name="ios-home-sharp" color="#fff" size={50} />
-                    <MaterialCommunityIcons name="lightning-bolt" color="#fff" size={50} />
-                    <Ionicons name="ios-add-circle" color="#fff" size={50} />
-                    <MaterialCommunityIcons name="pin-outline" color="#fff" size={50} />
-                    <MaterialCommunityIcons name="bookmark" color="#fff" size={50} />
+                    <TouchableOpacity>
+                        <Ionicons name="ios-home-sharp" color="#fff" size={50} />
+                    </TouchableOpacity>
+                    <TouchableOpacity>
+                        <MaterialCommunityIcons name="lightning-bolt" color="#fff" size={50} />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => props.setName("upload")}>
+                        <Ionicons name="ios-add-circle" color="#fff" size={50} />
+                    </TouchableOpacity>
+                    <TouchableOpacity>
+                        <MaterialCommunityIcons name="pin-outline" color="#fff" size={50} />
+                    </TouchableOpacity>
+                    <TouchableOpacity>
+                        <MaterialCommunityIcons name="bookmark" color="#fff" size={50} />
+                    </TouchableOpacity>
                 </View>
             </ScrollView>
         </View >
