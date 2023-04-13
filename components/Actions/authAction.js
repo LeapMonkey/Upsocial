@@ -9,12 +9,17 @@ export const loginUser = (userData) => (dispatch) => {
     axios
         .post(apiURL + "/api/Upsocial/users/login", userData)
         .then((res) => {
-            Notification("Login Success!");
-            dispatch({
-                type: SET_USERS,
-                payload: res.data,
-            });
-            dispatch(setLoadingdata(false));
+            if (res.data.status) {
+                Notification(res.data.msg);
+                dispatch({
+                    type: SET_USERS,
+                    payload: res.data,
+                });
+                dispatch(setLoadingdata(false));
+            } else {
+                Notification(res.data.msg);
+                dispatch(setLoadingdata(false));
+            }
         })
         .catch((err) => {
             dispatch({

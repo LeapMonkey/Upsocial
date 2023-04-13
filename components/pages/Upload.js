@@ -6,6 +6,8 @@ import * as ImagePicker from "expo-image-picker";
 import { Video, ResizeMode } from "expo-av";
 import Notification from '../Actions/Notification';
 import axios from 'axios';
+import { apiURL, API_UPLOAD_URL } from '../config/config';
+import { connect } from "react-redux";
 
 const Upload = (props) => {
 
@@ -25,6 +27,8 @@ const Upload = (props) => {
     const [name, setName] = useState("");
     const [type, setType] = useState("");
 
+    const [loading, setLoading] = useState(false);
+
     // Reset function
     const resetValues = () => {
         setTitle("");
@@ -40,8 +44,51 @@ const Upload = (props) => {
     };
 
     // Upload
-    const uploadContent = () => {
-        Notification("Success!!");
+    const uploadContent = async (e) => {
+        e.preventDefault();
+
+        setLoading(true);
+
+        let formData = new FormData();
+        let cid;
+
+        formData.append('video', {
+            uri: uri,
+            name: name,
+            type: type
+        });
+
+        let headers = {
+            Accept: 'application/json',
+            'Content-Type': 'multipart/form-data'
+        };
+
+        await axios.post(API_UPLOAD_URL + "/generate-ipfs", formData, { headers }).then((res) => {
+            console.log(res.data.data.ipfsUrl);
+            cid = res.data.data.ipfsUrl;
+        }).catch((err) => {
+            console.log(err);
+            setLoading(false);
+        });
+
+        const contentData = {
+            title: title,
+            description: description,
+            keyword: keyword,
+            category: category,
+            userEmail: props.auth.user.curUser,
+            ipfsUrl: cid
+        };
+        axios
+            .post(apiURL + "/api/Upsocial/users/content/uploadContent", contentData)
+            .then((res) => {
+                setLoading(false);
+                Notification(res.data.msg);
+            })
+            .catch((err) => {
+                console.error(err);
+                setLoading(false);
+            });
     };
 
     const addImageGallery = async () => {
@@ -68,20 +115,6 @@ const Upload = (props) => {
         setUri(localUri);
         setName(filename);
         setType(type);
-
-        // let formData = new FormData();
-        // formData.append('video', {
-        //     uri: localUri,
-        //     name: filename,
-        //     type: type
-        // });
-        // let headers = {
-        //     Accept: 'application/json',
-        //     'Content-Type': 'multipart/form-data'
-        // };
-        // axios.post("https://upload63f6f713447ec.cloud.bunnyroute.com/api/generate-ipfs", formData, { headers }).then((res) => {
-        //     console.log(res.data);
-        // }).catch((err) => console.log(err));
     };
 
     const addImageCamera = async () => {
@@ -106,32 +139,24 @@ const Upload = (props) => {
         // Infer the type of the image
         let match = /\.(\w+)$/.exec(filename);
         let type = match ? `video/${match[1]}` : `video`;
-        let pdata = { uri: localUri, name: filename, type };
 
         setImage(localUri);
 
         setUri(localUri);
         setName(filename);
         setType(type);
-
-        // let formData = new FormData();
-        // formData.append('video', {
-        //     uri: localUri,
-        //     name: filename,
-        //     type: type
-        // });
-        // let headers = {
-        //     Accept: 'application/json',
-        //     'Content-Type': 'multipart/form-data'
-        // };
-        // axios.post("https://upload63f6f713447ec.cloud.bunnyroute.com/api/generate-ipfs", formData, { headers }).then((res) => {
-        //     console.log(res.data);
-        // }).catch((err) => console.log(err));
-
     };
 
     return (
         <ScrollView style={styles.container}>
+            {loading && (
+                <View style={styles.loadingView}>
+                    <Image
+                        source={require("../../assets/loading.gif")}
+                        style={{ width: 140, height: 140 }}
+                    />
+                </View>
+            )}
             <View style={styles.backArrow}>
                 <TouchableOpacity onPress={() => props.setName("home")}>
                     <Ionicons name="arrow-back-sharp" color="#fff" size={30} />
@@ -197,6 +222,17 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: "#000"
+    },
+    loadingView: {
+        position: "absolute",
+        top: 0,
+        left: 0,
+        backgroundColor: "rgba(0, 0, 0, 0.6)",
+        width: "100%",
+        height: "100%",
+        justifyContent: "center",
+        alignItems: "center",
+        zIndex: 10000,
     },
     backArrow: {
         flexDirection: "row",
@@ -267,4 +303,8 @@ const styles = StyleSheet.create({
     }
 });
 
-export default Upload;
+const mapStateToProps = (state) => ({
+    auth: state.auth,
+});
+
+export default connect(mapStateToProps, {})(Upload);
