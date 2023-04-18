@@ -158,7 +158,7 @@ const Upload = (props) => {
                 </View>
             )}
             <View style={styles.backArrow}>
-                <TouchableOpacity onPress={() => props.setName("home")}>
+                <TouchableOpacity onPress={() => props.setName("explore")}>
                     <Ionicons name="arrow-back-sharp" color="#fff" size={30} />
                 </TouchableOpacity>
             </View>

@@ -1,22 +1,33 @@
 import React, { useState } from "react";
-import { StyleSheet, View, StatusBar, Image } from "react-native";
+import { StyleSheet, View, StatusBar, Image, Text, Dimensions, TouchableOpacity } from "react-native";
 import { connect } from "react-redux";
 import ProfileManage from "./pages/ProfileManage";
 import Dashboard from "./pages/Dashboard";
+import VideoPlay from "./pages/VideoPlay";
 
 const Main = (props) => {
+    const [videoflag, setVideoflag] = useState(false);
+    const [videoProps, setVideoProps] = useState(null);
+
+    const setvideoflag = (flag, videoProps) => {
+        setVideoflag(flag);
+        setVideoProps(videoProps)
+    }
+
     return (
         <View style={styles.container}>
             <StatusBar />
-            {props.auth.isAuthenticated ? <ProfileManage /> : <Dashboard />}
-            {props.loading.loading && (
+            <ProfileManage setvideoflag={setvideoflag} />
+            {/* {props.auth.isAuthenticated ? <ProfileManage /> : <Dashboard />} */}
+            {/* {props.loading.loading && (
                 <View style={styles.loadingView}>
                     <Image
                         source={require("../assets/loading.gif")}
                         style={{ width: 140, height: 140 }}
                     />
                 </View>
-            )}
+            )} */}
+            <VideoPlay videoflag={videoflag} setVideoflag={setVideoflag} videoProps={videoProps} />
         </View>
     );
 };
@@ -24,18 +35,19 @@ const Main = (props) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        position: "relative",
     },
     loadingView: {
         position: "absolute",
         top: 0,
         left: 0,
         backgroundColor: "rgba(0, 0, 0, 0.6)",
-        width: "100%",
-        height: "100%",
+        width: Dimensions.get('window').width,
+        height: Dimensions.get('window').height,
         justifyContent: "center",
         alignItems: "center",
         zIndex: 10000,
-    },
+    }
 });
 
 const mapStateToProps = (state) => ({

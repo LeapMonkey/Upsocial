@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import Profile from './Profile';
 import Upload from './Upload';
-import Home from './Home';
+import Watch from './Watch';
+import Explore from './Explore';
 
-const ProfileManage = () => {
-    const [routeName, setRouteName] = useState("home");
+const ProfileManage = (props) => {
+    const [routeName, setRouteName] = useState("explore");
 
     const setName = (name) => {
         setRouteName(name);
@@ -12,7 +13,8 @@ const ProfileManage = () => {
 
     return (
         <>
-            {routeName === "home" && <Home setName={setName} />}
+            {routeName === "explore" && <Explore setName={setName} setvideoflag={props.setvideoflag} />}
+            {routeName === "home" && <Watch setName={setName} />}
             {routeName === "profile" && <Profile setName={setName} />}
             {routeName === "upload" && <Upload setName={setName} />}
         </>

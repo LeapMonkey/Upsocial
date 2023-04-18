@@ -1,9 +1,10 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import { StyleSheet, View, Text, Image, TouchableOpacity, ScrollView, Dimensions } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { Video, ResizeMode } from "expo-av";
 import GestureRecognizer, { swipeDirections } from 'react-native-swipe-gestures';
+// import * as ScreenOrientation from 'expo-screen-orientation';
 
 const Onboarding = (props) => {
     const video = useRef(null);
@@ -13,6 +14,25 @@ const Onboarding = (props) => {
     const [gestureName, setgestureName] = useState("none");
     const [count, setCount] = useState(0);
 
+    // const setOrientation = () => {
+    //     if (Dimensions.get("window").height > Dimensions.get("window").width) {
+    //         console.log("Landscape", ScreenOrientation)
+    //         ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE);
+    //     } else {
+    //         console.log("Portrait", ScreenOrientation)
+    //         ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT);
+    //     }
+    // }
+
+    // const detectOrientation = async () => {
+    //     let orientation = await ScreenOrientation.getOrientationAsync();
+    //     console.log("start", orientation)
+    //     const screen = Dimensions.get('screen');
+    //     if (orientation === 0) {
+    //         orientation = screen.width > screen.height ? ScreenOrientation.Orientation.LANDSCAPE : ScreenOrientation.Orientation.PORTRAIT;
+    //     }
+    //     console.log("end", orientation);
+    // };
     const VideoDatas = [
         require("../../assets/video/onboardingVideo.mp4"),
         require("../../assets/video/advertising.mp4"),
@@ -67,12 +87,15 @@ const Onboarding = (props) => {
                         ref={video}
                         style={styles.VideoWidget}
                         source={VideoDatas[count]}
+                        rate={1.0}
                         isLooping
+                        volume={1.0}
                         shouldPlay
                         useNativeControls
                         resizeMode={ResizeMode.STRETCH}
                         onPlaybackStatusUpdate={status => setStatus(() => status)}
                         onLoad={() => { video.current.playAsync() }}
+                    // onFullscreenUpdate={setOrientation}
                     />
                     {!videoFinished && <View style={styles.gifview}>
                         <GestureRecognizer
