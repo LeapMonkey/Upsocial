@@ -3,6 +3,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import Foundation from "react-native-vector-icons/Foundation";
 import { ScrollView, StyleSheet, View, TouchableOpacity, Text, TextInput, Image } from 'react-native';
 import * as ImagePicker from "expo-image-picker";
+import * as VideoThumbnails from 'expo-video-thumbnails';
 import { Video, ResizeMode } from "expo-av";
 import Notification from '../Actions/Notification';
 import axios from 'axios';
@@ -23,9 +24,11 @@ const Upload = (props) => {
     const [category, setCategory] = useState("");
 
     // Video file data
-    const [uri, setUri] = useState("");
+    const [videoUri, setVideoUri] = useState("");
     const [name, setName] = useState("");
     const [type, setType] = useState("");
+
+    const [cid, setCID] = useState("");
 
     const [loading, setLoading] = useState(false);
 
@@ -36,7 +39,7 @@ const Upload = (props) => {
         setKeyword("");
         setCategory("");
         setImage("");
-        setUri("");
+        setVideoUri("");
         setName("");
         setType("");
 
@@ -49,21 +52,19 @@ const Upload = (props) => {
 
         setLoading(true);
 
-        let formData = new FormData();
-        let cid;
-
-        formData.append('video', {
-            uri: uri,
-            name: name,
-            type: type
-        });
-
         let headers = {
             Accept: 'application/json',
             'Content-Type': 'multipart/form-data'
         };
+        let VideoFormData = new FormData();
 
-        await axios.post(API_UPLOAD_URL + "/generate-ipfs", formData, { headers }).then((res) => {
+        VideoFormData.append('video', {
+            uri: videoUri,
+            name: name,
+            type: type
+        });
+        let cid = "";
+        await axios.post(API_UPLOAD_URL + "/generate-ipfs", VideoFormData, { headers }).then((res) => {
             console.log(res.data.data.ipfsUrl);
             cid = res.data.data.ipfsUrl;
         }).catch((err) => {
@@ -71,14 +72,39 @@ const Upload = (props) => {
             setLoading(false);
         });
 
+        const { uri } = await VideoThumbnails.getThumbnailAsync(
+            cid,
+            {
+                time: 15000,
+            }
+        );
+
+        let ThumbnailFormData = new FormData();
+        let thumbnail = "";
+
+        ThumbnailFormData.append('video', {
+            uri: uri,
+            name: "Thumbnail",
+            type: "image/*"
+        });
+
+        await axios.post(API_UPLOAD_URL + "/generate-ipfs", ThumbnailFormData, { headers }).then((res) => {
+            console.log(res.data.data.ipfsUrl);
+            thumbnail = res.data.data.ipfsUrl;
+        }).catch((err) => {
+            console.log(err);
+        });
+
         const contentData = {
             title: title,
             description: description,
             keyword: keyword,
             category: category,
-            userEmail: props.auth.user.curUser,
-            ipfsUrl: cid
+            userEmail: "kogutstt2@gmail.com", //props.auth.user.curUser
+            ipfsUrl: cid,
+            thumbnail: thumbnail
         };
+        console.log(contentData);
         axios
             .post(apiURL + "/api/Upsocial/users/content/uploadContent", contentData)
             .then((res) => {
@@ -89,6 +115,42 @@ const Upload = (props) => {
                 console.error(err);
                 setLoading(false);
             });
+    };
+
+    const generateThumbnail = async (source) => {
+        try {
+            const { uri } = await VideoThumbnails.getThumbnailAsync(
+                source,
+                {
+                    time: 15000,
+                }
+            );
+
+            console.log(uri);
+
+            let formData = new FormData();
+
+            formData.append('video', {
+                uri: uri,
+                name: "Thumbnail",
+                type: "image/*"
+            });
+
+            let headers = {
+                Accept: 'application/json',
+                'Content-Type': 'multipart/form-data'
+            };
+
+            await axios.post(API_UPLOAD_URL + "/generate-ipfs", formData, { headers }).then((res) => {
+                console.log(res.data.data.ipfsUrl);
+                return res.data.data.ipfsUrl;
+            }).catch((err) => {
+                console.log(err);
+            });
+
+        } catch (e) {
+            console.warn(e);
+        }
     };
 
     const addImageGallery = async () => {
@@ -111,10 +173,10 @@ const Upload = (props) => {
         let type = match ? `video/${match[1]}` : `video`;
 
         setImage(localUri);
-
-        setUri(localUri);
+        setVideoUri(localUri);
         setName(filename);
         setType(type);
+
     };
 
     const addImageCamera = async () => {
@@ -142,7 +204,7 @@ const Upload = (props) => {
 
         setImage(localUri);
 
-        setUri(localUri);
+        setVideoUri(localUri);
         setName(filename);
         setType(type);
     };

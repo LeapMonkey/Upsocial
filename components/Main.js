@@ -3,31 +3,21 @@ import { StyleSheet, View, StatusBar, Image, Text, Dimensions, TouchableOpacity 
 import { connect } from "react-redux";
 import ProfileManage from "./pages/ProfileManage";
 import Dashboard from "./pages/Dashboard";
-import VideoPlay from "./pages/VideoPlay";
 
 const Main = (props) => {
-    const [videoflag, setVideoflag] = useState(false);
-    const [videoProps, setVideoProps] = useState(null);
-
-    const setvideoflag = (flag, videoProps) => {
-        setVideoflag(flag);
-        setVideoProps(videoProps)
-    }
 
     return (
         <View style={styles.container}>
             <StatusBar />
-            <ProfileManage setvideoflag={setvideoflag} />
-            {/* {props.auth.isAuthenticated ? <ProfileManage /> : <Dashboard />} */}
-            {/* {props.loading.loading && (
+            {props.auth.isAuthenticated ? <ProfileManage /> : <Dashboard />}
+            {props.loading.loading && (
                 <View style={styles.loadingView}>
                     <Image
                         source={require("../assets/loading.gif")}
                         style={{ width: 140, height: 140 }}
                     />
                 </View>
-            )} */}
-            <VideoPlay videoflag={videoflag} setVideoflag={setVideoflag} videoProps={videoProps} />
+            )}
         </View>
     );
 };

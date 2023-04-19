@@ -1,64 +1,57 @@
 import React, { useEffect, useRef, useState } from "react";
-import { View, Text, StyleSheet, Image, TouchableOpacity, Dimensions, ScrollView, SectionList, SafeAreaView, FlatList } from "react-native";
+import { View, Text, StyleSheet, Image, TouchableOpacity, Dimensions, ScrollView, VirtualizedList, SafeAreaView, FlatList } from "react-native";
 import { Video, ResizeMode } from "expo-av";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-
-
-
-const SECTIONS = [
-    {
-        title: 'Made for you',
-        horizontal: true,
-        data: [
-            {
-                key: '1',
-                text: 'Item text 1',
-                uri: 'https://g.upsocial.com/ipfs/QmYrC4BL87hVcLCbNiRQwtjPnCoN1kvSLi221oSrA6vqXt',
-            },
-            {
-                key: '2',
-                text: 'Item text 2',
-                uri: 'https://g.upsocial.com/ipfs/QmYrC4BL87hVcLCbNiRQwtjPnCoN1kvSLi221oSrA6vqXt',
-            },
-
-            {
-                key: '3',
-                text: 'Item text 3',
-                uri: 'https://g.upsocial.com/ipfs/QmYrC4BL87hVcLCbNiRQwtjPnCoN1kvSLi221oSrA6vqXt',
-            },
-            {
-                key: '4',
-                text: 'Item text 4',
-                uri: 'https://g.upsocial.com/ipfs/QmYrC4BL87hVcLCbNiRQwtjPnCoN1kvSLi221oSrA6vqXt',
-            },
-            {
-                key: '5',
-                text: 'Item text 5',
-                uri: 'https://g.upsocial.com/ipfs/QmYrC4BL87hVcLCbNiRQwtjPnCoN1kvSLi221oSrA6vqXt',
-            },
-        ],
-    },
-];
-
-
-const ListItem = ({ item }) => {
-    return (
-        <View style={styles.item}>
-            <Image
-                source={{
-                    uri: item.uri,
-                }}
-                style={styles.itemPhoto}
-                resizeMode="cover"
-            />
-        </View>
-    );
-};
+import axios from "axios";
+import { apiURL } from "../config/config";
 
 const Watch = (props) => {
+
+    const [videoSource, SetVideoSource] = useState({ uri: "https://g.upsocial.com/ipfs/QmfATQNSR2sbFAQwfgycZyzXqYcAT4TXPSeyyMTjekaUR9" });
+    const [title, setTitle] = useState("FOX News");
+    const [description, setDescription] = useState("Elon Muck's rocket SpaceX launching");
+    const [keyword, setKeyword] = useState("");
+    const [category, setCategory] = useState("");
+    const [ID, setId] = useState("");
+    const [thumbnail, setThumbnail] = useState({ uri: "https://g.upsocial.com/ipfs/QmYrC4BL87hVcLCbNiRQwtjPnCoN1kvSLi221oSrA6vqXt" });
+
+    const setCurrentVideoData = (item) => {
+        setId(item.ID);
+        setTitle(item.title);
+        setDescription(item.description);
+        setKeyword(item.keyword);
+        setCategory(item.category);
+        SetVideoSource({ uri: item.ipfsUrl });
+        setThumbnail({ uri: item.thumbnail });
+    };
+
+    const ListItem = ({ item }) => {
+        return (
+            <TouchableOpacity style={styles.item} onPress={() => setCurrentVideoData(item)}>
+                <Image
+                    source={{
+                        uri: item.thumbnail,
+                    }}
+                    style={styles.itemPhoto}
+                    resizeMode="cover"
+                />
+            </TouchableOpacity>
+        );
+    };
+
     const TopVideo = useRef(null);
     const [status, setStatus] = useState({});
+    const [data, setData] = useState([]);
+    const [limit, setLimit] = useState(5);
+
+    useEffect(() => {
+        axios.post(apiURL + "/api/Upsocial/users/getAll/UploadedContent", { limit: limit }).then((res) => {
+            setData(res.data.data);
+        }).catch((err) => {
+            console.warn(err);
+        });
+    }, []);
 
     return (
         <View style={styles.container}>
@@ -67,7 +60,7 @@ const Watch = (props) => {
                     <Video
                         ref={TopVideo}
                         style={{ width: "100%", height: Dimensions.get("window").height * 0.35 }}
-                        source={require("../../assets/video/elonmusk.mp4")}
+                        source={videoSource}
                         isLooping
                         useNativeControls
                         resizeMode={ResizeMode.STRETCH}
@@ -79,47 +72,39 @@ const Watch = (props) => {
                         <View style={{ flexDirection: "column", alignItems: "center", gap: 5 }}>
                             <View style={{ color: "#fff", fontWeight: "bold" }}>
                                 <Image
-                                    source={require("../../assets/logos/fox.png")}
+                                    source={thumbnail}
                                     style={{
                                         height: 50,
                                         width: 80
                                     }}
                                 />
                             </View>
-                            <Text style={{ color: "#fff", fontWeight: "bold" }}>Fox News</Text>
+                            <Text style={{ color: "#fff", fontWeight: "bold" }}>{title}</Text>
                         </View>
                     </TouchableOpacity>
                     <View style={{ flex: 1, flexDirection: "column", gap: 10 }}>
-                        <Text style={{ color: "#fff", fontWeight: "bold" }}>Elon Musk Lanunches Another rocket into space making history again</Text>
+                        <Text style={{ color: "#fff", fontWeight: "bold" }}>{description}</Text>
                         <Text style={{ color: "#5a5a5a", fontWeight: "bold" }}>333k views | 3,784 UPs | 11 hours ago</Text>
                     </View>
                 </View>
             </View>
-            <SafeAreaView style={{ flex: 1 }}>
-                <SectionList
-                    contentContainerStyle={{ paddingHorizontal: 10 }}
-                    stickySectionHeadersEnabled={false}
-                    sections={SECTIONS}
-                    renderSectionHeader={({ section }) => (
-                        <>
-                            {section.horizontal ? (
-                                <FlatList
-                                    horizontal
-                                    data={section.data}
-                                    renderItem={({ item }) => <ListItem item={item} />}
-                                    showsHorizontalScrollIndicator={false}
-                                />
-                            ) : null}
-                        </>
-                    )}
-                    renderItem={({ item, section }) => {
-                        if (section.horizontal) {
-                            return null;
-                        }
-                        return <ListItem item={item} />;
-                    }}
-                />
-            </SafeAreaView>
+            <VirtualizedList
+                keyExtractor={(item, key) => key}
+                data={data}
+                initialNumToRender={7}
+                renderItem={() => {
+                    return <FlatList
+                        horizontal
+                        data={data}
+                        renderItem={({ item }) => <ListItem item={item} />}
+                        showsHorizontalScrollIndicator={false}
+                    />;
+                }}
+                getItem={(data, index) => {
+                    return data[index];
+                }}
+                getItemCount={data => data.length}
+            />
             <View style={{ flexDirection: "row", height: "10%", justifyContent: "center", gap: 20 }}>
                 <TouchableOpacity>
                     <Ionicons name="ios-home-sharp" color="#fff" size={50} />
@@ -175,6 +160,8 @@ const styles = StyleSheet.create({
     itemPhoto: {
         width: 200,
         height: 200,
+        borderRadius: 12,
+        borderColor: "red"
     },
     itemText: {
         color: 'rgba(255, 255, 255, 0.5)',

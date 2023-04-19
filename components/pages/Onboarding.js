@@ -177,12 +177,6 @@ const styles = StyleSheet.create({
         height: 150,
         transform: [{ rotateX: '180deg' }, { translateX: -15 }]
     },
-    gifstyle: {
-        width: 100,
-        height: 100,
-        position: "absolute",
-        zIndex: 10
-    },
     ScrollText: {
         textTransform: "uppercase",
         fontSize: 24,
