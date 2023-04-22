@@ -1,7 +1,7 @@
 import { CLEAR_ERRORS, GET_ERRORS, LOADING_DATA, SET_USERS } from "./constants";
 import { apiURL } from "../config/config";
 import axios from "axios";
-import Notification from "./Notification";
+import { ToastAndroid, Platform } from 'react-native';
 
 // Login user
 export const loginUser = (userData) => (dispatch) => {
@@ -10,14 +10,19 @@ export const loginUser = (userData) => (dispatch) => {
         .post(apiURL + "/api/Upsocial/users/login", userData)
         .then((res) => {
             if (res.data.status) {
-                Notification(res.data.msg);
+
+                if (Platform.OS === "android") {
+                    ToastAndroid.show(res.data.msg, ToastAndroid.SHORT);
+                }
                 dispatch({
                     type: SET_USERS,
                     payload: res.data,
                 });
                 dispatch(setLoadingdata(false));
             } else {
-                Notification(res.data.msg);
+                if (Platform.OS === "android") {
+                    ToastAndroid.show(res.data.msg, ToastAndroid.SHORT);
+                }
                 dispatch(setLoadingdata(false));
             }
         })

@@ -6,9 +6,13 @@ import { connect } from "react-redux";
 import { loginUser } from "../Actions/authAction";
 import axios from "axios";
 import { apiURL } from "../config/config";
-import Notification from "../Actions/Notification";
+import { ToastAndroid, Platform } from 'react-native';
+import { useMediaQuery } from "react-responsive";
 
 const SignUP = (props) => {
+    const isDesktopOrLaptop = useMediaQuery({
+        query: "(min-device-width: 500px)"
+    });
 
     const [isLogin, SetIsLogin] = useState(false);
 
@@ -31,7 +35,9 @@ const SignUP = (props) => {
         axios
             .post(apiURL + "/api/Upsocial/users/register", userData)
             .then((res) => {
-                Notification(res.data.msg);
+                if (Platform.OS === "android") {
+                    ToastAndroid.show(res.data.msg, ToastAndroid.SHORT);
+                }
                 SetIsLogin(true)
             })
             .catch((err) => {
@@ -53,132 +59,134 @@ const SignUP = (props) => {
             colors={['#2ab4fad9', '#1D2145']}
             style={styles.container}
         >
-            {!isLogin && (<ScrollView style={styles.main}>
-                <View style={styles.logoView}>
-                    <Image
-                        source={require("../../assets/logos/logo.png")}
-                        style={styles.logoImage}
-                    />
-                </View>
-                <View style={styles.CreateAccountView}>
-                    <TouchableOpacity onPress={() => props.setflag("onboarding")}>
-                        <Ionicons name="md-chevron-back" color="#fff" size={24} />
-                    </TouchableOpacity>
-                    <Text style={styles.create_account_title}>Create Account</Text>
-                </View>
-                <View style={styles.loginotherview}>
-                    <View style={styles.subotherview}>
-                        <TouchableOpacity style={[{ backgroundColor: '#4468b0' }, styles.loginbtn]}>
-                            <Ionicons name="logo-facebook" color="#fff" size={30} />
+            <View style={isDesktopOrLaptop ? styles.mainview : styles.responsiveview}>
+                {!isLogin && (<ScrollView style={styles.main}>
+                    <View style={styles.logoView}>
+                        <Image
+                            source={require("../../assets/logos/logo.png")}
+                            style={styles.logoImage}
+                        />
+                    </View>
+                    <View style={styles.CreateAccountView}>
+                        <TouchableOpacity onPress={() => props.setflag("onboarding")}>
+                            <Ionicons name="md-chevron-back" color="#fff" size={24} />
                         </TouchableOpacity>
-                        <TouchableOpacity style={[{ backgroundColor: '#3cbff8' }, styles.loginbtn]}>
-                            <Ionicons name="ios-logo-twitter" color="#fff" size={30} />
-                        </TouchableOpacity>
-                        <TouchableOpacity style={[{ backgroundColor: '#ea4c89' }, styles.loginbtn]}>
-                            <Ionicons name="ios-logo-dribbble" color="#fff" size={30} />
-                        </TouchableOpacity>
+                        <Text style={styles.create_account_title}>Create Account</Text>
                     </View>
-                    <View style={styles.loginothertitle}>
-                        <Text style={styles.loginothertitletxt}>or be classical</Text>
-                    </View>
-                </View>
-                <View style={styles.TextGroupView}>
-                    <View style={styles.TextView}>
-                        <TextInput placeholder="Username" placeholderTextColor="#adb2b6"
-                            style={styles.TextInput} onChangeText={(e) => setUsername(e)} />
-                    </View>
-                    <View style={styles.TextView}>
-                        <TextInput placeholder="Email" placeholderTextColor="#adb2b6"
-                            style={styles.TextInput} onChangeText={(e) => setEmail(e)} />
-                    </View>
-                    <View style={styles.TextView}>
-                        <TextInput placeholder="Password" placeholderTextColor="#adb2b6"
-                            secureTextEntry={true}
-                            style={styles.TextInput} onChangeText={(e) => setPassword(e)} />
-                    </View>
-                    <View style={styles.TextView}>
-                        <TouchableOpacity style={styles.regbtn} onPress={UserRegister}>
-                            <Text style={styles.regbtntext}>SIGN UP</Text>
-                        </TouchableOpacity>
-                    </View>
-                    <View style={styles.RouteView}>
-                        <View>
-                            <Text style={styles.routetext}>Already have an account?</Text>
+                    <View style={styles.loginotherview}>
+                        <View style={styles.subotherview}>
+                            <TouchableOpacity style={[{ backgroundColor: '#4468b0' }, styles.loginbtn]}>
+                                <Ionicons name="logo-facebook" color="#fff" size={30} />
+                            </TouchableOpacity>
+                            <TouchableOpacity style={[{ backgroundColor: '#3cbff8' }, styles.loginbtn]}>
+                                <Ionicons name="ios-logo-twitter" color="#fff" size={30} />
+                            </TouchableOpacity>
+                            <TouchableOpacity style={[{ backgroundColor: '#ea4c89' }, styles.loginbtn]}>
+                                <Ionicons name="ios-logo-dribbble" color="#fff" size={30} />
+                            </TouchableOpacity>
                         </View>
-                        <TouchableOpacity style={{ marginLeft: 5 }} onPress={() => SetIsLogin(true)}>
-                            <Text style={styles.routetext}>Sign In</Text>
-                        </TouchableOpacity>
-                    </View>
-                    <View style={styles.TextView}>
-                        <TouchableOpacity style={[styles.regbtn, { backgroundColor: "#433b45" }]}>
-                            <Text style={styles.regbtntext}>
-                                Anonymous account
-                            </Text>
-                        </TouchableOpacity>
-                    </View>
-                    <View style={styles.RouteView}>
-                        <View>
-                            <Text style={styles.routetext}>Already have your </Text>
-                        </View>
-                        <TouchableOpacity onPress={() => SetIsLogin(true)}>
-                            <Text style={styles.routetext}>login</Text>
-                        </TouchableOpacity>
-                        <View>
-                            <Text style={styles.routetext}> code?</Text>
+                        <View style={styles.loginothertitle}>
+                            <Text style={styles.loginothertitletxt}>or be classical</Text>
                         </View>
                     </View>
-                </View>
-            </ScrollView>)}
-            {isLogin && (<ScrollView style={styles.main}>
-                <View style={styles.logoView}>
-                    <Image
-                        source={require("../../assets/logos/logo.png")}
-                        style={styles.logoImage}
-                    />
-                </View>
-                <View style={styles.CreateAccountView}>
-                    <TouchableOpacity onPress={() => SetIsLogin(false)}>
-                        <Ionicons name="md-chevron-back" color="#fff" size={24} />
-                    </TouchableOpacity>
-                    <Text style={styles.create_account_title}>Sign In</Text>
-                </View>
-                <View style={styles.TextGroupView}>
-                    <View style={styles.TextView}>
-                        <TextInput placeholder="Email" placeholderTextColor="#adb2b6" onChangeText={(e) => setUEmail(e)}
-                            style={styles.TextInput} />
-                    </View>
-                    <View style={styles.TextView}>
-                        <TextInput placeholder="Password" placeholderTextColor="#adb2b6" onChangeText={(e) => setUPassword(e)}
-                            secureTextEntry={true}
-                            style={styles.TextInput} />
-                    </View>
-                    <View style={styles.RouteView}>
-                        <TouchableOpacity style={styles.forgotLabel}>
-                            <Text style={styles.routetext}>Forgot Password?</Text>
-                        </TouchableOpacity>
-                    </View>
-                    <View style={styles.TextView}>
-                        <TouchableOpacity style={styles.regbtn} onPress={UserLogin}>
-                            <Text style={styles.regbtntext}>SIGN IN</Text>
-                        </TouchableOpacity>
-                    </View>
-                    <View style={styles.TextView}>
-                        <TouchableOpacity style={[styles.regbtn, { backgroundColor: "#433b45" }]}>
-                            <Text style={styles.regbtntext}>
-                                Anonymous account
-                            </Text>
-                        </TouchableOpacity>
-                    </View>
-                    <View style={styles.RouteView}>
-                        <View>
-                            <Text style={styles.routetext}>Don't have account? </Text>
+                    <View style={styles.TextGroupView}>
+                        <View style={styles.TextView}>
+                            <TextInput placeholder="Username" placeholderTextColor="#adb2b6"
+                                style={styles.TextInput} onChangeText={(e) => setUsername(e)} />
                         </View>
+                        <View style={styles.TextView}>
+                            <TextInput placeholder="Email" placeholderTextColor="#adb2b6"
+                                style={styles.TextInput} onChangeText={(e) => setEmail(e)} />
+                        </View>
+                        <View style={styles.TextView}>
+                            <TextInput placeholder="Password" placeholderTextColor="#adb2b6"
+                                secureTextEntry={true}
+                                style={styles.TextInput} onChangeText={(e) => setPassword(e)} />
+                        </View>
+                        <View style={styles.TextView}>
+                            <TouchableOpacity style={styles.regbtn} onPress={UserRegister}>
+                                <Text style={styles.regbtntext}>SIGN UP</Text>
+                            </TouchableOpacity>
+                        </View>
+                        <View style={styles.RouteView}>
+                            <View>
+                                <Text style={styles.routetext}>Already have an account?</Text>
+                            </View>
+                            <TouchableOpacity style={{ marginLeft: 5 }} onPress={() => SetIsLogin(true)}>
+                                <Text style={styles.routetext}>Sign In</Text>
+                            </TouchableOpacity>
+                        </View>
+                        <View style={styles.TextView}>
+                            <TouchableOpacity style={[styles.regbtn, { backgroundColor: "#433b45" }]}>
+                                <Text style={styles.regbtntext}>
+                                    Anonymous account
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
+                        <View style={styles.RouteView}>
+                            <View>
+                                <Text style={styles.routetext}>Already have your </Text>
+                            </View>
+                            <TouchableOpacity onPress={() => SetIsLogin(true)}>
+                                <Text style={styles.routetext}>login</Text>
+                            </TouchableOpacity>
+                            <View>
+                                <Text style={styles.routetext}> code?</Text>
+                            </View>
+                        </View>
+                    </View>
+                </ScrollView>)}
+                {isLogin && (<ScrollView style={styles.main}>
+                    <View style={styles.logoView}>
+                        <Image
+                            source={require("../../assets/logos/logo.png")}
+                            style={styles.logoImage}
+                        />
+                    </View>
+                    <View style={styles.CreateAccountView}>
                         <TouchableOpacity onPress={() => SetIsLogin(false)}>
-                            <Text style={styles.routetext}>SIGN UP</Text>
+                            <Ionicons name="md-chevron-back" color="#fff" size={24} />
                         </TouchableOpacity>
+                        <Text style={styles.create_account_title}>Sign In</Text>
                     </View>
-                </View>
-            </ScrollView>)}
+                    <View style={styles.TextGroupView}>
+                        <View style={styles.TextView}>
+                            <TextInput placeholder="Email" placeholderTextColor="#adb2b6" onChangeText={(e) => setUEmail(e)}
+                                style={styles.TextInput} />
+                        </View>
+                        <View style={styles.TextView}>
+                            <TextInput placeholder="Password" placeholderTextColor="#adb2b6" onChangeText={(e) => setUPassword(e)}
+                                secureTextEntry={true}
+                                style={styles.TextInput} />
+                        </View>
+                        <View style={styles.RouteView}>
+                            <TouchableOpacity style={styles.forgotLabel}>
+                                <Text style={styles.routetext}>Forgot Password?</Text>
+                            </TouchableOpacity>
+                        </View>
+                        <View style={styles.TextView}>
+                            <TouchableOpacity style={styles.regbtn} onPress={UserLogin}>
+                                <Text style={styles.regbtntext}>SIGN IN</Text>
+                            </TouchableOpacity>
+                        </View>
+                        <View style={styles.TextView}>
+                            <TouchableOpacity style={[styles.regbtn, { backgroundColor: "#433b45" }]}>
+                                <Text style={styles.regbtntext}>
+                                    Anonymous account
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
+                        <View style={styles.RouteView}>
+                            <View>
+                                <Text style={styles.routetext}>Don't have account? </Text>
+                            </View>
+                            <TouchableOpacity onPress={() => SetIsLogin(false)}>
+                                <Text style={styles.routetext}>SIGN UP</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </ScrollView>)}
+            </View>
         </LinearGradient >
     );
 };
@@ -187,7 +195,14 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         height: "100%",
-        justifyContent: "center"
+        justifyContent: "center",
+        alignItems: "center"
+    },
+    responsiveview: {
+        width: "100%",
+    },
+    mainview: {
+        width: 400
     },
     main: {
         flex: 1,

@@ -36,22 +36,76 @@ const Watch = (props) => {
                     style={styles.itemPhoto}
                     resizeMode="cover"
                 />
+                <Image source={require("../../assets/logos/playvideo.png")} style={{ width: 50, height: 50, position: "absolute", top: "40%", left: "30%" }} />
             </TouchableOpacity>
         );
     };
 
     const TopVideo = useRef(null);
     const [status, setStatus] = useState({});
-    const [data, setData] = useState([]);
+    const [data, setData] = useState([
+        {
+            "ID": 0,
+            "email": "kogutstt2@gmail.com",
+            "title": "video2 title",
+            "status": true,
+            "ipfsUrl": "https://g.upsocial.com/ipfs/QmUQypwRoVf1PpwmDgHPP6Fear4Q7tdgE1D932itw13jJo",
+            "keyword": "introduction",
+            "category": "backend",
+            "thumbnail": "https://g.upsocial.com/ipfs/QmXJoA3vuqYZkEn5vsm2oscDuX1Y8yZVeZavDgzJYbUu9m",
+            "description": "video2 description"
+        },
+        {
+            "ID": 1,
+            "email": "kogutstt2@gmail.com",
+            "title": "video2 title",
+            "status": false,
+            "ipfsUrl": "https://g.upsocial.com/ipfs/QmUQypwRoVf1PpwmDgHPP6Fear4Q7tdgE1D932itw13jJo",
+            "keyword": "introduction",
+            "category": "backend",
+            "thumbnail": "https://g.upsocial.com/ipfs/QmQGtYw4QpR8oucMEgNSTCrM1mnKu3GxePo3sSfES3QDZe",
+            "description": "video2 description"
+        },
+        {
+            "ID": 2,
+            "email": "kogutstt2@gmail.com",
+            "title": "video2 title",
+            "status": true,
+            "ipfsUrl": "https://g.upsocial.com/ipfs/QmUQypwRoVf1PpwmDgHPP6Fear4Q7tdgE1D932itw13jJo",
+            "keyword": "introduction",
+            "category": "backend",
+            "thumbnail": "https://g.upsocial.com/ipfs/QmeavuHFKnhKpw4Cha9ysRAuCr6peZPvG7penDMrygNjk3",
+            "description": "video2 description"
+        },
+        {
+            "email": "tomford@gmail.com",
+            "title": "video2 title",
+            "ipfsUrl": "https://g.upsocial.com/ipfs/QmUQypwRoVf1PpwmDgHPP6Fear4Q7tdgE1D932itw13jJo",
+            "keyword": "introduction",
+            "category": "backend",
+            "thumbnail": "https://g.upsocial.com/ipfs/QmeCVhxEfsfz482iZEEUkRuAM5jqqBEbBBDXobTtxaebYD",
+            "description": "video2 description"
+        },
+        {
+            "ID": 4,
+            "title": "asd",
+            "status": true,
+            "ipfsUrl": "https://g.upsocial.com/ipfs/QmW5SKwvKW3pb9YNxKD7up748ZJJzYoaLCRHBUYrarqFFS",
+            "keyword": "asdad",
+            "category": "sad",
+            "thumbnail": "https://g.upsocial.com/ipfs/QmbU2GJMnQAJTHaedqGJXeGKo41Uec8UeDn6hcD28Xj2bQ",
+            "description": "asd"
+        },
+    ]);
     const [limit, setLimit] = useState(5);
 
-    useEffect(() => {
-        axios.post(apiURL + "/api/Upsocial/users/getAll/UploadedContent", { limit: limit }).then((res) => {
-            setData(res.data.data);
-        }).catch((err) => {
-            console.warn(err);
-        });
-    }, []);
+    // useEffect(() => {
+    //     axios.post(apiURL + "/api/Upsocial/users/getAll/UploadedContent", { limit: limit }).then((res) => {
+    //         setData(res.data.data);
+    //     }).catch((err) => {
+    //         console.warn(err);
+    //     });
+    // }, []);
 
     return (
         <View style={styles.container}>
@@ -59,7 +113,8 @@ const Watch = (props) => {
                 <View style={{ height: Dimensions.get("window").height * 0.35 }}>
                     <Video
                         ref={TopVideo}
-                        style={{ width: "100%", height: Dimensions.get("window").height * 0.35 }}
+                        videoStyle={{ position: 'relative', margin: 'auto', maxWidth: 400, width: "100%", height: "100%", aspectRatio: 1 / 2 }}
+                        style={{ width: "100%", height: Dimensions.get("window").height * 0.35, justifyContent: "center", alignItems: "center" }}
                         source={videoSource}
                         isLooping
                         useNativeControls
@@ -67,28 +122,39 @@ const Watch = (props) => {
                         onPlaybackStatusUpdate={status => setStatus(() => status)}
                     />
                 </View>
-                <View style={{ flexDirection: "row", gap: 20, marginHorizontal: 20, marginVertical: 10, backgroundColor: "#000" }}>
-                    <TouchableOpacity onPress={() => props.setName("profile")}>
-                        <View style={{ flexDirection: "column", alignItems: "center", gap: 5 }}>
-                            <View style={{ color: "#fff", fontWeight: "bold" }}>
-                                <Image
-                                    source={thumbnail}
-                                    style={{
-                                        height: 50,
-                                        width: 80
-                                    }}
-                                />
+                <View style={{ alignItems: "center" }}>
+                    <View style={{ flexDirection: "row", gap: 20, marginHorizontal: 20, marginVertical: 10, backgroundColor: "#000" }}>
+                        <TouchableOpacity onPress={() => props.setName("profile")}>
+                            <View style={{ flexDirection: "column", alignItems: "center", gap: 5 }}>
+                                <View style={{ color: "#fff", fontWeight: "bold" }}>
+                                    <Image
+                                        source={thumbnail}
+                                        style={{
+                                            height: 50,
+                                            width: 80
+                                        }}
+                                    />
+                                </View>
+                                <Text style={{ color: "#fff", fontWeight: "bold" }}>{title}</Text>
                             </View>
-                            <Text style={{ color: "#fff", fontWeight: "bold" }}>{title}</Text>
+                        </TouchableOpacity>
+                        <View style={{ flex: 1, flexDirection: "column", gap: 10 }}>
+                            <Text style={{ color: "#fff", fontWeight: "bold" }}>{description}</Text>
+                            <Text style={{ color: "#5a5a5a", fontWeight: "bold" }}>333k views | 3,784 UPs | 11 hours ago</Text>
                         </View>
-                    </TouchableOpacity>
-                    <View style={{ flex: 1, flexDirection: "column", gap: 10 }}>
-                        <Text style={{ color: "#fff", fontWeight: "bold" }}>{description}</Text>
-                        <Text style={{ color: "#5a5a5a", fontWeight: "bold" }}>333k views | 3,784 UPs | 11 hours ago</Text>
                     </View>
                 </View>
             </View>
-            <VirtualizedList
+            <View style={{ height: 200 }}>
+                <FlatList
+                    horizontal
+                    data={data}
+                    renderItem={({ item }) => <ListItem item={item} />}
+                    showsHorizontalScrollIndicator={false}
+
+                />
+            </View>
+            {/* <VirtualizedList
                 keyExtractor={(item, key) => key}
                 data={data}
                 initialNumToRender={7}
@@ -104,8 +170,8 @@ const Watch = (props) => {
                     return data[index];
                 }}
                 getItemCount={data => data.length}
-            />
-            <View style={{ flexDirection: "row", height: "10%", justifyContent: "center", gap: 20 }}>
+            /> */}
+            <View style={{ marginTop: 50, flexDirection: "row", height: "10%", justifyContent: "center", gap: 20 }}>
                 <TouchableOpacity>
                     <Ionicons name="ios-home-sharp" color="#fff" size={50} />
                 </TouchableOpacity>
@@ -156,10 +222,12 @@ const styles = StyleSheet.create({
     },
     item: {
         margin: 10,
-    },
-    itemPhoto: {
         width: 200,
         height: 200,
+    },
+    itemPhoto: {
+        width: "100%",
+        height: "100%",
         borderRadius: 12,
         borderColor: "red"
     },

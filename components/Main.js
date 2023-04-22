@@ -5,7 +5,6 @@ import ProfileManage from "./pages/ProfileManage";
 import Dashboard from "./pages/Dashboard";
 
 const Main = (props) => {
-
     return (
         <View style={styles.container}>
             <StatusBar />

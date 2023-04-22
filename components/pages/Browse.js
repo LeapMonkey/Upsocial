@@ -1,15 +1,92 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { ScrollView, View, Text, StyleSheet, Image, Dimensions, TouchableOpacity, Share } from 'react-native';
+import { ScrollView, View, Text, StyleSheet, Image, TextInput, Dimensions, TouchableOpacity, Share } from 'react-native';
 import Modal from "react-native-modal";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import axios from 'axios';
 import { apiURL } from '../config/config';
 import { Video, ResizeMode, Audio, InterruptionModeAndroid, InterruptionModeIOS } from "expo-av";
+import { useMediaQuery } from "react-responsive";
+
+const datas = [
+    {
+        "ID": 0,
+        "email": "kogutstt2@gmail.com",
+        "title": "video2 title",
+        "status": true,
+        "ipfsUrl": "https://g.upsocial.com/ipfs/QmUQypwRoVf1PpwmDgHPP6Fear4Q7tdgE1D932itw13jJo",
+        "keyword": "introduction",
+        "category": "backend",
+        "thumbnail": "https://g.upsocial.com/ipfs/QmXJoA3vuqYZkEn5vsm2oscDuX1Y8yZVeZavDgzJYbUu9m",
+        "description": "video2 description"
+    },
+    {
+        "ID": 1,
+        "email": "kogutstt2@gmail.com",
+        "title": "video2 title",
+        "status": false,
+        "ipfsUrl": "https://g.upsocial.com/ipfs/QmUQypwRoVf1PpwmDgHPP6Fear4Q7tdgE1D932itw13jJo",
+        "keyword": "introduction",
+        "category": "backend",
+        "thumbnail": "https://g.upsocial.com/ipfs/QmQGtYw4QpR8oucMEgNSTCrM1mnKu3GxePo3sSfES3QDZe",
+        "description": "video2 description"
+    },
+    {
+        "ID": 2,
+        "email": "kogutstt2@gmail.com",
+        "title": "video2 title",
+        "status": true,
+        "ipfsUrl": "https://g.upsocial.com/ipfs/QmUQypwRoVf1PpwmDgHPP6Fear4Q7tdgE1D932itw13jJo",
+        "keyword": "introduction",
+        "category": "backend",
+        "thumbnail": "https://g.upsocial.com/ipfs/QmeavuHFKnhKpw4Cha9ysRAuCr6peZPvG7penDMrygNjk3",
+        "description": "video2 description"
+    },
+    {
+        "email": "tomford@gmail.com",
+        "title": "video2 title",
+        "ipfsUrl": "https://g.upsocial.com/ipfs/QmUQypwRoVf1PpwmDgHPP6Fear4Q7tdgE1D932itw13jJo",
+        "keyword": "introduction",
+        "category": "backend",
+        "thumbnail": "https://g.upsocial.com/ipfs/QmeCVhxEfsfz482iZEEUkRuAM5jqqBEbBBDXobTtxaebYD",
+        "description": "video2 description"
+    },
+    {
+        "ID": 4,
+        "title": "asd",
+        "status": true,
+        "ipfsUrl": "https://g.upsocial.com/ipfs/QmW5SKwvKW3pb9YNxKD7up748ZJJzYoaLCRHBUYrarqFFS",
+        "keyword": "asdad",
+        "category": "sad",
+        "thumbnail": "https://g.upsocial.com/ipfs/QmbU2GJMnQAJTHaedqGJXeGKo41Uec8UeDn6hcD28Xj2bQ",
+        "description": "asd"
+    },
+];
 
 const Browse = (props) => {
+    const isMobile = useMediaQuery({
+        query: "(max-device-width: 468px)"
+    });
 
-    const [data, setData] = useState([]);
+    const isTabletOrMobile = useMediaQuery({
+        query: "(min-device-width: 468px)"
+    });
+
+    const isTablet = useMediaQuery({
+        query: "(min-device-width: 768px)"
+    });
+
+    const isDesktop = useMediaQuery({
+        query: "(min-device-width: 1024px)"
+    });
+
+    const isWide = useMediaQuery({
+        query: "(min-device-width: 1441px)"
+    });
+
+    const [alldata, setAlldata] = useState([]);
+    const [result, setResult] = useState([]);
+
     const [opened, setOpened] = useState(false);
     const [limit, setLimit] = useState(5);
 
@@ -17,15 +94,15 @@ const Browse = (props) => {
     const [status, setStatus] = useState({});
     const TopVideo = useRef(null);
     const [videoProps, setVideoProps] = useState(null);
-
+    const [searchflag, setSearchflag] = useState(false);
+    const [searchtext, setSearchtext] = useState("");
 
     useEffect(() => {
-        axios.post(apiURL + "/api/Upsocial/users/getAll/UploadedContent", { limit: limit }).then((res) => {
-            setData(res.data.data);
-        }).catch((err) => {
-            console.warn(err);
-        });
+        setAlldata(datas);
+        setResult(datas);
+    }, []);
 
+    useEffect(() => {
         Audio.setAudioModeAsync({
             playsInSilentModeIOS: true,
             allowsRecordingIOS: false,
@@ -50,6 +127,18 @@ const Browse = (props) => {
         }).catch((err) => console.log(err));
     };
 
+    const onSearch = (e) => {
+        setSearchtext(e);
+        var searchresult = alldata.filter((item) => {
+            return item.title.toLowerCase().indexOf(e.toLowerCase()) > -1 || item.category.toLowerCase().indexOf(e.toLowerCase()) > -1;
+        });
+        if (e === "") {
+            setResult(alldata);
+        } else {
+            setResult(searchresult);
+        }
+    }
+
     return (
         <View style={styles.container}>
             <Modal
@@ -64,29 +153,19 @@ const Browse = (props) => {
                             <Ionicons name="arrow-back-sharp" color="#fff" size={30} />
                         </TouchableOpacity>
                         <View style={{ flexDirection: "row", gap: 10, alignItems: "center" }}>
-                            <TouchableOpacity onPress={() => setOpened(false)}>
+                            {/* <TouchableOpacity onPress={() => setOpened(false)}>
                                 <AntDesign name="like2" color="#fff" size={30} />
                             </TouchableOpacity><TouchableOpacity onPress={() => setOpened(false)}>
                                 <AntDesign name="dislike2" color="#fff" size={30} />
-                            </TouchableOpacity>
+                            </TouchableOpacity> */}
                             <TouchableOpacity onPress={() => ShareFile(videoProps.ipfsUrl)}>
                                 <Ionicons name="md-share-social-outline" color="#fff" size={30} />
                             </TouchableOpacity>
                         </View>
                     </View>
-                    {/* <View style={{ flexDirection: "row", justifyContent: "center", gap: 40, width: "100%", position: 'absolute', top: 50, zIndex: 1000000 }}>
-                        <Image source={require("../../assets/swipe/swipe.png")} style={{ width: 50, height: 50, backgroundColor: 'red' }} />
-                    </View> */}
-                    {/* <View style={styles.gifview}>
-                        <TouchableOpacity onPress={() => alert("like this video")}>
-                            <Image
-                                style={styles.scrollGif}
-                                source={require("../../assets/ScrollTop.gif")}
-                            />
-                        </TouchableOpacity>
-                    </View> */}
                     <View style={{ width: "100%", position: 'relative' }} >
                         <Video
+                            videoStyle={{ position: 'relative', aspectRatio: 1 / 2 }}
                             ref={TopVideo}
                             style={{ width: "100%", height: Dimensions.get("window").height }}
                             source={source}
@@ -99,25 +178,29 @@ const Browse = (props) => {
                 </View>
             </Modal>
             <View style={styles.topBarContainer}>
-
-                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                <TouchableOpacity style={{ flexDirection: "row", alignItems: "center" }} onPress={() => props.setName("explore")}>
                     <Image
                         source={require("../../assets/logos/imagelogo.png")}
                         style={styles.topLogo}
                     />
                     <Text style={{ color: "#fff", fontSize: 30, fontWeight: "bold" }}>UpSocial</Text>
-                </View>
-                <TouchableOpacity onPress={() => alert("Hi")}>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => setSearchflag(!searchflag)}>
                     <Ionicons name="search" color="#fff" size={30} />
                 </TouchableOpacity>
             </View>
+            {searchflag && <View style={styles.searchbar}>
+                <TextInput placeholder="search by title and tag" placeholderTextColor="#adb2b6"
+                    style={styles.TextInput} value={searchtext} onChangeText={(e) => onSearch(e)} />
+            </View>}
             <ScrollView style={{ flex: 1 }}>
                 <View style={styles.board}>
-                    {data.map((index, key) => {
+                    {result.map((index, key) => {
                         return (
-                            <TouchableOpacity style={{ alignItems: 'center', width: "50%", padding: 10 }} key={key} onPress={() => watchVideo(index)}>
+                            <TouchableOpacity style={isWide ? styles.wideitemview : isDesktop ? styles.desktopitemview : isTablet ? styles.tabletitemview : isTabletOrMobile ? styles.tabletormobileitemview : styles.mobileitemview} key={key} onPress={() => watchVideo(index)}>
                                 <View style={{ alignItems: 'center', width: "100%" }}>
                                     <Image source={{ uri: index.thumbnail }} style={{ width: "100%", height: Dimensions.get("window").height * 0.3, borderRadius: 12 }} />
+                                    <Image source={require("../../assets/logos/playvideo.png")} style={{ width: 50, height: 50, position: "absolute", top: "40%" }} />
                                 </View>
                                 <Text>{index.title}</Text>
                                 <Text>{index.description}</Text>
@@ -145,26 +228,65 @@ const styles = StyleSheet.create({
         flexWrap: "wrap",
 
     },
+    tabletormobileitemview: {
+        alignItems: 'center',
+        width: "50%",
+        padding: 10
+    },
+    mobileitemview: {
+        alignItems: "center",
+        width: "50%",
+        padding: 10,
+    },
+    tabletitemview: {
+        alignItems: "center",
+        width: "33%",
+        padding: 10
+    },
+    desktopitemview: {
+        alignItems: "center",
+        width: "25%",
+        padding: 10
+    },
+    wideitemview: {
+        alignItems: "center",
+        width: "20%",
+        padding: 10
+    },
     topBarContainer: {
         width: "100%",
-        backgroundColor: "rgba(0, 0, 0, 0.1)",
+        backgroundColor: "rgba(0, 0, 0, 0.2)",
         flexDirection: "row",
         justifyContent: "space-between",
         height: 40,
         alignItems: "center",
         zIndex: 2,
-        position: "absolute",
-        top: 0
+        position: "relative"
     },
     topLogo: {
         height: 30,
         width: 30
     },
+    searchbar: {
+        flexDirection: "row",
+        width: "100%",
+        justifyContent: "center",
+        alignItems: "center"
+    },
+    TextInput: {
+        paddingVertical: 10,
+        paddingHorizontal: 10,
+        fontSize: 16,
+        borderColor: "#3b8ad0",
+        borderWidth: 2,
+        borderRadius: 20,
+        width: "90%",
+        marginVertical: 10,
+    },
     btnLoad: {
         flex: 1,
         justifyContent: 'center',
-        alignItems: "center"
-
+        alignItems: "center",
     },
     btnCover: {
         backgroundColor: "gray",

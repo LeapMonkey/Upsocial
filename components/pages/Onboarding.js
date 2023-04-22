@@ -4,6 +4,7 @@ import { StyleSheet, View, Text, Image, TouchableOpacity, ScrollView, Dimensions
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { Video, ResizeMode } from "expo-av";
 import GestureRecognizer, { swipeDirections } from 'react-native-swipe-gestures';
+import { useMediaQuery } from "react-responsive";
 // import * as ScreenOrientation from 'expo-screen-orientation';
 
 const Onboarding = (props) => {
@@ -14,31 +15,13 @@ const Onboarding = (props) => {
     const [gestureName, setgestureName] = useState("none");
     const [count, setCount] = useState(0);
 
-    // const setOrientation = () => {
-    //     if (Dimensions.get("window").height > Dimensions.get("window").width) {
-    //         console.log("Landscape", ScreenOrientation)
-    //         ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE);
-    //     } else {
-    //         console.log("Portrait", ScreenOrientation)
-    //         ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT);
-    //     }
-    // }
+    const isDesktopOrLaptop = useMediaQuery({
+        query: "(min-device-width: 500px)"
+    });
 
-    // const detectOrientation = async () => {
-    //     let orientation = await ScreenOrientation.getOrientationAsync();
-    //     console.log("start", orientation)
-    //     const screen = Dimensions.get('screen');
-    //     if (orientation === 0) {
-    //         orientation = screen.width > screen.height ? ScreenOrientation.Orientation.LANDSCAPE : ScreenOrientation.Orientation.PORTRAIT;
-    //     }
-    //     console.log("end", orientation);
-    // };
     const VideoDatas = [
-        require("../../assets/video/onboardingVideo.mp4"),
-        require("../../assets/video/advertising.mp4"),
-        require("../../assets/video/bunny1.mp4"),
-        require("../../assets/video/bunny2.mp4"),
-        require("../../assets/video/bunny3.webm"),
+        { uri: "https://g.upsocial.com/ipfs/QmXF1SaqxcFCTDrBrygXqdrHFT9nUhroHZDQ6p672xCRns" },
+        { uri: "https://g.upsocial.com/ipfs/Qmd9jWF4ajEop3AyJirP4q2N8nFzL5GyeoB75pTqRPSAUr" }
     ]
 
     const config = {
@@ -48,14 +31,12 @@ const Onboarding = (props) => {
 
     const onSwipe = (gestureName, gestureState) => {
         const { SWIPE_UP, SWIPE_DOWN, SWIPE_LEFT, SWIPE_RIGHT } = swipeDirections;
-        console.log(gestureName, gestureState)
         setgestureName(gestureName);
         switch (gestureName) {
             case SWIPE_UP:
                 settouched(true);
                 setCount(count + 1);
-                console.log(count)
-                if (count == 4) setvideoFinished(true);
+                if (count == 1) setvideoFinished(true);
                 break;
             case SWIPE_DOWN:
                 settouched(false);
@@ -70,60 +51,77 @@ const Onboarding = (props) => {
     }
 
     return (
-        <View style={styles.container}>
-            <View style={styles.topBarContainer}>
-                <Image
-                    source={require("../../assets/logos/logo.png")}
-                    style={styles.topLogo}
-                />
-                <TouchableOpacity>
-                    <Ionicons name="search" color="#000" size={30} style={styles.searchIcon} />
-                </TouchableOpacity>
-            </View>
-
-            <ScrollView style={{ flex: 1, zIndex: 1 }}>
-                <View style={{ position: "relative" }}>
-                    <Video
-                        ref={video}
-                        style={styles.VideoWidget}
-                        source={VideoDatas[count]}
-                        rate={1.0}
-                        isLooping
-                        volume={1.0}
-                        shouldPlay
-                        useNativeControls
-                        resizeMode={ResizeMode.STRETCH}
-                        onPlaybackStatusUpdate={status => setStatus(() => status)}
-                        onLoad={() => { video.current.playAsync() }}
-                    // onFullscreenUpdate={setOrientation}
+        <LinearGradient
+            colors={['#2ab4fad9', '#1D2145']}
+            style={styles.container}
+        >
+            <View style={isDesktopOrLaptop ? styles.mainview : styles.responsiveview}>
+                <View style={styles.topBarContainer}>
+                    <Image
+                        source={require("../../assets/logos/logo.png")}
+                        style={styles.topLogo}
                     />
-                    {!videoFinished && <View style={styles.gifview}>
-                        <GestureRecognizer
-                            onSwipe={(direction, state) => onSwipe(direction, state)}
-                            config={config}
-                        >
-                            <Image
-                                style={styles.scrollGif}
-                                source={require("../../assets/ScrollTop.gif")}
-                            />
-                            <Text style={styles.ScrollText}>Scroll</Text>
-                        </GestureRecognizer>
-                    </View>}
-                </View>
-                {videoFinished && (<LinearGradient colors={['#1e2452', '#1e247f']} style={styles.bottomsection}>
-                    <TouchableOpacity style={styles.bottombtn} onPress={() => props.setflag("SignUp")}>
-                        <Text style={styles.bottombtntext}>Get Started</Text>
+                    <TouchableOpacity>
+                        <Ionicons name="search" color="#000" size={30} style={styles.searchIcon} />
                     </TouchableOpacity>
-                </LinearGradient>)}
-            </ScrollView>
-        </View>
+                </View>
+                <ScrollView style={{ flex: 1, zIndex: 1 }}>
+                    <View style={{ position: "relative" }}>
+                        <Video
+                            ref={video}
+                            videoStyle={{ position: 'relative', aspectRatio: 1 / 2 }}
+                            style={styles.VideoWidget}
+                            source={VideoDatas[count]}
+                            rate={1.0}
+                            isLooping
+                            volume={1.0}
+                            shouldPlay
+                            useNativeControls
+                            resizeMode={ResizeMode.STRETCH}
+                            onPlaybackStatusUpdate={status => setStatus(() => status)}
+                            onLoad={() => { video.current.playAsync() }}
+                        // onFullscreenUpdate={setOrientation}
+                        />
+                        {!videoFinished && <View style={styles.gifview}>
+                            <GestureRecognizer
+                                onSwipe={(direction, state) => onSwipe(direction, state)}
+                                config={config}
+                            >
+                                <Image
+                                    style={styles.scrollGif}
+                                    source={require("../../assets/ScrollTop.gif")}
+                                />
+                                <Text style={styles.ScrollText}>Scroll</Text>
+                            </GestureRecognizer>
+                        </View>}
+                    </View>
+                    {videoFinished && (<LinearGradient colors={['#1e2452', '#1e247f']} style={styles.bottomsection}>
+                        <TouchableOpacity style={styles.bottombtn} onPress={() => props.setflag("SignUp")}>
+                            <Text style={styles.bottombtntext}>Get Started</Text>
+                        </TouchableOpacity>
+                    </LinearGradient>)}
+                </ScrollView>
+            </View>
+        </LinearGradient>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        position: "relative"
+        position: "relative",
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    mainview: {
+        flex: 1,
+        position: "relative",
+        width: 400,
+    },
+    responsiveview: {
+        flex: 1,
+        position: "relative",
+        width: "100%",
     },
     topBarContainer: {
         width: "100%",
@@ -143,7 +141,6 @@ const styles = StyleSheet.create({
     },
     VideoWidget: {
         width: "100%",
-        height: Dimensions.get("window").height,
     },
     bottomsection: {
         justifyContent: "center",
