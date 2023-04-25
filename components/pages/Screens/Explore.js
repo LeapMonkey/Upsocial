@@ -1,7 +1,4 @@
-import { useState } from "react";
-import Ionicons from "react-native-vector-icons/Ionicons";
-import { View } from "react-native";
-import { NavigationContainer } from '@react-navigation/native';
+import { Dimensions } from "react-native";
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import Watch from "../Watch";
 import Browse from "../Browse";
@@ -15,28 +12,16 @@ const Explore = (props) => {
     return (
         <Tab.Navigator
             screenOptions={({ route }) => ({
-                tabBarIcon: ({ focused, color, size }) => {
-                    let iconName;
-
-                    if (route.name === 'Browse') {
-                        iconName = focused
-                            ? 'ios-browsers'
-                            : 'ios-browsers-outline';
-                    } else if (route.name === 'Watch') {
-                        iconName = focused ? 'watch' : 'watch-outline';
-                    }
-
-                    // You can return any component that you like here!
-                    return <Ionicons name={iconName} size={size} color={color} />;
-                },
-                tabBarActiveTintColor: '#fff',
+                tabBarActiveTintColor: '#000',
                 tabBarInactiveTintColor: 'gray',
-                tabBarLabelStyle: { fontSize: 15 },
-                tabBarStyle: { backgroundColor: "#000" }
+                tabBarLabelStyle: { fontSize: 12, color: "#fff", paddingHorizontal: 20, paddingVertical: 10, borderRadius: 10, backgroundColor: 'gray' },
+                tabBarStyle: { backgroundColor: "#fff", overflow: 'auto', width: Dimensions.get("window").width }
             })}
         >
-            <Tab.Screen name="Browse" children={() => <Browse setName={setName} setvideoflag={props.setvideoflag} />} />
-            <Tab.Screen name="Watch" children={() => <Watch setName={setName} />} />
+            <Tab.Screen name="Browse" options={{ tabBarItemStyle: { width: 100 } }} children={() => <Browse setName={setName} setvideoflag={props.setvideoflag} />} />
+            <Tab.Screen name="Watch" options={{ tabBarItemStyle: { width: 100 } }} children={() => <Watch setName={setName} />} />
+            <Tab.Screen name="News" options={{ tabBarItemStyle: { width: 100 } }} children={() => <Watch setName={setName} />} />
+            <Tab.Screen name="Music" options={{ tabBarItemStyle: { width: 100 } }} children={() => <Watch setName={setName} />} />
         </Tab.Navigator>
     );
 };

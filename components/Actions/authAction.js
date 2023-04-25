@@ -14,6 +14,7 @@ export const loginUser = (userData) => (dispatch) => {
                 if (Platform.OS === "android") {
                     ToastAndroid.show(res.data.msg, ToastAndroid.SHORT);
                 }
+                alert(res.data.msg);
                 dispatch({
                     type: SET_USERS,
                     payload: res.data,
@@ -23,6 +24,7 @@ export const loginUser = (userData) => (dispatch) => {
                 if (Platform.OS === "android") {
                     ToastAndroid.show(res.data.msg, ToastAndroid.SHORT);
                 }
+                alert(res.data.msg);
                 dispatch(setLoadingdata(false));
             }
         })
