@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { LinearGradient } from 'expo-linear-gradient';
-import Foundation from "react-native-vector-icons/Foundation";
+import MultiSelect from "react-native-multiple-select";
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { ScrollView, StyleSheet, View, TouchableOpacity, Text, TextInput, Image, Dimensions } from 'react-native';
@@ -12,10 +12,11 @@ import { ToastAndroid, Platform } from 'react-native';
 import axios from 'axios';
 import { apiURL, API_UPLOAD_URL } from '../../config/config';
 import { connect } from "react-redux";
+import Modal from "react-native-modal";
 
 const Upload = (props) => {
 
-    const [image, setImage] = useState(null);
+    const [image, setImage] = useState();
     const video = useRef(null);
     const [status, setStatus] = useState({});
     const [cameraStatus, requestPermission] = ImagePicker.useCameraPermissions();
@@ -23,7 +24,6 @@ const Upload = (props) => {
     // Metadata values
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
-    const [keyword, setKeyword] = useState("");
     const [category, setCategory] = useState("");
 
     // Video file data
@@ -35,6 +35,69 @@ const Upload = (props) => {
 
     const [loading, setLoading] = useState(false);
 
+    const [hashCode, setHashCode] = useState("");
+    const [URL, setURL] = useState("");
+    const [embedCode, setEmbedCode] = useState("");
+    const [opened, setOpened] = useState(false);
+
+    // multi select options
+    const [selectedItems, setSelectedItems] = useState([]);
+
+    // Keys
+    const [keyword, setKeyword] = useState("");
+    const [keywords, setKeywords] = useState([]);
+
+    const addKeyword = (e) => {
+        if (e.nativeEvent.key == "Enter") {
+            if (keywords.length == 10) {
+                alert("Max keywords number is 10 !");
+                setKeyword("");
+                return;
+            } else {
+                var tempkeys = keyword.split(/\s*,\s*/);
+                if (tempkeys.length + keywords.length > 10) {
+                    alert("Max keywords number is 10 !");
+                } else {
+                    setKeywords(keywords => [...keywords, ...tempkeys]);
+                    setKeyword("");
+                }
+            }
+        }
+    };
+
+    const items = [
+        { id: 1, name: 'Animation' },
+        { id: 2, name: 'Autos & Vehicles' },
+        { id: 3, name: 'Beauty & Fashion' },
+        { id: 4, name: 'Comedy' },
+        { id: 5, name: 'Cooking & Food' },
+        { id: 6, name: 'DIY & Crafts' },
+        { id: 7, name: 'Documentary' },
+        { id: 8, name: 'Education' },
+        { id: 9, name: 'Entertainment' },
+        { id: 10, name: 'Film & Animation' },
+        { id: 11, name: 'Gaming' },
+        { id: 12, name: 'Health & Fitness' },
+        { id: 13, name: 'How-to & Style' },
+        { id: 14, name: 'Kids & Family' },
+        { id: 15, name: 'Music' },
+        { id: 16, name: 'News & Politics' },
+        { id: 17, name: 'Nonprofits & Activism' },
+        { id: 18, name: 'People & Blogs' },
+        { id: 19, name: 'Pets & Animals' },
+        { id: 20, name: 'Science & Technology' },
+        { id: 21, name: 'Sports' },
+        { id: 22, name: 'Travel & Events' },
+        { id: 23, name: 'Unboxing & Reviews' },
+        { id: 24, name: 'Vlogs' },
+    ];
+    const onSelectedItemsChange = (selectedItems) => {
+        if (selectedItems.length > 3) {
+            alert("Max category is 3 !");
+        } else {
+            setSelectedItems(selectedItems);
+        }
+    };
     // Reset function
     const resetValues = () => {
         setTitle("");
@@ -104,17 +167,23 @@ const Upload = (props) => {
         const contentData = {
             title: title,
             description: description,
-            keyword: keyword,
-            category: category,
+            keyword: keywords,
+            category: selectedItems,
             userEmail: "kogutstt2@gmail.com", //props.auth.user.curUser
             ipfsUrl: cid,
             thumbnail: thumbnail
         };
         console.log(contentData);
+        setHashCode(cid);
+        let URL = `${cid}`;
+        setURL(URL);
+        let emb = `<iframe src="${cid}" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" style="border:none; width:100%; height:100%; min-height:500px;" frameborder="0" scrolling="no"></iframe>`
+        setEmbedCode(emb);
         axios
             .post(apiURL + "/api/Upsocial/users/content/uploadContent", contentData)
             .then((res) => {
                 setLoading(false);
+                setOpened(true);
                 if (Platform.OS === "android") {
                     ToastAndroid.show(res.data.msg, ToastAndroid.SHORT);
                 }
@@ -144,14 +213,10 @@ const Upload = (props) => {
         let match = /\.(\w+)$/.exec(filename);
         let type = match ? `video/${match[1]}` : `video`;
 
-        setImage(localUri);
-        console.log(localUri);
+        setImage({ uri: localUri });
         setVideoUri(localUri);
         setName(filename);
-        console.log(filename);
         setType(type);
-        console.log(type);
-
     };
 
     const addImageCamera = async () => {
@@ -177,30 +242,60 @@ const Upload = (props) => {
         let match = /\.(\w+)$/.exec(filename);
         let type = match ? `video/${match[1]}` : `video`;
 
-        setImage(localUri);
-
+        setImage({ uri: localUri });
         setVideoUri(localUri);
         setName(filename);
         setType(type);
     };
 
+
     return (
-        <View style={styles.container}>
-            {loading && (
-                <View style={styles.loadingView}>
-                    <Image
-                        source={require("../../../assets/loading.gif")}
-                        style={{ width: 140, height: 140 }}
-                    />
+        <ScrollView style={styles.container} nestedScrollEnabled={true}>
+
+            <Modal
+                isVisible={opened}
+                animationIn={'slideInRight'}
+                animationOut={'slideOutRight'}
+                style={{ margin: 0, padding: 0 }}
+            >
+                <View style={styles.videopage}>
+                    <View style={{ flexDirection: "row", justifyContent: "space-between", width: "100%", alignItems: "center", position: 'absolute', top: 0, left: 0, zIndex: 1000000 }}>
+                        <TouchableOpacity onPress={() => setOpened(false)}>
+                            <Ionicons name="arrow-back-sharp" color="#000" size={30} />
+                        </TouchableOpacity>
+                    </View>
+                    <View style={{ flexDirection: "column", width: "100%", justifyContent: "center", alignItems: "center" }}>
+                        <View style={{ flexDirection: "column", width: "100%", justifyContent: "center", alignItems: "center" }}>
+                            <Text>HashCode: </Text>
+                            <Text>{hashCode}</Text>
+                        </View>
+                        <View style={{ flexDirection: "column", width: "100%", justifyContent: "center", alignItems: "center" }}>
+                            <Text>URL: </Text>
+                            <Text>{URL}</Text>
+                        </View>
+                        <View style={{ flexDirection: "column", width: "100%", justifyContent: "center", alignItems: "center" }}>
+                            <Text>embedCode: </Text>
+                            <Text>{embedCode}</Text>
+                        </View>
+                    </View>
                 </View>
-            )}
+            </Modal>
+
+            {loading && <View style={styles.loadingView}>
+                <Image
+                    source={require("../../../assets/loading.gif")}
+                    style={{ width: 140, height: 140 }}
+                />
+            </View>
+            }
+
             <View>
                 {image ? (
                     <Video
                         ref={video}
-                        videoStyle={{ position: "relative", margin: 'auto', maxWidth: 400 }}
+                        videoStyle={{ position: "relative", width: Dimensions.get("window").width, height: Dimensions.get("window").height * 0.7, margin: 'auto', maxWidth: 400 }}
                         style={styles.videoPreviewer}
-                        source={{ uri: image }}
+                        source={Platform.OS === 'android' || Platform.OS === 'ios' ? image : { uri: videoUri }}
                         isLooping
                         shouldPlay
                         useNativeControls
@@ -254,7 +349,7 @@ const Upload = (props) => {
                 image && (
                     <LinearGradient colors={['#fcfbff', '#f9f9fb']} style={styles.metadataview}>
                         <View style={{ position: "relative", marginBottom: 50 }}>
-                            <View style={{ position: "absolute", top: 0, left: "10%", transform: [{ translateY: -100 }], width: "80%", backgroundColor: "#fff", borderRadius: 5, flexDirection: "column", alignItems: "center" }}>
+                            <View style={{ position: "relative", top: 0, left: "10%", transform: [{ translateY: -100 }], width: "80%", backgroundColor: "#fff", borderRadius: 5, flexDirection: "column", alignItems: "center" }}>
                                 <View style={styles.videoDetailView}>
                                     <Text>Title</Text>
                                     <TextInput value={title} onChangeText={(e) => setTitle(e)} placeholder="Content Title" placeholderTextColor="#adb2b6" style={styles.videoDetailTextInput} />
@@ -264,14 +359,42 @@ const Upload = (props) => {
                                     <TextInput value={description} onChangeText={(e) => setDescription(e)} placeholder="Content Description" placeholderTextColor="#adb2b6" style={styles.videoDetailTextInput} />
                                 </View>
                                 <View style={styles.videoDetailView}>
-                                    <Text>Keyword</Text>
-                                    <TextInput value={keyword} onChangeText={(e) => setKeyword(e)} placeholder="keyword" placeholderTextColor="#adb2b6" style={styles.videoDetailTextInput} />
+                                    <Text>Keywords</Text>
+                                    <TextInput value={keyword} onKeyPress={(e) => addKeyword(e)} onChangeText={(e) => setKeyword(e)} placeholder="keyword: You can enter 10 keywords" placeholderTextColor="#adb2b6" style={styles.videoDetailTextInput} />
+                                    <View style={{ flexDirection: "row", gap: 20, width: "100%", flexWrap: "wrap" }}>
+                                        {keywords.map((index, key) => {
+                                            return (
+                                                <Text>{index}</Text>
+                                            );
+                                        })}
+                                    </View>
                                 </View>
                                 <View style={styles.videoDetailView}>
-                                    <Text>Category</Text>
-                                    <TextInput value={category} onChangeText={(e) => setCategory(e)} placeholder="Category" placeholderTextColor="#adb2b6" style={styles.videoDetailTextInput} />
+                                    <Text style={{ marginBottom: 10 }}>Category</Text>
+                                    {/* <TextInput value={category} onChangeText={(e) => setCategory(e)} placeholder="Category" placeholderTextColor="#adb2b6" style={styles.videoDetailTextInput} /> */}
+                                    <MultiSelect
+                                        hideTags
+                                        items={items}
+                                        uniqueKey="id"
+                                        onSelectedItemsChange={onSelectedItemsChange}
+                                        selectedItems={selectedItems}
+                                        selectText="Pick Categories"
+                                        searchInputPlaceholderText="Search Items..."
+                                        onChangeInput={(text) => console.log(text)}
+                                        flatListProps={{ nestedScrollEnabled: true }}
+                                        nestedScrollEnabled={true}
+                                        tagRemoveIconColor="#CCC"
+                                        tagBorderColor="#CCC"
+                                        tagTextColor="#CCC"
+                                        selectedItemTextColor="#CCC"
+                                        selectedItemIconColor="#CCC"
+                                        itemTextColor="#000"
+                                        displayKey="name"
+                                        searchInputStyle={{ color: '#CCC' }}
+                                        submitButtonColor="#48d22b"
+                                    />
                                 </View>
-                                <View style={{ width: Dimensions.get("window").height - 30, flexDirection: "row", justifyContent: "space-between" }}>
+                                <View style={{ width: Dimensions.get("window").width - 30, flexDirection: "row", justifyContent: "space-around" }}>
                                     <LinearGradient
                                         colors={['#621a9f', '#3521b3']}
                                         style={styles.videouploadlinearview}
@@ -293,7 +416,7 @@ const Upload = (props) => {
                         </View>
                     </LinearGradient>)
             }
-        </View >
+        </ScrollView >
     );
 };
 
@@ -301,6 +424,14 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: "#fff",
+        height: Dimensions.get("window").height
+    },
+    videopage: {
+        width: "100%",
+        height: Dimensions.get('window').height,
+        justifyContent: "center",
+        backgroundColor: "#fff",
+        alignItems: "center",
     },
     loadingView: {
         position: "absolute",
@@ -332,7 +463,8 @@ const styles = StyleSheet.create({
         marginTop: 40,
     },
     videoPreviewer: {
-        width: "100%"
+        width: Dimensions.get("window").width,
+        height: Dimensions.get("window").height * 0.75
     },
     loginbtn: {
         width: 70,
@@ -447,11 +579,7 @@ const styles = StyleSheet.create({
     },
     metadataview: {
         backgroundColor: "#fff",
-        position: "absolute",
-        bottom: 0,
-        left: 0,
         width: "100%",
-        height: "50%",
         flexDirection: "column",
         justifyContent: "flex-end"
     },

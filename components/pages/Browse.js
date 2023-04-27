@@ -165,11 +165,14 @@ const Browse = (props) => {
                     </View>
                     <View style={{ width: "100%", position: 'relative' }} >
                         <Video
-                            videoStyle={{ position: 'relative', aspectRatio: 1 / 2 }}
+                            videoStyle={{ position: 'relative', width: Dimensions.get("window").width, height: Dimensions.get("window").height }}
                             ref={TopVideo}
                             style={{ width: "100%", height: Dimensions.get("window").height }}
                             source={source}
+                            rate={1.0}
                             isLooping
+                            volume={1.0}
+                            shouldPlay
                             useNativeControls
                             resizeMode={ResizeMode.CONTAIN}
                             onPlaybackStatusUpdate={status => setStatus(() => status)}

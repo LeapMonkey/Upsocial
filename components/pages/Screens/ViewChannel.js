@@ -46,14 +46,15 @@ const ViewChannel = () => {
                     </View>
                     <View style={styles.moreData}>
                         <Text style={styles.handleId}>@Web3man</Text>
-                        <Text style={styles.handleUrl}><a href="https://web3in5.com" target="_blank">https://web3in5.com</a></Text>
+                        <Text style={styles.handleUrl}>https://web3in5.com</Text>
                     </View>
                     <View style={styles.exploreSection}>
                         <View style={styles.exploreTab}>
                             <Tab.Navigator
                                 screenOptions={({ route }) => ({
                                     tabBarLabelStyle: { fontSize: 15, color: "#fff", paddingHorizontal: 10, paddingVertical: 10, borderRadius: 10, backgroundColor: '#7579FF' },
-                                    tabBarStyle: { backgroundColor: "#fff", overflow: 'auto', width: Dimensions.get("window").width }
+                                    tabBarStyle: { backgroundColor: "#fff", width: Dimensions.get("window").width },
+                                    tabBarScrollEnabled: true
                                 })}
                             >
                                 <Tab.Screen name="Home" options={{ tabBarItemStyle: { width: 100 } }} children={() => <Videos />} />
@@ -62,11 +63,6 @@ const ViewChannel = () => {
                                 <Tab.Screen name="About" options={{ tabBarItemStyle: { width: 100 } }} children={() => <Videos />} />
                             </Tab.Navigator>
                         </View>
-                        {/* <View style={styles.explore}>
-                            <ScrollView style={{ flex: 1 }}>
-                                <Videos />
-                            </ScrollView>
-                        </View> */}
                     </View>
                 </View>
             </ScrollView>
@@ -158,13 +154,13 @@ const styles = StyleSheet.create({
     socialItems: {
         flexDirection: "row",
         justifyContent: "center",
-        alignItems: "center ",
+        // alignItems: "center ",
         gap: 5
     },
     moreData: {
         flexDirection: "row",
         justifyContent: "space-between",
-        alignItems: "center"
+        // alignItems: "center"
     },
     handleId: {
         fontSize: 15,
@@ -181,7 +177,7 @@ const styles = StyleSheet.create({
     exploreTab: {
         flexDirection: "row",
         justifyContent: "center",
-        alignItems: "center"
+        // alignItems: "center"
     },
     explore: {
         position: "relative",

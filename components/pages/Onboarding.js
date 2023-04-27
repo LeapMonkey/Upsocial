@@ -69,7 +69,7 @@ const Onboarding = (props) => {
                     <View style={{ position: "relative" }}>
                         <Video
                             ref={video}
-                            videoStyle={{ position: 'relative', aspectRatio: 1 / 2 }}
+                            videoStyle={{ position: 'relative', width: Dimensions.get("window").width, height: Dimensions.get("window").height }}
                             style={styles.VideoWidget}
                             source={VideoDatas[count]}
                             rate={1.0}
