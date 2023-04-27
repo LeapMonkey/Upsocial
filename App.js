@@ -2,7 +2,7 @@ import { StyleSheet, View } from 'react-native';
 import Main from './components/Main';
 import { Provider } from "react-redux";
 import configureStore from "./components/configureStore";
-// import * as serviceWorkerRegistration from "./src/serviceWorkerRegistration";
+import * as serviceWorkerRegistration from "./src/serviceWorkerRegistration";
 
 
 const store = configureStore();
@@ -43,4 +43,4 @@ const styles = StyleSheet.create({
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
 // Learn more about service workers: https://cra.link/PWA
-// serviceWorkerRegistration.register();
+serviceWorkerRegistration.register();
