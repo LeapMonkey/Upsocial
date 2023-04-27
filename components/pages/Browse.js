@@ -8,60 +8,60 @@ import { apiURL } from '../config/config';
 import { Video, ResizeMode, Audio, InterruptionModeAndroid, InterruptionModeIOS } from "expo-av";
 import { useMediaQuery } from "react-responsive";
 
-const datas = [
-    {
-        "ID": 0,
-        "email": "kogutstt2@gmail.com",
-        "title": "video2 title",
-        "status": true,
-        "ipfsUrl": "https://g.upsocial.com/ipfs/QmUQypwRoVf1PpwmDgHPP6Fear4Q7tdgE1D932itw13jJo",
-        "keyword": "introduction",
-        "category": "backend",
-        "thumbnail": "https://g.upsocial.com/ipfs/QmXJoA3vuqYZkEn5vsm2oscDuX1Y8yZVeZavDgzJYbUu9m",
-        "description": "video2 description"
-    },
-    {
-        "ID": 1,
-        "email": "kogutstt2@gmail.com",
-        "title": "video2 title",
-        "status": false,
-        "ipfsUrl": "https://g.upsocial.com/ipfs/QmUQypwRoVf1PpwmDgHPP6Fear4Q7tdgE1D932itw13jJo",
-        "keyword": "introduction",
-        "category": "backend",
-        "thumbnail": "https://g.upsocial.com/ipfs/QmQGtYw4QpR8oucMEgNSTCrM1mnKu3GxePo3sSfES3QDZe",
-        "description": "video2 description"
-    },
-    {
-        "ID": 2,
-        "email": "kogutstt2@gmail.com",
-        "title": "video2 title",
-        "status": true,
-        "ipfsUrl": "https://g.upsocial.com/ipfs/QmUQypwRoVf1PpwmDgHPP6Fear4Q7tdgE1D932itw13jJo",
-        "keyword": "introduction",
-        "category": "backend",
-        "thumbnail": "https://g.upsocial.com/ipfs/QmeavuHFKnhKpw4Cha9ysRAuCr6peZPvG7penDMrygNjk3",
-        "description": "video2 description"
-    },
-    {
-        "email": "tomford@gmail.com",
-        "title": "video2 title",
-        "ipfsUrl": "https://g.upsocial.com/ipfs/QmUQypwRoVf1PpwmDgHPP6Fear4Q7tdgE1D932itw13jJo",
-        "keyword": "introduction",
-        "category": "backend",
-        "thumbnail": "https://g.upsocial.com/ipfs/QmeCVhxEfsfz482iZEEUkRuAM5jqqBEbBBDXobTtxaebYD",
-        "description": "video2 description"
-    },
-    {
-        "ID": 4,
-        "title": "asd",
-        "status": true,
-        "ipfsUrl": "https://g.upsocial.com/ipfs/QmW5SKwvKW3pb9YNxKD7up748ZJJzYoaLCRHBUYrarqFFS",
-        "keyword": "asdad",
-        "category": "sad",
-        "thumbnail": "https://g.upsocial.com/ipfs/QmbU2GJMnQAJTHaedqGJXeGKo41Uec8UeDn6hcD28Xj2bQ",
-        "description": "asd"
-    },
-];
+// const datas = [
+//     {
+//         "ID": 0,
+//         "email": "kogutstt2@gmail.com",
+//         "title": "video2 title",
+//         "status": true,
+//         "ipfsUrl": "https://g.upsocial.com/ipfs/QmUQypwRoVf1PpwmDgHPP6Fear4Q7tdgE1D932itw13jJo",
+//         "keyword": "introduction",
+//         "category": "backend",
+//         "thumbnail": "https://g.upsocial.com/ipfs/QmXJoA3vuqYZkEn5vsm2oscDuX1Y8yZVeZavDgzJYbUu9m",
+//         "description": "video2 description"
+//     },
+//     {
+//         "ID": 1,
+//         "email": "kogutstt2@gmail.com",
+//         "title": "video2 title",
+//         "status": false,
+//         "ipfsUrl": "https://g.upsocial.com/ipfs/QmUQypwRoVf1PpwmDgHPP6Fear4Q7tdgE1D932itw13jJo",
+//         "keyword": "introduction",
+//         "category": "backend",
+//         "thumbnail": "https://g.upsocial.com/ipfs/QmQGtYw4QpR8oucMEgNSTCrM1mnKu3GxePo3sSfES3QDZe",
+//         "description": "video2 description"
+//     },
+//     {
+//         "ID": 2,
+//         "email": "kogutstt2@gmail.com",
+//         "title": "video2 title",
+//         "status": true,
+//         "ipfsUrl": "https://g.upsocial.com/ipfs/QmUQypwRoVf1PpwmDgHPP6Fear4Q7tdgE1D932itw13jJo",
+//         "keyword": "introduction",
+//         "category": "backend",
+//         "thumbnail": "https://g.upsocial.com/ipfs/QmeavuHFKnhKpw4Cha9ysRAuCr6peZPvG7penDMrygNjk3",
+//         "description": "video2 description"
+//     },
+//     {
+//         "email": "tomford@gmail.com",
+//         "title": "video2 title",
+//         "ipfsUrl": "https://g.upsocial.com/ipfs/QmUQypwRoVf1PpwmDgHPP6Fear4Q7tdgE1D932itw13jJo",
+//         "keyword": "introduction",
+//         "category": "backend",
+//         "thumbnail": "https://g.upsocial.com/ipfs/QmeCVhxEfsfz482iZEEUkRuAM5jqqBEbBBDXobTtxaebYD",
+//         "description": "video2 description"
+//     },
+//     {
+//         "ID": 4,
+//         "title": "asd",
+//         "status": true,
+//         "ipfsUrl": "https://g.upsocial.com/ipfs/QmW5SKwvKW3pb9YNxKD7up748ZJJzYoaLCRHBUYrarqFFS",
+//         "keyword": "asdad",
+//         "category": "sad",
+//         "thumbnail": "https://g.upsocial.com/ipfs/QmbU2GJMnQAJTHaedqGJXeGKo41Uec8UeDn6hcD28Xj2bQ",
+//         "description": "asd"
+//     },
+// ];
 
 const Browse = (props) => {
     const isMobile = useMediaQuery({
@@ -97,10 +97,20 @@ const Browse = (props) => {
     const [searchflag, setSearchflag] = useState(false);
     const [searchtext, setSearchtext] = useState("");
 
+    // useEffect(() => {
+    //     setAlldata(datas);
+    //     setResult(datas);
+    // }, []);
+
     useEffect(() => {
-        setAlldata(datas);
-        setResult(datas);
+        axios.post(apiURL + "/api/Upsocial/users/getAll/UploadedContent", { limit: limit }).then((res) => {
+            setAlldata(res.data.data);
+            setResult(res.data.data);
+        }).catch((err) => {
+            console.warn(err);
+        });
     }, []);
+
 
     useEffect(() => {
         Audio.setAudioModeAsync({
