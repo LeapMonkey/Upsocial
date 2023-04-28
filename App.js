@@ -1,4 +1,4 @@
-import { StyleSheet, View } from 'react-native';
+import { Dimensions, StyleSheet, View } from 'react-native';
 import Main from './components/Main';
 import { Provider } from "react-redux";
 import configureStore from "./components/configureStore";
@@ -10,16 +10,26 @@ const store = configureStore();
 export default function App() {
   return (
     <Provider store={store}>
-      <Main />
+      <View style={styles.main}>
+        <View style={styles.hiddenView}></View>
+        <Main />
+      </View>
     </Provider>
   );
 }
 
 const styles = StyleSheet.create({
   main: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    flex: 1
+  },
+  hiddenView: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    width: "calc(50% - 200px)",
+    height: "100vh",
+    zIndex: 2,
+    backgroundColor: "#fff"
   },
   section: {
     width: 400,

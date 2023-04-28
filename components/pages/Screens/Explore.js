@@ -25,8 +25,6 @@ const Explore = (props) => {
             <Tab.Screen name="Music" options={{ tabBarItemStyle: { width: 100 } }} children={() => <Watch setName={setName} />} />
             <Tab.Screen name="Sports" options={{ tabBarItemStyle: { width: 100 } }} children={() => <Watch setName={setName} />} />
             <Tab.Screen name="Concert" options={{ tabBarItemStyle: { width: 100 } }} children={() => <Watch setName={setName} />} />
-            <Tab.Screen name="Education" options={{ tabBarItemStyle: { width: 100 } }} children={() => <Watch setName={setName} />} />
-            <Tab.Screen name="Documentary" options={{ tabBarItemStyle: { width: 100 } }} children={() => <Watch setName={setName} />} />
             <Tab.Screen name="Blog" options={{ tabBarItemStyle: { width: 100 } }} children={() => <Watch setName={setName} />} />
         </Tab.Navigator>
     );

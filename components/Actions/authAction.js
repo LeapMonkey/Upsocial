@@ -7,7 +7,10 @@ import { ToastAndroid, Platform } from 'react-native';
 export const loginUser = (userData) => (dispatch) => {
     dispatch(setLoadingdata(true));
     axios
-        .post(apiURL + "/api/Upsocial/users/login", userData)
+        .post(apiURL + "/api/Upsocial/users/login", userData, {
+            "Access-Control-Allow-Origin": "*",
+            'Access-Control-Allow-Headers': '*',
+        })
         .then((res) => {
             if (res.data.status) {
 
@@ -41,7 +44,10 @@ export const loginUser = (userData) => (dispatch) => {
 export const registerUser = (userData) => (dispatch) => {
     dispatch(setLoadingdata(true));
     axios
-        .post(apiURL + "/api/Upsocial/users/register", userData)
+        .post(apiURL + "/api/Upsocial/users/register", userData, {
+            "Access-Control-Allow-Origin": "*",
+            'Access-Control-Allow-Headers': '*',
+        })
         .then((res) => {
             console.log(res.data);
             dispatch({

@@ -33,7 +33,10 @@ const SignUP = (props) => {
             password: password,
         };
         axios
-            .post(apiURL + "/api/Upsocial/users/register", userData)
+            .post(apiURL + "/api/Upsocial/users/register", userData, {
+                "Access-Control-Allow-Origin": "*",
+                'Access-Control-Allow-Headers': '*',
+            })
             .then((res) => {
                 if (Platform.OS === "android") {
                     ToastAndroid.show(res.data.msg, ToastAndroid.SHORT);
