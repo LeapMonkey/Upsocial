@@ -47,54 +47,54 @@ const Watch = (props) => {
         {
             "ID": 0,
             "email": "kogutstt2@gmail.com",
-            "title": "video2 title",
+            "title": "How to learn music?",
             "status": true,
             "ipfsUrl": "https://g.upsocial.com/ipfs/QmUQypwRoVf1PpwmDgHPP6Fear4Q7tdgE1D932itw13jJo",
             "keyword": "introduction",
             "category": "backend",
             "thumbnail": "https://g.upsocial.com/ipfs/QmXJoA3vuqYZkEn5vsm2oscDuX1Y8yZVeZavDgzJYbUu9m",
-            "description": "video2 description"
+            "description": "Learning music free online"
         },
         {
             "ID": 1,
             "email": "kogutstt2@gmail.com",
-            "title": "video2 title",
+            "title": "Learning English",
             "status": false,
             "ipfsUrl": "https://g.upsocial.com/ipfs/QmUQypwRoVf1PpwmDgHPP6Fear4Q7tdgE1D932itw13jJo",
             "keyword": "introduction",
             "category": "backend",
             "thumbnail": "https://g.upsocial.com/ipfs/QmQGtYw4QpR8oucMEgNSTCrM1mnKu3GxePo3sSfES3QDZe",
-            "description": "video2 description"
+            "description": "Learn english online free"
         },
         {
             "ID": 2,
             "email": "kogutstt2@gmail.com",
-            "title": "video2 title",
+            "title": "what is cook?",
             "status": true,
             "ipfsUrl": "https://g.upsocial.com/ipfs/QmUQypwRoVf1PpwmDgHPP6Fear4Q7tdgE1D932itw13jJo",
             "keyword": "introduction",
             "category": "backend",
             "thumbnail": "https://g.upsocial.com/ipfs/QmeavuHFKnhKpw4Cha9ysRAuCr6peZPvG7penDMrygNjk3",
-            "description": "video2 description"
+            "description": "BBC NEWs"
         },
         {
             "email": "tomford@gmail.com",
-            "title": "video2 title",
+            "title": "Hello girls",
             "ipfsUrl": "https://g.upsocial.com/ipfs/QmUQypwRoVf1PpwmDgHPP6Fear4Q7tdgE1D932itw13jJo",
             "keyword": "introduction",
             "category": "backend",
             "thumbnail": "https://g.upsocial.com/ipfs/QmeCVhxEfsfz482iZEEUkRuAM5jqqBEbBBDXobTtxaebYD",
-            "description": "video2 description"
+            "description": "How to talk to girl first?"
         },
         {
             "ID": 4,
-            "title": "asd",
+            "title": "SpaceX launch",
             "status": true,
             "ipfsUrl": "https://g.upsocial.com/ipfs/QmW5SKwvKW3pb9YNxKD7up748ZJJzYoaLCRHBUYrarqFFS",
             "keyword": "asdad",
             "category": "sad",
             "thumbnail": "https://g.upsocial.com/ipfs/QmbU2GJMnQAJTHaedqGJXeGKo41Uec8UeDn6hcD28Xj2bQ",
-            "description": "asd"
+            "description": "Elon Musk launched SpaceX"
         },
     ]);
     const [limit, setLimit] = useState(5);
