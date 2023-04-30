@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@expo/match-media": "^0.4.0",
-    "@expo/webpack-config": "^18.0.1",
+    "@expo/webpack-config": "^0.13.1",
     "@rajesh896/video-thumbnails-generator": "^2.3.9",
     "@react-native-community/masked-view": "^0.1.11",
     "@react-native-community/slider": "^4.4.2",
