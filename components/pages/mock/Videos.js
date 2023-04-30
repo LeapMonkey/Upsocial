@@ -14,7 +14,6 @@ const Videos = () => {
     const [limit, setLimit] = useState(5);
 
     const [currentItem, setItem] = useState(null);
-    const { size, elapsed, percentage, download, cancel, error, isInProgress } = useDownloader();
 
     let A = [
         { id: '1', value: 'Play next in queue', name: "featured-play-list" },
