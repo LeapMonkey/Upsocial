@@ -1,67 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { ScrollView, View, Text, StyleSheet, Image, TextInput, Dimensions, TouchableOpacity, Share } from 'react-native';
+import { ScrollView, View, Text, StyleSheet, Image, TextInput, Dimensions, TouchableOpacity, Share, TouchableHighlight } from 'react-native';
 import Modal from "react-native-modal";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import AntDesign from "react-native-vector-icons/AntDesign";
+import { SwipeListView } from 'react-native-swipe-list-view';
 import axios from 'axios';
 import { apiURL } from '../config/config';
 import { Video, ResizeMode, Audio, InterruptionModeAndroid, InterruptionModeIOS } from "expo-av";
 import { useMediaQuery } from "react-responsive";
-
-// const datas = [
-//     {
-//         "ID": 0,
-//         "email": "kogutstt2@gmail.com",
-//         "title": "How to learn music?",
-//         "status": true,
-//         "ipfsUrl": "https://g.upsocial.com/ipfs/QmUQypwRoVf1PpwmDgHPP6Fear4Q7tdgE1D932itw13jJo",
-//         "keyword": "introduction",
-//         "category": "backend",
-//         "thumbnail": "https://g.upsocial.com/ipfs/QmXJoA3vuqYZkEn5vsm2oscDuX1Y8yZVeZavDgzJYbUu9m",
-//         "description": "Learning music free online"
-//     },
-//     {
-//         "ID": 1,
-//         "email": "kogutstt2@gmail.com",
-//         "title": "Learning English",
-//         "status": false,
-//         "ipfsUrl": "https://g.upsocial.com/ipfs/QmUQypwRoVf1PpwmDgHPP6Fear4Q7tdgE1D932itw13jJo",
-//         "keyword": "introduction",
-//         "category": "backend",
-//         "thumbnail": "https://g.upsocial.com/ipfs/QmQGtYw4QpR8oucMEgNSTCrM1mnKu3GxePo3sSfES3QDZe",
-//         "description": "Learn english online free"
-//     },
-//     {
-//         "ID": 2,
-//         "email": "kogutstt2@gmail.com",
-//         "title": "what is cook?",
-//         "status": true,
-//         "ipfsUrl": "https://g.upsocial.com/ipfs/QmUQypwRoVf1PpwmDgHPP6Fear4Q7tdgE1D932itw13jJo",
-//         "keyword": "introduction",
-//         "category": "backend",
-//         "thumbnail": "https://g.upsocial.com/ipfs/QmeavuHFKnhKpw4Cha9ysRAuCr6peZPvG7penDMrygNjk3",
-//         "description": "BBC NEWs"
-//     },
-//     {
-//         "email": "tomford@gmail.com",
-//         "title": "Hello girls",
-//         "ipfsUrl": "https://g.upsocial.com/ipfs/QmUQypwRoVf1PpwmDgHPP6Fear4Q7tdgE1D932itw13jJo",
-//         "keyword": "introduction",
-//         "category": "backend",
-//         "thumbnail": "https://g.upsocial.com/ipfs/QmeCVhxEfsfz482iZEEUkRuAM5jqqBEbBBDXobTtxaebYD",
-//         "description": "How to talk to girl first?"
-//     },
-//     {
-//         "ID": 4,
-//         "title": "SpaceX launch",
-//         "status": true,
-//         "ipfsUrl": "https://g.upsocial.com/ipfs/QmW5SKwvKW3pb9YNxKD7up748ZJJzYoaLCRHBUYrarqFFS",
-//         "keyword": "asdad",
-//         "category": "sad",
-//         "thumbnail": "https://g.upsocial.com/ipfs/QmbU2GJMnQAJTHaedqGJXeGKo41Uec8UeDn6hcD28Xj2bQ",
-//         "description": "Elon Musk launched SpaceX"
-//     },
-// ];
 
 const Browse = (props) => {
     const isMobile = useMediaQuery({
@@ -97,10 +42,11 @@ const Browse = (props) => {
     const [searchflag, setSearchflag] = useState(false);
     const [searchtext, setSearchtext] = useState("");
 
-    // useEffect(() => {
-    //     setAlldata(datas);
-    //     setResult(datas);
-    // }, []);
+    const [listData, setListData] = useState(
+        Array(1)
+            .fill('')
+            .map((_, i) => ({ key: `${i}`, text: `item #${i}` }))
+    );
 
     useEffect(() => {
         axios.post(apiURL + "/api/Upsocial/users/getAll/UploadedContent", { limit: limit }, {
@@ -152,6 +98,42 @@ const Browse = (props) => {
         }
     }
 
+    const renderItem = () => (
+        <View style={{ width: "100%", position: 'relative', height: "100%" }}>
+            <Video
+                videoStyle={{ position: 'relative', width: Dimensions.get("window").width, height: Dimensions.get("window").height }}
+                ref={TopVideo}
+                style={{ width: "100%", height: Dimensions.get("window").height }}
+                source={source}
+                rate={1.0}
+                isLooping
+                volume={1.0}
+                shouldPlay
+                useNativeControls
+                resizeMode={ResizeMode.COVER}
+                onPlaybackStatusUpdate={status => setStatus(() => status)}
+            />
+        </View>
+    );
+
+    const renderHiddenItem = (data, rowMap) => (
+        <View style={styles.rowBack}>
+            <TouchableOpacity style={[styles.backRightBtn, styles.backRightBtnLeft]} onPress={() => alert("I Liked!")}>
+                <View style={{ padding: 10, backgroundColor: "#0FA148", borderRadius: 50 }}>
+                    <Ionicons name="thumbs-up-outline" color="#fff" size={30} />
+                </View>
+            </TouchableOpacity>
+            <TouchableOpacity
+                style={[styles.backRightBtn, styles.backRightBtnRight]}
+                onPress={() => alert("I DISLIKED!")}
+            >
+                <View style={{ padding: 10, backgroundColor: "#EC4134", borderRadius: 50 }}>
+                    <Ionicons name="ios-thumbs-down-outline" color="#fff" size={30} />
+                </View>
+            </TouchableOpacity>
+        </View>
+    );
+
     return (
         <View style={styles.container}>
             <Modal
@@ -166,29 +148,21 @@ const Browse = (props) => {
                             <Ionicons name="arrow-back-sharp" color="#fff" size={30} />
                         </TouchableOpacity>
                         <View style={{ flexDirection: "row", gap: 10, alignItems: "center" }}>
-                            {/* <TouchableOpacity onPress={() => setOpened(false)}>
-                                <AntDesign name="like2" color="#fff" size={30} />
-                            </TouchableOpacity><TouchableOpacity onPress={() => setOpened(false)}>
-                                <AntDesign name="dislike2" color="#fff" size={30} />
-                            </TouchableOpacity> */}
                             <TouchableOpacity onPress={() => ShareFile(videoProps.ipfsUrl)}>
                                 <Ionicons name="md-share-social-outline" color="#fff" size={30} />
                             </TouchableOpacity>
                         </View>
                     </View>
-                    <View style={{ width: "100%", position: 'relative' }} >
-                        <Video
-                            videoStyle={{ position: 'relative', width: Dimensions.get("window").width, height: Dimensions.get("window").height }}
-                            ref={TopVideo}
-                            style={{ width: "100%", height: Dimensions.get("window").height }}
-                            source={source}
-                            rate={1.0}
-                            isLooping
-                            volume={1.0}
-                            shouldPlay
-                            useNativeControls
-                            resizeMode={ResizeMode.CONTAIN}
-                            onPlaybackStatusUpdate={status => setStatus(() => status)}
+                    <View style={{ height: Dimensions.get("window").height }}>
+                        <SwipeListView
+                            data={listData}
+                            renderItem={renderItem}
+                            renderHiddenItem={renderHiddenItem}
+                            leftOpenValue={100}
+                            rightOpenValue={-100}
+                            previewRowKey={'0'}
+                            previewOpenValue={-40}
+                            previewOpenDelay={3000}
                         />
                     </View>
                 </View>
@@ -349,6 +323,38 @@ const styles = StyleSheet.create({
         width: 80,
         height: 100,
         transform: [{ rotate: '90deg' }, { translateX: -15 }]
+    },
+    rowFront: {
+        alignItems: 'center',
+        backgroundColor: '#CCC',
+        borderBottomColor: 'black',
+        borderBottomWidth: 1,
+        justifyContent: 'center',
+        height: 50,
+    },
+    rowBack: {
+        alignItems: 'center',
+        backgroundColor: '#000',
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        paddingLeft: 15,
+    },
+    backRightBtn: {
+        alignItems: 'center',
+        bottom: 0,
+        justifyContent: 'center',
+        position: 'absolute',
+        top: 0,
+        width: 75,
+    },
+    backRightBtnLeft: {
+        backgroundColor: '#000',
+        left: 0,
+    },
+    backRightBtnRight: {
+        backgroundColor: '#000',
+        right: 0,
     }
 });
 

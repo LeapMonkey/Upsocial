@@ -45,7 +45,7 @@ const Videos = () => {
         } else if (name == "Save to Playlist") {
             alert("Success!");
         } else if (name == "Download Video") {
-            alert("Success!");
+            window.open(item.ipfsUrl, '_blank')
         } else {
             Share.share({
                 message: item.ipfsUrl.toString()
