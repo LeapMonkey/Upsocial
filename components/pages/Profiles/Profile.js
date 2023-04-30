@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
     View,
     Text,
@@ -6,9 +6,13 @@ import {
     ImageBackground,
     TouchableOpacity,
     StyleSheet,
+    Image,
     Dimensions
 } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import axios from "axios";
+import { connect } from "react-redux";
+import { apiURL } from "../../config/config";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { Video, ResizeMode } from "expo-av";
 
@@ -16,29 +20,65 @@ const Profile = (props) => {
     const video = useRef(null);
     const [status, setStatus] = useState({});
 
-    const dataSource = [
-        require('../../../assets/video/onboardingVideo.mp4'),
-        require('../../../assets/video/onboardingVideo.mp4'),
-        require('../../../assets/video/onboardingVideo.mp4'),
-    ];
+    const [avatar, setAvatar] = useState(null);
+    const [username, setUsername] = useState(null);
+    const [location, setLocation] = useState(null);
+
+    const [limit, setLimit] = useState(5);
+    const [result, setResult] = useState([]);
+
+    useEffect(() => {
+        axios.post(apiURL + "/api/Upsocial/users/get/UploadedContent", { userEmail: props.auth.user.curUser }, {
+            "Access-Control-Allow-Origin": "*",
+            'Access-Control-Allow-Headers': '*',
+        }).then((res) => {
+            setResult(res.data.data);
+        }).catch((err) => {
+            console.warn(err);
+        });
+    });
+
+
+    useEffect(() => {
+
+        axios.post(apiURL + "/api/Upsocial/admin/getUsers",
+            { userEmail: props.auth.user.curUser },
+            {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            }).then((res) => {
+                console.log(res.data.data);
+                if (res.data.data.photo) {
+                    setAvatar({ uri: res.data.data.photo })
+                }
+                if (res.data.data.username) {
+                    setUsername(res.data.data.username);
+                }
+                if (res.data.data.location) {
+                    setLocation(res.data.data.location);
+                }
+
+            }).catch((err) => console.log(err));
+    }, []);
 
     return (
         <View style={styles.container}>
             <ScrollView style={{ flex: 1, zIndex: 1 }}>
                 <View>
                     <ImageBackground
-                        source={require("../../../assets/profile.png")}
+                        source={avatar == null ? require("../../../assets/profile.png") : avatar}
                         style={styles.profileImage}
                     >
                         <View style={styles.subContainer}>
                             <View style={styles.backArrow}>
-                                <TouchableOpacity onPress={() => props.setName("explore")}>
+                                <TouchableOpacity onPress={() => props.setflag("EditProfile")} style={{ flexDirection: "row", gap: 15, alignItems: "center" }}>
                                     <Ionicons name="arrow-back-sharp" color="#fff" size={30} />
+                                    <Text style={{ fontSize: 24, color: "#fff" }} >Edit</Text>
                                 </TouchableOpacity>
                             </View>
                             <View style={styles.SubTitleView}>
                                 <View style={styles.titleContainer}>
-                                    <Text style={styles.Username}>Baby Yoda</Text>
+                                    <Text style={styles.Username}>{username}</Text>
                                     <View>
                                         <TouchableOpacity>
                                             <Ionicons name="add-circle" color="#fff" size={24} />
@@ -61,7 +101,7 @@ const Profile = (props) => {
                                     </View>
                                     <View style={styles.userLocation}>
                                         <Ionicons name="location-sharp" color="#fff" size={24} />
-                                        <Text style={styles.location}>Los Angeles, CA</Text>
+                                        <Text style={styles.location}>{location == null ? "Los Angeles, CA" : location}</Text>
                                     </View>
                                 </View>
                             </View>
@@ -86,24 +126,21 @@ const Profile = (props) => {
                     <View style={styles.RecentContents}>
                         <View style={styles.ViewHeader}>
                             <Text style={styles.HeaderTitle}>Recent Uploads</Text>
-                            <TouchableOpacity>
+                            <TouchableOpacity onPress={() => props.viewall()}>
                                 <Text style={styles.BtnView}>View all</Text>
                             </TouchableOpacity>
                         </View>
-                        <View style={styles.VideoContainer}>
-                            {dataSource.map((item, key) => {
+                        <View style={styles.board}>
+                            {result && result.map((index, key) => {
                                 return (
-                                    <Video
-                                        key={key}
-                                        ref={video}
-                                        videoStyle={{ position: 'relative' }}
-                                        style={styles.VideoItem}
-                                        source={item}
-                                        isLooping
-                                        useNativeControls
-                                        resizeMode={ResizeMode.STRETCH}
-                                        onPlaybackStatusUpdate={status => setStatus(() => status)}
-                                    />
+                                    <TouchableOpacity style={styles.mobileitemview} key={key} onPress={() => watchVideo(index)}>
+                                        <View style={{ alignItems: 'center', width: "100%" }}>
+                                            <Image source={{ uri: index.thumbnail }} style={{ width: "100%", height: Dimensions.get("window").height * 0.3, borderRadius: 12 }} />
+                                            <Image source={require("../../../assets/logos/playvideo.png")} style={{ width: 50, height: 50, position: "absolute", top: "40%" }} />
+                                        </View>
+                                        <Text>{index.title}</Text>
+                                        <Text>{index.description}</Text>
+                                    </TouchableOpacity>
                                 )
                             })}
                         </View>
@@ -236,6 +273,7 @@ const styles = StyleSheet.create({
     VideoContainer: {
         flexDirection: "row",
         flexWrap: "wrap",
+        position: 'relative'
     },
     VideoItem: {
         width: Dimensions.get("window").width * 0.25,
@@ -243,7 +281,23 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         borderRadius: 10,
         marginHorizontal: 2,
+        position: 'relative'
     },
+    board: {
+        width: "100%",
+        flexDirection: "row",
+        flexWrap: "wrap",
+
+    },
+    mobileitemview: {
+        alignItems: "center",
+        width: "50%",
+        padding: 10,
+    }
 });
 
-export default Profile;
+const mapStateToProps = (state) => ({
+    auth: state.auth,
+});
+
+export default connect(mapStateToProps, {})(Profile);

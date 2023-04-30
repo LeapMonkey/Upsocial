@@ -12,6 +12,8 @@ import * as ImagePicker from "expo-image-picker";
 
 export default function UploadLogo(props) {
     const [image, setImage] = useState(null);
+    const [platformstate, setPlatformstate] = useState("web");
+    const [webimage, setWebImage] = useState("");
 
     const addImage = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
@@ -33,27 +35,64 @@ export default function UploadLogo(props) {
         let pdata = { uri: localUri, name: filename, type };
 
         setImage(localUri);
-        props.setimagefunc(pdata);
     };
 
+
+    const propicURL = async (input) => {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            setWebImage(e.target.result);
+        }
+
+        reader.readAsDataURL(input.target.files[0]);
+
+        props.setimagefunc(input.target.files[0]);
+    }
+
     return (
-        <View style={imageUploaderStyles.container}>
-            {image ? (
-                <Image source={{ uri: image }} style={{ width: 150, height: 150, borderRadius: 100 }} />
+        <>
+            {platformstate === "android" ? (
+                <View style={imageUploaderStyles.container} >
+                    {
+                        image ? (
+                            <Image source={{ uri: image }} style={{ width: 150, height: 150, borderRadius: 100 }
+                            } />
+                        ) : (
+                            <Image source={require("../../../assets/logos/preview.png")} style={{ width: 150, height: 150, borderRadius: 100 }} />
+                        )
+                    }
+                    <View style={imageUploaderStyles.uploadBtnContainer}>
+                        <TouchableOpacity
+                            onPress={addImage}
+                            style={imageUploaderStyles.uploadBtn}
+                        >
+                            <AntDesign name="camera" size={24} color="#fff" />
+                        </TouchableOpacity>
+                    </View >
+                </View>
             ) : (
-                <Image source={require("../../../assets/logos/preview.png")} style={{ width: 150, height: 150, borderRadius: 100 }} />
+                <View style={imageUploaderStyles.container} >
+                    {
+                        webimage !== "" ? (
+                            <Image source={{ uri: webimage }} style={{ width: 150, height: 150, borderRadius: 100 }
+                            } />
+                        ) : (
+                            <Image source={require("../../../assets/logos/preview.png")} style={{ width: 150, height: 150, borderRadius: 100 }} />
+                        )
+                    }
+                    <View style={imageUploaderStyles.uploadBtnContainer}>
+                        <label htmlFor="fileuploadinput">
+                            <AntDesign name="camera" size={24} color="#fff" />
+                        </label>
+                        <input onChange={propicURL} type="file" style={{ display: "none" }} id="fileuploadinput" />
+                    </View >
+                </View>
             )}
-            <View style={imageUploaderStyles.uploadBtnContainer}>
-                <TouchableOpacity
-                    onPress={addImage}
-                    style={imageUploaderStyles.uploadBtn}
-                >
-                    <AntDesign name="camera" size={24} color="#fff" />
-                </TouchableOpacity>
-            </View>
-        </View>
+        </>
     );
 }
+
+
 const imageUploaderStyles = StyleSheet.create({
     container: {
         elevation: 2,

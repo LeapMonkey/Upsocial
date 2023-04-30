@@ -10,10 +10,7 @@ const store = configureStore();
 export default function App() {
   return (
     <Provider store={store}>
-      <View style={styles.main}>
-        <View style={styles.hiddenView}></View>
-        <Main />
-      </View>
+      <Main />
     </Provider>
   );
 }
@@ -21,15 +18,6 @@ export default function App() {
 const styles = StyleSheet.create({
   main: {
     flex: 1
-  },
-  hiddenView: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    width: "calc(50% - 200px)",
-    height: "100vh",
-    zIndex: 2,
-    backgroundColor: "#fff"
   },
   section: {
     width: 400,

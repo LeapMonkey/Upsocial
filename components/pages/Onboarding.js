@@ -11,7 +11,7 @@ const Onboarding = (props) => {
     const video = useRef(null);
     const [status, setStatus] = useState({});
     const [touched, settouched] = useState(false);
-    const [videoFinished, setvideoFinished] = useState(false);
+    const [videoFinished, setvideoFinished] = useState(true);
     const [gestureName, setgestureName] = useState("none");
     const [count, setCount] = useState(0);
 
@@ -21,7 +21,14 @@ const Onboarding = (props) => {
 
     const VideoDatas = [
         { uri: "https://g.upsocial.com/ipfs/QmXF1SaqxcFCTDrBrygXqdrHFT9nUhroHZDQ6p672xCRns" },
-        { uri: "https://g.upsocial.com/ipfs/Qmd9jWF4ajEop3AyJirP4q2N8nFzL5GyeoB75pTqRPSAUr" }
+        { uri: "https://g.upsocial.com/ipfs/Qmd9jWF4ajEop3AyJirP4q2N8nFzL5GyeoB75pTqRPSAUr" },
+        { uri: "https://g.upsocial.com/ipfs/QmUYUkvJFCpdt3dKqhGkAX9cpi3PydC2hvVHSTv1RYQQUS" },
+        { uri: "https://g.upsocial.com/ipfs/QmUQypwRoVf1PpwmDgHPP6Fear4Q7tdgE1D932itw13jJo" },
+        { uri: "https://g.upsocial.com/ipfs/QmcBa5RZ5JSj7yybWyW2vdEr8KWtAqiqsxdqWLs52kVPP1" },
+        { uri: "https://g.upsocial.com/ipfs/QmUpxoDxrvrjgdKXpFYo3659dcfZYq9GN4uWKz8kP2BrDM" },
+        { uri: "https://g.upsocial.com/ipfs/QmPLkLnSNUD5AzqbYsPKrmwETRcshuy3Y1Yvv5WAPhfi6x" },
+        { uri: "https://g.upsocial.com/ipfs/QmfPLvtyGxgiNvw4Kp17tyuyX8ykptNbcFZKc6Mj7HkVGi" },
+        { uri: "https://g.upsocial.com/ipfs/QmaR5ovcPp1s7urguih9ZNfd1Dt97tqEaMSHsQfLyhiCX4" }
     ]
 
     const config = {
@@ -36,7 +43,7 @@ const Onboarding = (props) => {
             case SWIPE_UP:
                 settouched(true);
                 setCount(count + 1);
-                if (count == 1) setvideoFinished(true);
+                if (count == 8) setCount(0);
                 break;
             case SWIPE_DOWN:
                 settouched(false);
@@ -82,7 +89,7 @@ const Onboarding = (props) => {
                             onLoad={() => { video.current.playAsync() }}
                         // onFullscreenUpdate={setOrientation}
                         />
-                        {!videoFinished && <View style={styles.gifview}>
+                        {videoFinished && <View style={styles.gifview}>
                             <GestureRecognizer
                                 onSwipe={(direction, state) => onSwipe(direction, state)}
                                 config={config}

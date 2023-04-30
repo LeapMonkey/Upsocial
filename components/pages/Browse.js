@@ -8,60 +8,60 @@ import { apiURL } from '../config/config';
 import { Video, ResizeMode, Audio, InterruptionModeAndroid, InterruptionModeIOS } from "expo-av";
 import { useMediaQuery } from "react-responsive";
 
-const datas = [
-    {
-        "ID": 0,
-        "email": "kogutstt2@gmail.com",
-        "title": "How to learn music?",
-        "status": true,
-        "ipfsUrl": "https://g.upsocial.com/ipfs/QmUQypwRoVf1PpwmDgHPP6Fear4Q7tdgE1D932itw13jJo",
-        "keyword": "introduction",
-        "category": "backend",
-        "thumbnail": "https://g.upsocial.com/ipfs/QmXJoA3vuqYZkEn5vsm2oscDuX1Y8yZVeZavDgzJYbUu9m",
-        "description": "Learning music free online"
-    },
-    {
-        "ID": 1,
-        "email": "kogutstt2@gmail.com",
-        "title": "Learning English",
-        "status": false,
-        "ipfsUrl": "https://g.upsocial.com/ipfs/QmUQypwRoVf1PpwmDgHPP6Fear4Q7tdgE1D932itw13jJo",
-        "keyword": "introduction",
-        "category": "backend",
-        "thumbnail": "https://g.upsocial.com/ipfs/QmQGtYw4QpR8oucMEgNSTCrM1mnKu3GxePo3sSfES3QDZe",
-        "description": "Learn english online free"
-    },
-    {
-        "ID": 2,
-        "email": "kogutstt2@gmail.com",
-        "title": "what is cook?",
-        "status": true,
-        "ipfsUrl": "https://g.upsocial.com/ipfs/QmUQypwRoVf1PpwmDgHPP6Fear4Q7tdgE1D932itw13jJo",
-        "keyword": "introduction",
-        "category": "backend",
-        "thumbnail": "https://g.upsocial.com/ipfs/QmeavuHFKnhKpw4Cha9ysRAuCr6peZPvG7penDMrygNjk3",
-        "description": "BBC NEWs"
-    },
-    {
-        "email": "tomford@gmail.com",
-        "title": "Hello girls",
-        "ipfsUrl": "https://g.upsocial.com/ipfs/QmUQypwRoVf1PpwmDgHPP6Fear4Q7tdgE1D932itw13jJo",
-        "keyword": "introduction",
-        "category": "backend",
-        "thumbnail": "https://g.upsocial.com/ipfs/QmeCVhxEfsfz482iZEEUkRuAM5jqqBEbBBDXobTtxaebYD",
-        "description": "How to talk to girl first?"
-    },
-    {
-        "ID": 4,
-        "title": "SpaceX launch",
-        "status": true,
-        "ipfsUrl": "https://g.upsocial.com/ipfs/QmW5SKwvKW3pb9YNxKD7up748ZJJzYoaLCRHBUYrarqFFS",
-        "keyword": "asdad",
-        "category": "sad",
-        "thumbnail": "https://g.upsocial.com/ipfs/QmbU2GJMnQAJTHaedqGJXeGKo41Uec8UeDn6hcD28Xj2bQ",
-        "description": "Elon Musk launched SpaceX"
-    },
-];
+// const datas = [
+//     {
+//         "ID": 0,
+//         "email": "kogutstt2@gmail.com",
+//         "title": "How to learn music?",
+//         "status": true,
+//         "ipfsUrl": "https://g.upsocial.com/ipfs/QmUQypwRoVf1PpwmDgHPP6Fear4Q7tdgE1D932itw13jJo",
+//         "keyword": "introduction",
+//         "category": "backend",
+//         "thumbnail": "https://g.upsocial.com/ipfs/QmXJoA3vuqYZkEn5vsm2oscDuX1Y8yZVeZavDgzJYbUu9m",
+//         "description": "Learning music free online"
+//     },
+//     {
+//         "ID": 1,
+//         "email": "kogutstt2@gmail.com",
+//         "title": "Learning English",
+//         "status": false,
+//         "ipfsUrl": "https://g.upsocial.com/ipfs/QmUQypwRoVf1PpwmDgHPP6Fear4Q7tdgE1D932itw13jJo",
+//         "keyword": "introduction",
+//         "category": "backend",
+//         "thumbnail": "https://g.upsocial.com/ipfs/QmQGtYw4QpR8oucMEgNSTCrM1mnKu3GxePo3sSfES3QDZe",
+//         "description": "Learn english online free"
+//     },
+//     {
+//         "ID": 2,
+//         "email": "kogutstt2@gmail.com",
+//         "title": "what is cook?",
+//         "status": true,
+//         "ipfsUrl": "https://g.upsocial.com/ipfs/QmUQypwRoVf1PpwmDgHPP6Fear4Q7tdgE1D932itw13jJo",
+//         "keyword": "introduction",
+//         "category": "backend",
+//         "thumbnail": "https://g.upsocial.com/ipfs/QmeavuHFKnhKpw4Cha9ysRAuCr6peZPvG7penDMrygNjk3",
+//         "description": "BBC NEWs"
+//     },
+//     {
+//         "email": "tomford@gmail.com",
+//         "title": "Hello girls",
+//         "ipfsUrl": "https://g.upsocial.com/ipfs/QmUQypwRoVf1PpwmDgHPP6Fear4Q7tdgE1D932itw13jJo",
+//         "keyword": "introduction",
+//         "category": "backend",
+//         "thumbnail": "https://g.upsocial.com/ipfs/QmeCVhxEfsfz482iZEEUkRuAM5jqqBEbBBDXobTtxaebYD",
+//         "description": "How to talk to girl first?"
+//     },
+//     {
+//         "ID": 4,
+//         "title": "SpaceX launch",
+//         "status": true,
+//         "ipfsUrl": "https://g.upsocial.com/ipfs/QmW5SKwvKW3pb9YNxKD7up748ZJJzYoaLCRHBUYrarqFFS",
+//         "keyword": "asdad",
+//         "category": "sad",
+//         "thumbnail": "https://g.upsocial.com/ipfs/QmbU2GJMnQAJTHaedqGJXeGKo41Uec8UeDn6hcD28Xj2bQ",
+//         "description": "Elon Musk launched SpaceX"
+//     },
+// ];
 
 const Browse = (props) => {
     const isMobile = useMediaQuery({
@@ -97,22 +97,22 @@ const Browse = (props) => {
     const [searchflag, setSearchflag] = useState(false);
     const [searchtext, setSearchtext] = useState("");
 
-    useEffect(() => {
-        setAlldata(datas);
-        setResult(datas);
-    }, []);
-
     // useEffect(() => {
-    //     axios.post(apiURL + "/api/Upsocial/users/getAll/UploadedContent", { limit: limit }, {
-    //         "Access-Control-Allow-Origin": "*",
-    //         'Access-Control-Allow-Headers': '*',
-    //     }).then((res) => {
-    //         setAlldata(res.data.data);
-    //         setResult(res.data.data);
-    //     }).catch((err) => {
-    //         console.warn(err);
-    //     });
+    //     setAlldata(datas);
+    //     setResult(datas);
     // }, []);
+
+    useEffect(() => {
+        axios.post(apiURL + "/api/Upsocial/users/getAll/UploadedContent", { limit: limit }, {
+            "Access-Control-Allow-Origin": "*",
+            'Access-Control-Allow-Headers': '*',
+        }).then((res) => {
+            setAlldata(res.data.data);
+            setResult(res.data.data);
+        }).catch((err) => {
+            console.warn(err);
+        });
+    }, [limit]);
 
 
     useEffect(() => {

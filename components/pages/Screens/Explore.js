@@ -15,7 +15,7 @@ const Explore = (props) => {
                 tabBarActiveTintColor: '#000',
                 tabBarInactiveTintColor: 'gray',
                 tabBarLabelStyle: { fontSize: 12, color: "#fff", paddingHorizontal: 20, width: 100, paddingVertical: 10, borderRadius: 100, backgroundColor: '#5E1AD5' },
-                tabBarStyle: { backgroundColor: "#C2C2C2", width: Dimensions.get("window").width },
+                tabBarStyle: { backgroundColor: "#C2C2C2", alignItems: "left", width: Dimensions.get("window").width },
                 tabBarScrollEnabled: true,
             })}
         >

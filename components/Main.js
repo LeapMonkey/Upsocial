@@ -25,16 +25,13 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         position: "relative",
-        maxWidth: 400,
-        marginLeft: "50%",
-        transform: [{ translateX: "-50%" }]
     },
     loadingView: {
         position: "absolute",
         top: 0,
         left: 0,
         backgroundColor: "rgba(0, 0, 0, 0.6)",
-        width: 400,
+        width: "100%",
         height: Dimensions.get('window').height,
         justifyContent: "center",
         alignItems: "center",

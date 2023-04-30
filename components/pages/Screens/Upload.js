@@ -271,9 +271,11 @@ const Upload = (props) => {
                 file: file.file,
             };
 
-            const headers = {
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*'
+            let headers = {
+                "Access-Control-Allow-Origin": "*",
+                'Access-Control-Allow-Headers': '*',
+                Accept: 'application/json',
+                'Content-Type': 'multipart/form-data'
             };
             let formData = new FormData();
 
@@ -294,6 +296,11 @@ const Upload = (props) => {
                     setLoading(false);
                 });
 
+            setHashCode(cid);
+            let URL = `${cid}`;
+            setURL(URL);
+            let emb = `<iframe src="${cid}" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" style="border:none; width:100%; height:100%; min-height:500px;" frameborder="0" scrolling="no"></iframe>`
+            setEmbedCode(emb);
 
             var arr = thumbnails[0].split(','), mime = arr[0].match(/:(.*?);/)[1],
                 bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
@@ -302,70 +309,34 @@ const Upload = (props) => {
             }
             let img_file = new File([u8arr], `${title}.jpg`, { type: mime });
 
+            console.log('thumbnail', img_file);
+
             let Thumbnail_formData = new FormData();
 
-            let thumbnail = "";
+            Thumbnail_formData.append('thumbnail', img_file);
+            Thumbnail_formData.append('title', title);
+            Thumbnail_formData.append('description', description);
+            Thumbnail_formData.append('keywords', keywords);
+            Thumbnail_formData.append('category', selectedItems);
+            Thumbnail_formData.append('userEmail', props.auth.user.curUser);
+            Thumbnail_formData.append('video_src', cid);
 
-            Thumbnail_formData.append('video', img_file);
-
-            await axios.post(apiURL + "/api/Upsocial/upload/generate-ipfs", Thumbnail_formData, headers)
-                .then((response) => {
-                    if (response.data.data) {
-                        console.log(response.data.data);
-                        thumbnail = response.data.data.ipfsUrl;
-                    } else {
-                        console.log(response.data.error);
-                        setLoading(false);
-                    }
-                })
-                .catch((error) => {
-                    console.log(error);
+            await axios.post(apiURL + "/api/Upsocial/users/content/web/uploadContent", Thumbnail_formData, headers).then((res) => {
+                console.log(res.data);
+                if (res.data.status) {
                     setLoading(false);
-                });
-
-
-            const contentData = {
-                title: title,
-                description: description,
-                keyword: keywords,
-                category: selectedItems,
-                userEmail: "kogutstt2@gmail.com", //props.auth.user.curUser
-                ipfsUrl: "https://g.upsocial.com/ipfs/QmW5SKwvKW3pb9YNxKD7up748ZJJzYoaLCRHBUYrarqFFS",
-                thumbnail: "https://g.upsocial.com/ipfs/QmaikLxWW5XEP9oRGRPEPQ69u2hUFGcUtnM5FeZwqsr1Vy"
-            };
-
-
-            console.log(contentData);
-            setHashCode(cid);
-            let URL = `${cid}`;
-            setURL(URL);
-            let emb = `<iframe src="${cid}" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" style="border:none; width:100%; height:100%; min-height:500px;" frameborder="0" scrolling="no"></iframe>`
-            setEmbedCode(emb);
-
-            await axios.post("https://upload63f6f713447ec.cloud.bunnyroute.com/api/Upsocial/admin/createDB", headers).then((res) => {
-                console.log(res.data.dbCreated)
-                if (res.data.dbCreated) {
-                    axios
-                        .post(apiURL + "/api/Upsocial/users/content/uploadContent", contentData)
-                        .then((res) => {
-                            console.log(res.data);
-                            setLoading(false);
-                            setOpened(true);
-                            if (Platform.OS === "android") {
-                                ToastAndroid.show(res.data.msg, ToastAndroid.SHORT);
-                            }
-                        })
-                        .catch((err) => {
-                            console.error(err);
-                            setLoading(false);
-                        });
+                    setOpened(true);
                 } else {
                     setLoading(false);
                 }
 
-            }).catch((err) => console.log(err));
+            }).catch((err) => {
+                console.log(err);
+                setLoading(false);
+            });
         }
     }
+
     const onFileChange = (event) => {
         const file = event.target.files[0];
         setFile({ file, error: '' });
@@ -473,7 +444,18 @@ const Upload = (props) => {
                                             <Text style={styles.uploadbtntext}>UPLOAD</Text>
                                         </TouchableOpacity>
                                     </LinearGradient>) : (
-                                        <input style={{ display: "block" }} type='file' accept='video/mp4,video/x-m4v,video/*' onChange={onFileChange} />)
+                                        <LinearGradient
+                                            colors={['#621a9f', '#3521b3']}
+                                            style={styles.uploadlinearview}
+                                        >
+                                            <label htmlFor="fileuploadinput">
+                                                <TouchableOpacity style={styles.uploadbtn}>
+                                                    <Text style={styles.uploadbtntext}>UPLOAD</Text>
+                                                </TouchableOpacity>
+                                            </label>
+                                            <input style={{ display: "none" }} type='file' id='fileuploadinput' accept='video/mp4,video/x-m4v,video/*' onChange={onFileChange} />
+                                        </LinearGradient>
+                                    )
                                 )}
                             </View>
                         </View>
@@ -572,7 +554,7 @@ const styles = StyleSheet.create({
         top: 0,
         left: 0,
         backgroundColor: "rgba(0, 0, 0, 0.6)",
-        width: 400,
+        width: "100%",
         height: "100%",
         justifyContent: "center",
         alignItems: "center",

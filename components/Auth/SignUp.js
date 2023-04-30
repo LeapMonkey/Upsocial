@@ -8,6 +8,7 @@ import axios from "axios";
 import { apiURL } from "../config/config";
 import { ToastAndroid, Platform } from 'react-native';
 import { useMediaQuery } from "react-responsive";
+import { validate } from 'email-validator';
 
 const SignUP = (props) => {
     const isDesktopOrLaptop = useMediaQuery({
@@ -19,42 +20,116 @@ const SignUP = (props) => {
     // User Register
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
+    const [invalid, setInvalid] = useState(true);
+
     const [password, setPassword] = useState("");
+    const [pass_length, setPass_length] = useState(true);
+    const [pass_num, setPass_num] = useState(true);
+    const [pass_cap, setPass_cap] = useState(true);
 
     // User Login
     const [uEmail, setUEmail] = useState("");
     const [uPassword, setUPassword] = useState("");
 
     const UserRegister = (e) => {
-        e.preventDefault();
-        const userData = {
-            username: username,
-            email: email,
-            password: password,
-        };
-        axios
-            .post(apiURL + "/api/Upsocial/users/register", userData, {
-                "Access-Control-Allow-Origin": "*",
-                'Access-Control-Allow-Headers': '*',
-            })
-            .then((res) => {
-                if (Platform.OS === "android") {
-                    ToastAndroid.show(res.data.msg, ToastAndroid.SHORT);
-                }
-                SetIsLogin(true)
-            })
-            .catch((err) => {
-                console.error(err)
-            });
+        if (username.trim() === "") {
+            if (Platform.OS === "android" || Platform.OS === "ios") {
+                ToastAndroid.show("Please input username!", ToastAndroid.SHORT);
+            } else {
+                alert("Please input username!");
+            }
+        } else if (email.trim() === "") {
+            if (Platform.OS === "android" || Platform.OS === "ios") {
+                ToastAndroid.show("Please input email!", ToastAndroid.SHORT);
+            } else {
+                alert("Please input email!");
+            }
+        } else if (password.trim() === "") {
+            if (Platform.OS === "android" || Platform.OS === "ios") {
+                ToastAndroid.show("Please input password!", ToastAndroid.SHORT);
+            } else {
+                alert("Please input password!");
+            }
+        } else {
+            e.preventDefault();
+            const userData = {
+                username: username,
+                email: email,
+                password: password,
+            };
+            axios
+                .post(apiURL + "/api/Upsocial/users/register", userData, {
+                    "Access-Control-Allow-Origin": "*",
+                    'Access-Control-Allow-Headers': '*',
+                })
+                .then((res) => {
+                    if (Platform.OS === "android") {
+                        ToastAndroid.show(res.data.msg, ToastAndroid.SHORT);
+                    }
+                    SetIsLogin(true)
+                })
+                .catch((err) => {
+                    console.error(err)
+                });
+        }
     }
 
     const UserLogin = (e) => {
-        e.preventDefault();
-        const userData = {
-            email: uEmail,
-            password: uPassword
-        };
-        props.loginUser(userData);
+        if (uEmail.trim() === "") {
+            if (Platform.OS === "android" || Platform.OS === "ios") {
+                ToastAndroid.show("Please input email!", ToastAndroid.SHORT);
+            } else {
+                alert("Please input email!");
+            }
+        } else if (uPassword.trim() === "") {
+            if (Platform.OS === "android" || Platform.OS === "ios") {
+                ToastAndroid.show("Please input password!", ToastAndroid.SHORT);
+            } else {
+                alert("Please input password!");
+            }
+        } else {
+            e.preventDefault();
+            const userData = {
+                email: uEmail,
+                password: uPassword
+            };
+            props.loginUser(userData);
+        }
+    }
+
+    const ValidateEmail = (e) => {
+        if (validate(e)) {
+            setEmail(e);
+            setUEmail(e);
+            setInvalid(true);
+        } else {
+            setInvalid(false);
+        }
+    }
+
+    const ValidatePassword = (e) => {
+        console.log(e, e.length)
+        if (e.length >= 8) {
+            setPass_length(true);
+        } else {
+            setPass_length(false);
+        }
+
+        if (/[A-Z]/.test(e)) {
+            setPass_cap(true);
+        } else {
+            setPass_cap(false);
+        }
+
+        if (/[0-9]/.test(e)) {
+            setPass_num(true);
+        } else {
+            setPass_num(false);
+        }
+
+        if (pass_length && pass_cap && pass_num) {
+            setPassword(e);
+        }
     }
 
     return (
@@ -99,12 +174,16 @@ const SignUP = (props) => {
                         </View>
                         <View style={styles.TextView}>
                             <TextInput placeholder="Email" placeholderTextColor="#adb2b6"
-                                style={styles.TextInput} onChangeText={(e) => setEmail(e)} />
+                                style={invalid ? styles.TextInput : styles.Error_TextInput} onChangeText={(e) => ValidateEmail(e)} />
+                            {!invalid && <Text style={{ color: "red", fontSize: 16 }}>Invalid Email Address!</Text>}
                         </View>
                         <View style={styles.TextView}>
                             <TextInput placeholder="Password" placeholderTextColor="#adb2b6"
                                 secureTextEntry={true}
-                                style={styles.TextInput} onChangeText={(e) => setPassword(e)} />
+                                style={pass_length && pass_num && pass_cap ? styles.TextInput : styles.Error_TextInput} onChangeText={(e) => ValidatePassword(e)} />
+                            {!pass_length && <Text style={{ color: "red", fontSize: 16 }}>Password has more than 8 characters!</Text>}
+                            {!pass_num && <Text style={{ color: "red", fontSize: 16 }}>Password has a number!</Text>}
+                            {!pass_cap && <Text style={{ color: "red", fontSize: 16 }}>Password has a capital letter!</Text>}
                         </View>
                         <View style={styles.TextView}>
                             <TouchableOpacity style={styles.regbtn} onPress={UserRegister}>
@@ -154,8 +233,9 @@ const SignUP = (props) => {
                     </View>
                     <View style={styles.TextGroupView}>
                         <View style={styles.TextView}>
-                            <TextInput placeholder="Email" placeholderTextColor="#adb2b6" onChangeText={(e) => setUEmail(e)}
+                            <TextInput placeholder="Email" placeholderTextColor="#adb2b6" onChangeText={(e) => ValidateEmail(e)}
                                 style={styles.TextInput} />
+                            {!invalid && <Text style={{ color: "red" }}>Invalid Email Address!</Text>}
                         </View>
                         <View style={styles.TextView}>
                             <TextInput placeholder="Password" placeholderTextColor="#adb2b6" onChangeText={(e) => setUPassword(e)}
@@ -274,6 +354,16 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
         fontSize: 16,
         borderBottomColor: "#3b8ad0",
+        borderBottomWidth: 2,
+        width: "90%",
+        color: "#fff",
+        marginVertical: 10
+    },
+    Error_TextInput: {
+        paddingVertical: 10,
+        paddingHorizontal: 10,
+        fontSize: 16,
+        borderBottomColor: "red",
         borderBottomWidth: 2,
         width: "90%",
         color: "#fff",

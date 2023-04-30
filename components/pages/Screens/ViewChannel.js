@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
     },
     background: {
         width: "100%",
-        aspectRatio: 1 / 1.2
+        height: Dimensions.get("window").height * 0.5,
     },
     section: {
         backgroundColor: "#fff",

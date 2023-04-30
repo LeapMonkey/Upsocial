@@ -10,16 +10,21 @@ import {
     ToastAndroid,
     Platform,
     AlertIOS,
+    Dimensions,
 } from "react-native";
+import { connect } from "react-redux";
+import axios from "axios";
 import { LinearGradient } from "expo-linear-gradient";
 import UploadLogo from "../upload/UploadLogo";
+import { apiURL } from "../../config/config";
 
 const EditProfile = (props) => {
     const [result, setResult] = useState([]);
     const [isEnabled, setIsEnabled] = useState(false);
-    const [title, setTitle] = useState("");
-    const [date, setDate] = useState("");
+    const [name, setName] = useState("");
+    const [handle, setHandle] = useState("");
     const [description, setDescription] = useState("");
+    const [location, setLocation] = useState("");
     const [uploadimagedata, setUploadimagedata] = useState(null);
 
     const toggleSwitch = () => {
@@ -27,42 +32,60 @@ const EditProfile = (props) => {
     };
 
     const setimagefunc = (imagedata) => {
+        console.log(imagedata);
+        console.log(typeof imagedata);
         setUploadimagedata(imagedata);
     };
 
-    const uploadData = () => {
+    const uploadData = async () => {
         if (uploadimagedata === null) {
-            if (Platform.OS === "android") {
+            if (Platform.OS === "android" || Platform.OS === "ios") {
                 ToastAndroid.show("Please select Image!", ToastAndroid.SHORT);
             } else {
-                AlertIOS.alert("Please select image!");
+                alert("Please select image!");
             }
-        } else if (title.trim() === "") {
-            if (Platform.OS === "android") {
-                ToastAndroid.show("Please input title!", ToastAndroid.SHORT);
+        } else if (name.trim() === "") {
+            if (Platform.OS === "android" || Platform.OS === "ios") {
+                ToastAndroid.show("Please input name!", ToastAndroid.SHORT);
             } else {
-                AlertIOS.alert("Please input title!");
+                alert("Please input name!");
             }
-        } else if (date.trim() === "") {
-            if (Platform.OS === "android") {
+        } else if (handle.trim() === "") {
+            if (Platform.OS === "android" || Platform.OS === "ios") {
                 ToastAndroid.show("Please input date!", ToastAndroid.SHORT);
             } else {
-                AlertIOS.alert("Please input date!");
+                alert("Please input handle!");
             }
         } else if (description.trim() === "") {
-            if (Platform.OS === "android") {
+            if (Platform.OS === "android" || Platform.OS === "ios") {
                 ToastAndroid.show("Please input description!", ToastAndroid.SHORT);
             } else {
-                AlertIOS.alert("Please input description!");
+                alert("Please input description!");
             }
         } else {
             let formdata = new FormData();
             formdata.append("photo", uploadimagedata);
-            formdata.append("title", title);
-            formdata.append("date", date);
-            formdata.append("user_id", props.auth.user.id);
+            formdata.append("name", name);
+            formdata.append("handle", handle);
             formdata.append("description", description);
-            formdata.append("flag", isEnabled);
+            formdata.append("location", location);
+            formdata.append("userEmail", props.auth.user.curUser);
+
+            const headers = {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            };
+
+            await axios.post(apiURL + "/api/Upsocial/upload/photo", formdata, headers).then((res) => {
+                if (res.data.status) {
+                    alert("Update Profile success !");
+                    props.setflag("Profile");
+                }
+            }).catch((error) => {
+                console.log(error);
+            })
+
+
         }
     };
 
@@ -89,7 +112,7 @@ const EditProfile = (props) => {
                             style={styles.TextInput}
                             placeholder="Name"
                             placeholderTextColor="#fff"
-                            onChangeText={(e) => setTitle(e)}
+                            onChangeText={(e) => setName(e)}
                         />
                     </View>
                     <View style={styles.inputView}>
@@ -97,7 +120,7 @@ const EditProfile = (props) => {
                             style={styles.TextInput}
                             placeholder="Handle"
                             placeholderTextColor="#fff"
-                            onChangeText={(e) => setDate(e)}
+                            onChangeText={(e) => setHandle(e)}
                         />
                     </View>
                     <View style={styles.inputView}>
@@ -106,7 +129,7 @@ const EditProfile = (props) => {
                             placeholder="About me"
                             placeholderTextColor="#fff"
                             multiline={true}
-                            numberOfLines={4}
+                            numberOfLines={5}
                             onChangeText={(e) => setDescription(e)}
                         />
                     </View>
@@ -115,7 +138,7 @@ const EditProfile = (props) => {
                             style={styles.TextInput}
                             placeholder="Location (City, State)"
                             placeholderTextColor="#fff"
-                            onChangeText={(e) => setDate(e)}
+                            onChangeText={(e) => setLocation(e)}
                         />
                     </View>
                     <View style={styles.TextInput}>
@@ -148,14 +171,14 @@ const styles = StyleSheet.create({
     headersubsection: {
         width: "85%",
     },
-    headertitlesection: {
+    headernamesection: {
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
         marginTop: 20,
         marginBottom: 20,
     },
-    headertitle: {
+    headername: {
         color: "#f9f9f9",
         fontSize: 24,
         fontWeight: "bold",
@@ -170,6 +193,7 @@ const styles = StyleSheet.create({
     },
     mainsection: {
         width: "100%",
+        maxWidth: 400,
         flex: 1,
     },
     uploadsection: {
@@ -237,4 +261,8 @@ const styles = StyleSheet.create({
 });
 
 
-export default EditProfile
+const mapStateToProps = (state) => ({
+    auth: state.auth,
+});
+
+export default connect(mapStateToProps, {})(EditProfile);
