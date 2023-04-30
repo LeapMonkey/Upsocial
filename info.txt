@@ -1,0 +1,52 @@
+node -v: 16.18.0
+
+npm -v: 9.6.3
+
+expo -v: 0.6.2
+
+create-react-native-app -v: 3.8.0
+
+*******************************************************************************
+assets: 
+https://drive.google.com/file/d/1BPigu_KV9Bpg8htU-vy8DFZiuH-0A7ZL/view?usp=sharing, https://drive.google.com/file/d/1N5NTGiirg1iC7SVPvgrtXIQR6ta2eW2W/view?usp=sharing, https://drive.google.com/file/d/1NfrqKgKezE7cLOfb05c0xv8zhyZgxJFG/view?usp=sharing, https://drive.google.com/file/d/1NpkSJS0GHn7YF-97AOW7H7JUjeqtU0J_/view?usp=sharing, https://drive.google.com/file/d/1OZTkN5eCCxt4F_eyNseQdqKqdf8gXpL1/view?usp=sharing, https://drive.google.com/file/d/1WGPPiu2Eh55lGPMDoAJAyrZVxL3NSSzD/view?usp=sharing, https://drive.google.com/file/d/1WzAcXkw1vo4XT0O-7bN0dOM2Q4-E4UOn/view?usp=sharing, https://drive.google.com/file/d/1XiCaGFdBxEZESrC-F3Stx4l0pPzm8yvq/view?usp=sharing, https://drive.google.com/file/d/1YgxfucJaO2CmT2uvNYop4sscBSZYBfi0/view?usp=sharing, https://drive.google.com/file/d/1_j1QFzEpFqqwocSKYKoz5TTA19EibdQV/view?usp=sharing, https://drive.google.com/file/d/1a7PPHkoXsm-PtrUm-ObZD6A4FeBmjJQA/view?usp=sharing, https://drive.google.com/file/d/1eGl6JX1IFuLmiTSdpiPbovKVzjG4KL0B/view?usp=sharing, https://drive.google.com/file/d/1nSWl2fD1iyxX98RSGhdR_RCd16A2rbMK/view?usp=sharing
+
+*******************************************************************************
+project: https://add.upsocial.com/
+
+*******************************************************************************
+MockUp for design: 
+https://rp.mockplus.com/run/55VP0VUqGC/eKL4I-GfQk?cps=expand&rps=expand&nav=1&ha=0&la=0&fc=1&dt=iphone&out=0&rt=1
+https://rp.mockplus.com/run/55VP0VUqGC/wTiDEWUovo?cps=expand&rps=expand&nav=1&ha=0&la=0&fc=1&dt=iphone&out=0&rt=1
+https://rp.mockplus.com/run/55VP0VUqGC/htvZ6JA_fv?cps=expand&rps=expand&nav=1&ha=0&la=0&fc=1&dt=iphone&out=0&rt=1
+https://rp.mockplus.com/run/55VP0VUqGC/RQm5kRlQCKF?cps=expand&rps=expand&nav=1&ha=0&la=0&fc=1&dt=iphone&out=0&rt=1
+
+*******************************************************************************
+
+References
+
+https://github.com/ipfs/helia
+
+https://github.com/orbitdb/orbit-db
+
+https://docs.google.com/document/d/1TCu2B44x-nNfCq9vfTSFDiWwcOF2N0lAj5Fpm67YYpc/edit?usp=sharing
+
+*******************************************************************************
+IPFS Storage Video
+
+https://g.upsocial.com/ipfs/QmUYUkvJFCpdt3dKqhGkAX9cpi3PydC2hvVHSTv1RYQQUS
+https://g.upsocial.com/ipfs/QmUQypwRoVf1PpwmDgHPP6Fear4Q7tdgE1D932itw13jJo
+https://g.upsocial.com/ipfs/QmcBa5RZ5JSj7yybWyW2vdEr8KWtAqiqsxdqWLs52kVPP1
+https://g.upsocial.com/ipfs/QmUpxoDxrvrjgdKXpFYo3659dcfZYq9GN4uWKz8kP2BrDM
+https://g.upsocial.com/ipfs/QmPLkLnSNUD5AzqbYsPKrmwETRcshuy3Y1Yvv5WAPhfi6x
+https://g.upsocial.com/ipfs/QmfPLvtyGxgiNvw4Kp17tyuyX8ykptNbcFZKc6Mj7HkVGi
+https://g.upsocial.com/ipfs/QmaR5ovcPp1s7urguih9ZNfd1Dt97tqEaMSHsQfLyhiCX4
+
+*******************************************************************************
+
+-- Kubo Node
+
+pass: tHadraki-r@RuthazAs4
+login: devopts
+192.3.103.54
+
+*******************************************************************************

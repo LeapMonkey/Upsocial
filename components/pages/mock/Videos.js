@@ -5,7 +5,6 @@ import { Video, ResizeMode } from "expo-av";
 import Modal from "react-native-modal";
 import axios from "axios";
 import { apiURL } from "../../config/config";
-import useDownloader from 'react-use-downloader';
 
 const Videos = () => {
     const video = useRef(null);
@@ -47,7 +46,6 @@ const Videos = () => {
         } else if (name == "Save to Playlist") {
             alert("Success!");
         } else if (name == "Download Video") {
-            await download(item.ipfsUrl, 'a.mp4');
             alert("Success!");
         } else {
             Share.share({
