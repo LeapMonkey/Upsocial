@@ -76,7 +76,7 @@ const Onboarding = (props) => {
                     <View style={{ position: "relative" }}>
                         <Video
                             ref={video}
-                            videoStyle={{ position: 'relative', width: "100%", height: Dimensions.get("window").height }}
+                            videoStyle={{ position: 'relative', width: "100%", height: Dimensions.get("window").height, aspectRatio: 9 / 16 }}
                             style={styles.VideoWidget}
                             source={VideoDatas[count]}
                             rate={1.0}
@@ -89,10 +89,11 @@ const Onboarding = (props) => {
                             onLoad={() => { video.current.playAsync() }}
                         // onFullscreenUpdate={setOrientation}
                         />
-                        {videoFinished && <View style={styles.gifview}>
+                        <View style={styles.gifview}>
                             <GestureRecognizer
                                 onSwipe={(direction, state) => onSwipe(direction, state)}
                                 config={config}
+                                style={count > 3 && styles.nonVisible}
                             >
                                 <Image
                                     style={styles.scrollGif}
@@ -100,13 +101,13 @@ const Onboarding = (props) => {
                                 />
                                 <Text style={styles.ScrollText}>Scroll</Text>
                             </GestureRecognizer>
-                        </View>}
+                        </View>
                     </View>
-                    {videoFinished && (<LinearGradient colors={['#1e2452', '#1e247f']} style={styles.bottomsection}>
+                    <LinearGradient colors={['#1e2452', '#1e247f']} style={styles.bottomsection}>
                         <TouchableOpacity style={styles.bottombtn} onPress={() => props.setflag("SignUp")}>
                             <Text style={styles.bottombtntext}>Get Started</Text>
                         </TouchableOpacity>
-                    </LinearGradient>)}
+                    </LinearGradient>
                 </ScrollView>
             </View>
         </LinearGradient>
@@ -123,7 +124,6 @@ const styles = StyleSheet.create({
     mainview: {
         flex: 1,
         position: "relative",
-        width: 400,
     },
     responsiveview: {
         flex: 1,
@@ -187,6 +187,9 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         color: "#fff",
         marginTop: 20,
+    },
+    nonVisible: {
+        opacity: 0
     }
 });
 

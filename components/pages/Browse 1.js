@@ -1,20 +1,20 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { ScrollView, View, Text, StyleSheet, Image, TextInput, Dimensions, TouchableOpacity, Share, TouchableHighlight } from 'react-native';
 import Modal from "react-native-modal";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import { SwipeListView } from 'react-native-swipe-list-view';
 import axios from 'axios';
 import { apiURL } from '../config/config';
 import { Video, ResizeMode, Audio, InterruptionModeAndroid, InterruptionModeIOS } from "expo-av";
 import { useMediaQuery } from "react-responsive";
+import TinderCard from "react-tinder-card";
 
 const Browse = (props) => {
     const isMobile = useMediaQuery({
-        query: "(max-device-width: 500px)"
+        query: "(max-device-width: 468px)"
     });
 
     const isTabletOrMobile = useMediaQuery({
-        query: "(min-device-width: 500px)"
+        query: "(min-device-width: 468px)"
     });
 
     const isTablet = useMediaQuery({
@@ -42,13 +42,40 @@ const Browse = (props) => {
     const [searchflag, setSearchflag] = useState(false);
     const [searchtext, setSearchtext] = useState("");
 
-    const [curIndex, setCurIndex] = useState(null);
+    const [currentIndex, setCurrentIndex] = useState(result.length - 1)
+    const [lastDirection, setLastDirection] = useState()
+    // used for outOfFrame closure
+    const currentIndexRef = useRef(currentIndex)
 
-    const [listData, setListData] = useState(
-        Array(1)
-            .fill('')
-            .map((_, i) => ({ key: `${i}`, text: `item #${i}` }))
-    );
+    let childRefs;
+
+    const updateCurrentIndex = (val) => {
+        console.log(val);
+        setCurrentIndex(val)
+        currentIndexRef.current = val
+        console.log("currentIndexRef", currentIndexRef);
+
+        console.log("currentIndexRef.current===>>", currentIndexRef.current);
+    }
+
+    // set last direction and decrease current index
+    const swiped = (direction, nameToDelete, index) => {
+        console.log("index==>>", index);
+        setLastDirection(direction)
+        updateCurrentIndex(index - 1)
+    }
+
+    const outOfFrame = (name, idx) => {
+        console.log(`${name} (${idx}) left the screen!`, currentIndexRef.current)
+
+        console.log("childrefs==>>", childRefs[idx].current)
+        console.log("childrefs.restoreCard()==>>", childRefs[idx].current.restoreCard())
+        // handle the case in which go back is pressed before card goes outOfFrame
+        currentIndexRef.current >= idx && childRefs[idx].current.restoreCard()
+        // TODO: when quickly swipe and restore multiple times the same card,
+        // it happens multiple outOfFrame events are queued and the card disappear
+        // during latest swipes. Only the last outOfFrame event should be considered valid
+    }
 
     useEffect(() => {
         axios.post(apiURL + "/api/Upsocial/users/getAll/UploadedContent", { limit: limit }, {
@@ -57,6 +84,15 @@ const Browse = (props) => {
         }).then((res) => {
             setAlldata(res.data.data);
             setResult(res.data.data);
+
+            childRefs = useMemo(
+                () =>
+                    Array(res.data.data.length)
+                        .fill(0)
+                        .map((i) => React.createRef()),
+                []
+            )
+
         }).catch((err) => {
             console.warn(err);
         });
@@ -74,11 +110,10 @@ const Browse = (props) => {
         });
     }, [limit]);
 
-    const watchVideo = (videoData, key) => {
+    const watchVideo = (videoData) => {
         setOpened(true);
         setVideoProps(videoData);
-        SetSource({ uri: videoData.ipfsUrl });
-        setCurIndex(key);
+        SetSource({ uri: videoData.ipfsUrl })
     };
 
     const ShareFile = async (url) => {
@@ -101,66 +136,6 @@ const Browse = (props) => {
         }
     }
 
-    const renderItem = () => (
-        <View style={{ width: "100%", position: 'relative', height: "100%" }}>
-            <Video
-                videoStyle={{ position: 'relative', width: Dimensions.get("window").width, height: Dimensions.get("window").height }}
-                ref={TopVideo}
-                style={{ width: "100%", height: Dimensions.get("window").height }}
-                source={source}
-                rate={1.0}
-                isLooping
-                volume={1.0}
-                shouldPlay
-                useNativeControls
-                resizeMode={ResizeMode.COVER}
-                onPlaybackStatusUpdate={status => setStatus(() => status)}
-            />
-        </View>
-    );
-
-    const handleReaction = async (e) => {
-        console.log(e.value)
-        if (e.value > 300 && confirm("You Like this video") == true) {
-            if (curIndex == result.length - 1) {
-                SetSource({ uri: result[0].ipfsUrl });
-                setCurIndex(0);
-            } else {
-                console.log("here 1")
-                SetSource({ uri: result[curIndex + 1].ipfsUrl });
-                setCurIndex(curIndex + 1);
-            }
-        } else if (e.value < -300 && confirm("You Like this video") == true) {
-            if (curIndex == result.length - 1) {
-                console.log("here 2")
-                SetSource({ uri: result[0].ipfsUrl });
-                setCurIndex(0);
-            } else {
-                console.log("here 2")
-                SetSource({ uri: result[curIndex + 1].ipfsUrl });
-                setCurIndex(curIndex + 1);
-            }
-        }
-    };
-
-    const renderHiddenItem = (data, rowMap) => (
-        <View style={styles.rowBack}>
-            {/* <TouchableOpacity style={[styles.backRightBtn, styles.backRightBtnLeft]} onPress={() => alert("I Liked!")}>
-                <View style={{ padding: 10, backgroundColor: "#0FA148", borderRadius: 50 }}>
-                    <Ionicons name="thumbs-up-outline" color="#fff" size={30} />
-                </View>
-            </TouchableOpacity>
-            <TouchableOpacity
-                style={[styles.backRightBtn, styles.backRightBtnRight]}
-                onPress={() => alert("I DISLIKED!")}
-            >
-                <View style={{ padding: 10, backgroundColor: "#EC4134", borderRadius: 50 }}>
-                    <Ionicons name="ios-thumbs-down-outline" color="#fff" size={30} />
-                </View>
-            </TouchableOpacity> */}
-        </View>
-    );
-
     return (
         <View style={styles.container}>
             <Modal
@@ -180,20 +155,47 @@ const Browse = (props) => {
                             </TouchableOpacity>
                         </View>
                     </View>
-                    <View style={{ height: Dimensions.get("window").height }}>
-                        <SwipeListView
-                            data={listData}
-                            renderItem={renderItem}
-                            renderHiddenItem={renderHiddenItem}
-                            leftOpenValue={0}
-                            rightOpenValue={0}
-                            previewRowKey={'0'}
-                            previewOpenValue={-40}
-                            previewOpenDelay={3000}
-                            onSwipeValueChange={async (e) => await handleReaction(e)}
-                        />
+                    <View style={styles.cardContainer}>
+                        {result.map((character, index) => (
+                            <View style={{ width: "100%", height: "100%" }}
+                                key={character.title}>
+                                <TinderCard
+                                    ref={childRefs && childRefs[index]}
+                                    onSwipe={(dir) => swiped(dir, character.title, index)}
+                                    onCardLeftScreen={() => outOfFrame(character.title, index)}
+                                >
+                                    <Video
+                                        videoStyle={{ width: Dimensions.get("window").width, height: Dimensions.get("window").height, position: "absolute" }}
+                                        ref={TopVideo}
+                                        style={{ width: "100%", height: Dimensions.get("window").height }}
+                                        source={{ uri: character.ipfsUrl }}
+                                        rate={1.0}
+                                        isLooping
+                                        volume={1.0}
+                                        shouldPlay
+                                        useNativeControls
+                                        resizeMode={ResizeMode.COVER}
+                                        onPlaybackStatusUpdate={status => setStatus(() => status)}
+                                    />
+                                </TinderCard>
+                            </View>
+                        ))}
                     </View>
                 </View>
+
+                {/* <Video
+                    videoStyle={{ position: 'relative', width: Dimensions.get("window").width, height: Dimensions.get("window").height, backgroundColor: "blue" }}
+                    ref={TopVideo}
+                    style={{ width: "100%", height: Dimensions.get("window").height, backgroundColor: "red" }}
+                    source={source}
+                    rate={1.0}
+                    isLooping
+                    volume={1.0}
+                    shouldPlay
+                    useNativeControls
+                    resizeMode={ResizeMode.COVER}
+                    onPlaybackStatusUpdate={status => setStatus(() => status)}
+                /> */}
             </Modal>
             <View style={styles.topBarContainer}>
                 <TouchableOpacity style={{ flexDirection: "row", alignItems: "center" }} onPress={() => props.setName("explore")}>
@@ -215,7 +217,7 @@ const Browse = (props) => {
                 <View style={styles.board}>
                     {result && result.map((index, key) => {
                         return (
-                            <TouchableOpacity style={isWide ? styles.wideitemview : isDesktop ? styles.desktopitemview : isTablet ? styles.tabletitemview : isTabletOrMobile ? styles.tabletormobileitemview : styles.mobileitemview} key={key} onPress={() => watchVideo(index, key)}>
+                            <TouchableOpacity style={isWide ? styles.wideitemview : isDesktop ? styles.desktopitemview : isTablet ? styles.tabletitemview : isTabletOrMobile ? styles.tabletormobileitemview : styles.mobileitemview} key={key} onPress={() => watchVideo(index)}>
                                 <View style={{ alignItems: 'center', width: "100%" }}>
                                     <Image source={{ uri: index.thumbnail }} style={{ width: "100%", height: Dimensions.get("window").height * 0.3, borderRadius: 12 }} />
                                     <Image source={require("../../assets/logos/playvideo.png")} style={{ width: 50, height: 50, position: "absolute", top: "40%" }} />
@@ -325,7 +327,7 @@ const styles = StyleSheet.create({
     },
     videopage: {
         width: "100%",
-        height: Dimensions.get('window').height,
+        height: "100%",
         justifyContent: "center",
         backgroundColor: "#000",
         alignItems: "center",
@@ -383,6 +385,10 @@ const styles = StyleSheet.create({
     backRightBtnRight: {
         backgroundColor: '#000',
         right: 0,
+    },
+    cardContainer: {
+        width: "100%",
+        height: "100%"
     }
 });
 
