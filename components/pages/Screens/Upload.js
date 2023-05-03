@@ -90,7 +90,7 @@ const Upload = (props) => {
         { id: 21, name: 'Sports' },
         { id: 22, name: 'Travel & Events' },
         { id: 23, name: 'Unboxing & Reviews' },
-        { id: 24, name: 'Vlogs' },
+        { id: 24, name: 'Blogs' },
     ];
     const onSelectedItemsChange = (selectedItems) => {
         if (selectedItems.length > 3) {

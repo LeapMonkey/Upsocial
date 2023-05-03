@@ -23,12 +23,10 @@ const Onboarding = (props) => {
         { uri: "https://g.upsocial.com/ipfs/QmXF1SaqxcFCTDrBrygXqdrHFT9nUhroHZDQ6p672xCRns" },
         { uri: "https://g.upsocial.com/ipfs/Qmd9jWF4ajEop3AyJirP4q2N8nFzL5GyeoB75pTqRPSAUr" },
         { uri: "https://g.upsocial.com/ipfs/QmUYUkvJFCpdt3dKqhGkAX9cpi3PydC2hvVHSTv1RYQQUS" },
-        { uri: "https://g.upsocial.com/ipfs/QmUQypwRoVf1PpwmDgHPP6Fear4Q7tdgE1D932itw13jJo" },
-        { uri: "https://g.upsocial.com/ipfs/QmcBa5RZ5JSj7yybWyW2vdEr8KWtAqiqsxdqWLs52kVPP1" },
-        { uri: "https://g.upsocial.com/ipfs/QmUpxoDxrvrjgdKXpFYo3659dcfZYq9GN4uWKz8kP2BrDM" },
-        { uri: "https://g.upsocial.com/ipfs/QmPLkLnSNUD5AzqbYsPKrmwETRcshuy3Y1Yvv5WAPhfi6x" },
+        { uri: "https://g.upsocial.com/ipfs/QmaeDhrZPgxQ3qypFdzqFos1gu7QnotfghYCPYjP2pVMNJ" },
+        { uri: "https://g.upsocial.com/ipfs/QmaR5ovcPp1s7urguih9ZNfd1Dt97tqEaMSHsQfLyhiCX4" },
         { uri: "https://g.upsocial.com/ipfs/QmfPLvtyGxgiNvw4Kp17tyuyX8ykptNbcFZKc6Mj7HkVGi" },
-        { uri: "https://g.upsocial.com/ipfs/QmaR5ovcPp1s7urguih9ZNfd1Dt97tqEaMSHsQfLyhiCX4" }
+        { uri: "https://g.upsocial.com/ipfs/QmPLkLnSNUD5AzqbYsPKrmwETRcshuy3Y1Yvv5WAPhfi6x" },
     ]
 
     const config = {
@@ -82,32 +80,31 @@ const Onboarding = (props) => {
                             rate={1.0}
                             isLooping
                             volume={1.0}
-                            shouldPlay
                             useNativeControls
                             resizeMode={ResizeMode.STRETCH}
                             onPlaybackStatusUpdate={status => setStatus(() => status)}
-                            onLoad={() => { video.current.playAsync() }}
-                        // onFullscreenUpdate={setOrientation}
                         />
                         <View style={styles.gifview}>
                             <GestureRecognizer
                                 onSwipe={(direction, state) => onSwipe(direction, state)}
                                 config={config}
-                                style={count > 3 && styles.nonVisible}
+                                style={[{ width: "100%", height: "100%" }, count > 3 && styles.nonVisible]}
                             >
-                                <Image
-                                    style={styles.scrollGif}
-                                    source={require("../../assets/ScrollTop.gif")}
-                                />
-                                <Text style={styles.ScrollText}>Scroll</Text>
+                                <View style={{ width: "100%", height: "100%", justifyContent: "flex-end", alignItems: "center", paddingBottom: 60 }}>
+                                    <Image
+                                        style={styles.scrollGif}
+                                        source={require("../../assets/ScrollTop.gif")}
+                                    />
+                                    <Text style={styles.ScrollText}>Scroll</Text>
+                                </View>
                             </GestureRecognizer>
                         </View>
+                        {count > 3 && <View style={styles.bottomsection}>
+                            <TouchableOpacity style={styles.bottombtn} onPress={() => props.setflag("SignUp")}>
+                                <Text style={styles.bottombtntext}>Get Started</Text>
+                            </TouchableOpacity>
+                        </View>}
                     </View>
-                    <LinearGradient colors={['#1e2452', '#1e247f']} style={styles.bottomsection}>
-                        <TouchableOpacity style={styles.bottombtn} onPress={() => props.setflag("SignUp")}>
-                            <Text style={styles.bottombtntext}>Get Started</Text>
-                        </TouchableOpacity>
-                    </LinearGradient>
                 </ScrollView>
             </View>
         </LinearGradient>
@@ -153,6 +150,12 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         flex: 1,
+        position: 'absolute',
+        bottom: "10%",
+        left: 0,
+        width: "100%",
+        opacity: 0.5,
+        zIndex: 101,
     },
     bottombtn: {
         width: "90%",
@@ -161,8 +164,6 @@ const styles = StyleSheet.create({
         alignItems: "center",
         backgroundColor: "#9c26b0",
         borderRadius: 5,
-        marginTop: 50,
-        marginBottom: 100
     },
     bottombtntext: {
         color: "#fff",
@@ -172,14 +173,18 @@ const styles = StyleSheet.create({
     gifview: {
         zIndex: 100,
         position: "absolute",
-        bottom: "10%",
-        left: "50%",
-        transform: [{ translateX: -50 }, { translateY: -50 }]
+        top: 0,
+        left: 0,
+        width: "100%",
+        height: "90%",
+        backgroundColor: "transparent",
+        justifyContent: "center",
+        alignItems: "center"
     },
     scrollGif: {
         width: 120,
         height: 150,
-        transform: [{ rotateX: '180deg' }, { translateX: -15 }]
+        transform: [{ rotateX: '180deg' }]
     },
     ScrollText: {
         textTransform: "uppercase",

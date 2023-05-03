@@ -163,7 +163,6 @@ const styles = StyleSheet.create({
 
     Sections: {
         flexDirection: "row",
-        justifyContent: "space-between",
         alignItems: "center",
         gap: 5,
         padding: 10
@@ -181,11 +180,11 @@ const styles = StyleSheet.create({
         flexDirection: "column",
         gap: 10,
         justifyContent: "center",
-        width: Dimensions.get("window").width * 0.2
+        width: "250px"
     },
 
     videoTitle: {
-        fontSize: 12,
+        fontSize: 24,
         color: "#000",
         fontWeight: "bold"
     },
