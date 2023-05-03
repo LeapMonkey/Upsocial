@@ -80,9 +80,12 @@ const Onboarding = (props) => {
                             rate={1.0}
                             isLooping
                             volume={1.0}
+                            shouldPlay
                             useNativeControls
                             resizeMode={ResizeMode.STRETCH}
                             onPlaybackStatusUpdate={status => setStatus(() => status)}
+                            onLoad={() => { video.current.playAsync() }}
+                        // onFullscreenUpdate={setOrientation}
                         />
                         <View style={styles.gifview}>
                             <GestureRecognizer
