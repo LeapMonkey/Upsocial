@@ -71,9 +71,9 @@ const Profile = (props) => {
                     >
                         <View style={styles.subContainer}>
                             <View style={styles.backArrow}>
-                                <TouchableOpacity onPress={() => props.setflag("EditProfile")} style={{ flexDirection: "row", gap: 15, alignItems: "center" }}>
-                                    <Ionicons name="arrow-back-sharp" color="#fff" size={30} />
-                                    <Text style={{ fontSize: 24, color: "#fff" }} >Edit</Text>
+                                <TouchableOpacity onPress={() => props.setflag("EditProfile")} style={{ flexDirection: "row", gap: 5, alignItems: "center", justifyContent: "center" }}>
+                                    <Ionicons name="arrow-back-sharp" color="#fff" size={15} />
+                                    <Text style={{ fontSize: 15, color: "#fff" }} >Edit</Text>
                                 </TouchableOpacity>
                             </View>
                             <View style={styles.SubTitleView}>

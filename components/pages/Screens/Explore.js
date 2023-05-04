@@ -15,13 +15,13 @@ const Explore = (props) => {
                 tabBarActiveTintColor: '#000',
                 tabBarInactiveTintColor: 'gray',
                 tabBarLabelStyle: { fontSize: 12, color: "#fff", paddingHorizontal: 20, width: "100%", flexShrink: 1, whiteSpace: 'nowrap', paddingVertical: 10, borderRadius: 100, backgroundColor: '#5E1AD5' },
-                tabBarStyle: { backgroundColor: "#C2C2C2", alignItems: "left" },
+                tabBarStyle: { backgroundColor: "#f2f2F2", alignItems: "left" },
                 tabBarScrollEnabled: true,
             })}
         >
             <Tab.Screen name="Browse" options={{ tabBarItemStyle: { width: 150 } }} children={() => <Browse setName={setName} setvideoflag={props.setvideoflag} />} />
             <Tab.Screen name="Watch" options={{ tabBarItemStyle: { width: 150 } }} children={() => <Watch setName={setName} />} />
-            <Tab.Screen name="Animation" options={{ tabBarItemStyle: { width: 150 } }} children={() => <Watch setName={setName} />} />
+            {/* <Tab.Screen name="Animation" options={{ tabBarItemStyle: { width: 150 } }} children={() => <Watch setName={setName} />} />
             <Tab.Screen name="Autos & Vehicles" options={{ tabBarItemStyle: { width: 150 } }} children={() => <Watch setName={setName} />} />
             <Tab.Screen name="Beauty & Fashion" options={{ tabBarItemStyle: { width: 150 } }} children={() => <Watch setName={setName} />} />
             <Tab.Screen name="Comedy" options={{ tabBarItemStyle: { width: 150 } }} children={() => <Watch setName={setName} />} />
@@ -44,7 +44,7 @@ const Explore = (props) => {
             <Tab.Screen name="Sports" options={{ tabBarItemStyle: { width: 150 } }} children={() => <Watch setName={setName} />} />
             <Tab.Screen name="Travel & Events" options={{ tabBarItemStyle: { width: 150 } }} children={() => <Watch setName={setName} />} />
             <Tab.Screen name="Unboxing & Reviews" options={{ tabBarItemStyle: { width: 150 } }} children={() => <Watch setName={setName} />} />
-            <Tab.Screen name="Blogs" options={{ tabBarItemStyle: { width: 150 } }} children={() => <Watch setName={setName} />} />
+            <Tab.Screen name="Blogs" options={{ tabBarItemStyle: { width: 150 } }} children={() => <Watch setName={setName} />} /> */}
         </Tab.Navigator>
     );
 };

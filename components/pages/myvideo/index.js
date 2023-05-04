@@ -1,12 +1,35 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, Dimensions, TouchableOpacity, Image } from "react-native";
 import { apiURL } from "../../config/config";
+import { useMediaQuery } from "react-responsive";
 import { connect } from "react-redux";
 import axios from "axios";
 
 const MyVideos = (props) => {
 
     const [result, setResult] = useState([]);
+
+    // mobile and desktop variable for responsive
+    const isMobile = useMediaQuery({
+        query: "(max-device-width: 500px)"
+    });
+
+    const isTabletOrMobile = useMediaQuery({
+        query: "(min-device-width: 500px)"
+    });
+
+    const isTablet = useMediaQuery({
+        query: "(min-device-width: 768px)"
+    });
+
+    const isDesktop = useMediaQuery({
+        query: "(min-device-width: 1024px)"
+    });
+
+    const isWide = useMediaQuery({
+        query: "(min-device-width: 1441px)"
+    });
+    // end
 
     useEffect(() => {
         axios.post(apiURL + "/api/Upsocial/users/get/UploadedContent", { userEmail: props.auth.user.curUser }, {
@@ -28,7 +51,7 @@ const MyVideos = (props) => {
                 <View style={styles.board}>
                     {result && result.map((index, key) => {
                         return (
-                            <TouchableOpacity style={styles.mobileitemview} key={key} onPress={() => watchVideo(index)}>
+                            <TouchableOpacity style={isWide ? styles.wideitemview : isDesktop ? styles.desktopitemview : isTablet ? styles.tabletitemview : isTabletOrMobile ? styles.tabletormobileitemview : styles.mobileitemview} key={key} onPress={() => watchVideo(index)}>
                                 <View style={{ alignItems: 'center', width: "100%" }}>
                                     <Image source={{ uri: index.thumbnail }} style={{ width: "100%", height: Dimensions.get("window").height * 0.3, borderRadius: 12 }} />
                                     <Image source={require("../../../assets/logos/playvideo.png")} style={{ width: 50, height: 50, position: "absolute", top: "40%" }} />
@@ -86,11 +109,31 @@ const styles = StyleSheet.create({
         flexWrap: "wrap",
 
     },
+    wideitemview: {
+        alignItems: "center",
+        width: "20%",
+        padding: 10
+    },
     mobileitemview: {
         alignItems: "center",
         width: "50%",
         padding: 10,
-    }
+    },
+    tabletitemview: {
+        alignItems: "center",
+        width: "33%",
+        padding: 10
+    },
+    desktopitemview: {
+        alignItems: "center",
+        width: "25%",
+        padding: 10
+    },
+    tabletormobileitemview: {
+        alignItems: 'center',
+        width: "50%",
+        padding: 10
+    },
 });
 
 

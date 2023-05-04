@@ -55,6 +55,10 @@ const Browse = (props) => {
             "Access-Control-Allow-Origin": "*",
             'Access-Control-Allow-Headers': '*',
         }).then((res) => {
+            res.data.data.sort((a, b) => {
+                return new Date(b.postDate) - new Date(a.postDate);
+            });
+            console.log(res.data.data);
             setAlldata(res.data.data);
             setResult(res.data.data);
         }).catch((err) => {
@@ -92,7 +96,7 @@ const Browse = (props) => {
     const onSearch = (e) => {
         setSearchtext(e);
         var searchresult = alldata.filter((item) => {
-            return item.title.toLowerCase().indexOf(e.toLowerCase()) > -1 || item.category.toLowerCase().indexOf(e.toLowerCase()) > -1;
+            return item.title.toLowerCase().indexOf(e.toLowerCase()) > -1 || item.keyword.toLowerCase().includes(e.toLowerCase());
         });
         if (e === "") {
             setResult(alldata);
@@ -113,7 +117,7 @@ const Browse = (props) => {
                 volume={1.0}
                 shouldPlay
                 useNativeControls
-                resizeMode={ResizeMode.COVER}
+                resizeMode={ResizeMode.CONTAIN}
                 onPlaybackStatusUpdate={status => setStatus(() => status)}
             />
         </View>
@@ -144,21 +148,7 @@ const Browse = (props) => {
     };
 
     const renderHiddenItem = (data, rowMap) => (
-        <View style={styles.rowBack}>
-            {/* <TouchableOpacity style={[styles.backRightBtn, styles.backRightBtnLeft]} onPress={() => alert("I Liked!")}>
-                <View style={{ padding: 10, backgroundColor: "#0FA148", borderRadius: 50 }}>
-                    <Ionicons name="thumbs-up-outline" color="#fff" size={30} />
-                </View>
-            </TouchableOpacity>
-            <TouchableOpacity
-                style={[styles.backRightBtn, styles.backRightBtnRight]}
-                onPress={() => alert("I DISLIKED!")}
-            >
-                <View style={{ padding: 10, backgroundColor: "#EC4134", borderRadius: 50 }}>
-                    <Ionicons name="ios-thumbs-down-outline" color="#fff" size={30} />
-                </View>
-            </TouchableOpacity> */}
-        </View>
+        <View style={styles.rowBack}></View>
     );
 
     return (
@@ -208,7 +198,7 @@ const Browse = (props) => {
                 </TouchableOpacity>
             </View>
             {searchflag && <View style={styles.searchbar}>
-                <TextInput placeholder="search by title and tag" placeholderTextColor="#adb2b6"
+                <TextInput placeholder="search by title & Tags" placeholderTextColor="#adb2b6"
                     style={styles.TextInput} value={searchtext} onChangeText={(e) => onSearch(e)} />
             </View>}
             <ScrollView style={{ flex: 1 }}>
@@ -268,7 +258,7 @@ const styles = StyleSheet.create({
     },
     wideitemview: {
         alignItems: "center",
-        width: "50%",
+        width: "20%",
         padding: 10
     },
     topBarContainer: {

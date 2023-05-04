@@ -17,6 +17,7 @@ import axios from "axios";
 import { LinearGradient } from "expo-linear-gradient";
 import UploadLogo from "../upload/UploadLogo";
 import { apiURL } from "../../config/config";
+import Ionicons from "react-native-vector-icons/Ionicons";
 
 const EditProfile = (props) => {
     const [result, setResult] = useState([]);
@@ -94,6 +95,12 @@ const EditProfile = (props) => {
             colors={['#2ab4fad9', '#1D2145']}
             style={styles.container}
         >
+            <View style={{ height: 30, width: 30, position: "absolute", top: 5, left: 20 }}>
+                <TouchableOpacity onPress={() => props.setflag("Profile")} style={{ flexDirection: "row", gap: 5, alignItems: "center", justifyContent: "center" }}>
+                    <Ionicons name="arrow-back-sharp" color="#fff" size={15} />
+                    <Text style={{ fontSize: 15, color: "#fff" }} >Back</Text>
+                </TouchableOpacity>
+            </View>
             <View>
                 <Image source={require("../../../assets/logos/logo_wh.png")} style={{ height: 40, width: 230, marginTop: 10 }} />
             </View>

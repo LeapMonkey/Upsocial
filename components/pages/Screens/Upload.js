@@ -2,8 +2,7 @@ import React, { useState, useRef } from 'react';
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { LinearGradient } from 'expo-linear-gradient';
 import MultiSelect from "react-native-multiple-select";
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import { FontAwesome5, MaterialCommunityIcons } from 'react-native-vector-icons';
 import { ScrollView, StyleSheet, View, TouchableOpacity, Text, TextInput, Image, Dimensions } from 'react-native';
 import * as ImagePicker from "expo-image-picker";
 import * as VideoThumbnails from 'expo-video-thumbnails';
@@ -104,7 +103,8 @@ const Upload = (props) => {
         setTitle("");
         setDescription("");
         setKeyword("");
-        setCategory("");
+        setCategory([]);
+        setKeywords([]);
         setImage("");
         setVideoUri("");
         setName("");
@@ -137,7 +137,6 @@ const Upload = (props) => {
         let cid = "";
 
         await axios.post(apiURL + "/api/Upsocial/upload/generate-ipfs", VideoFormData, headers).then((res) => {
-            console.log(res.data.data.ipfsUrl);
             cid = res.data.data.ipfsUrl;
         }).catch((err) => {
             console.log(err);
@@ -163,7 +162,6 @@ const Upload = (props) => {
         });
 
         await axios.post(apiURL + "/api/Upsocial/upload/generate-ipfs", ThumbnailFormData, headers).then((res) => {
-            console.log(res.data.data.ipfsUrl);
             thumbnail = res.data.data.ipfsUrl;
         }).catch((err) => {
             console.log(err);
@@ -178,7 +176,6 @@ const Upload = (props) => {
             ipfsUrl: cid,
             thumbnail: thumbnail
         };
-        console.log(contentData);
         setHashCode(cid);
         let URL = `${cid}`;
         setURL(URL);
@@ -284,7 +281,6 @@ const Upload = (props) => {
             await axios.post(apiURL + "/api/Upsocial/upload/generate-ipfs", formData, headers)
                 .then((response) => {
                     if (response.data.data) {
-                        console.log(response.data.data);
                         cid = response.data.data.ipfsUrl;
                     } else {
                         console.log(response.data.error);
@@ -309,8 +305,6 @@ const Upload = (props) => {
             }
             let img_file = new File([u8arr], `${title}.jpg`, { type: mime });
 
-            console.log('thumbnail', img_file);
-
             let Thumbnail_formData = new FormData();
 
             Thumbnail_formData.append('thumbnail', img_file);
@@ -322,7 +316,6 @@ const Upload = (props) => {
             Thumbnail_formData.append('video_src', cid);
 
             await axios.post(apiURL + "/api/Upsocial/users/content/web/uploadContent", Thumbnail_formData, headers).then((res) => {
-                console.log(res.data);
                 if (res.data.status) {
                     setLoading(false);
                     setOpened(true);
@@ -366,18 +359,18 @@ const Upload = (props) => {
                             <Ionicons name="arrow-back-sharp" color="#000" size={30} />
                         </TouchableOpacity>
                     </View>
-                    <View style={{ flexDirection: "column", width: "100%", justifyContent: "center", alignItems: "center" }}>
+                    <View style={{ flexDirection: "column", width: "100%", padding: 20, justifyContent: "center", alignItems: "center" }}>
                         <View style={{ flexDirection: "column", width: "100%", justifyContent: "center", alignItems: "center" }}>
-                            <Text>HashCode: </Text>
-                            <Text>{hashCode}</Text>
+                            <Text style={{ fontSize: 20, color: "#3f29b2" }}>HashCode: </Text>
+                            <Text style={{ fontSize: 20 }}>{hashCode}</Text>
                         </View>
                         <View style={{ flexDirection: "column", width: "100%", justifyContent: "center", alignItems: "center" }}>
-                            <Text>url: </Text>
-                            <Text>{url}</Text>
+                            <Text style={{ fontSize: 20, color: "#3f29b2" }}>url: </Text>
+                            <Text style={{ fontSize: 20 }}>{url}</Text>
                         </View>
                         <View style={{ flexDirection: "column", width: "100%", justifyContent: "center", alignItems: "center" }}>
-                            <Text>embedCode: </Text>
-                            <Text>{embedCode}</Text>
+                            <Text style={{ fontSize: 20, color: "#3f29b2" }}>embedCode: </Text>
+                            <Text style={{ fontSize: 20 }}>{embedCode}</Text>
                         </View>
                     </View>
                 </View>
@@ -480,7 +473,7 @@ const Upload = (props) => {
                                     <View style={{ flexDirection: "row", gap: 20, width: "100%", flexWrap: "wrap" }}>
                                         {keywords.map((index, key) => {
                                             return (
-                                                <Text>{index}</Text>
+                                                <Text key={key}>{index}</Text>
                                             );
                                         })}
                                     </View>
@@ -496,7 +489,6 @@ const Upload = (props) => {
                                         selectedItems={selectedItems}
                                         selectText="Pick Categories"
                                         searchInputPlaceholderText="Search Items..."
-                                        onChangeInput={(text) => console.log(text)}
                                         flatListProps={{ nestedScrollEnabled: true }}
                                         nestedScrollEnabled={true}
                                         tagRemoveIconColor="#CCC"

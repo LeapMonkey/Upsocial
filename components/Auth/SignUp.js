@@ -108,7 +108,6 @@ const SignUP = (props) => {
     }
 
     const ValidatePassword = (e) => {
-        console.log(e, e.length)
         if (e.length >= 8) {
             setPass_length(true);
         } else {
