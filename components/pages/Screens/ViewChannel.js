@@ -1,11 +1,34 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, Image, StyleSheet, Dimensions, ScrollView, TouchableOpacity } from "react-native";
 import { MaterialCommunityIcons, Ionicons, Zocial } from "@expo/vector-icons";
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+import { connect } from "react-redux";
 import Videos from "../mock/Videos";
+import axios from "axios";
+import { apiURL } from "../../config/config";
 
 const Tab = createMaterialTopTabNavigator();
-const ViewChannel = () => {
+const ViewChannel = (props) => {
+
+    const [location, setLocation] = useState("");
+    const [channelName, setChannelName] = useState("");
+    const [handleName, setHandleName] = useState("");
+    const [handleURL, setHandleURL] = useState("");
+
+    useEffect(() => {
+        axios.post(apiURL + "/api/Upsocial/get/channel", { userEmail: props.auth.user.curUser }, {
+            "Access-Control-Allow-Origin": "*",
+            'Access-Control-Allow-Headers': '*',
+        }).then((res) => {
+            setLocation(res.data.channelData[0].location);
+            setChannelName(res.data.channelData[0].channelName);
+            setHandleName(res.data.channelData[0].handleUrl);
+            setHandleURL(res.data.channelData[0].url);
+        }).catch((err) => {
+            console.warn(err);
+        });
+    })
+
     return (
         <View style={styles.container}>
             <ScrollView style={{ flex: 1, zIndex: 1 }}>
@@ -21,7 +44,7 @@ const ViewChannel = () => {
                         <View style={styles.sectionLeft}>
                             <Image style={styles.avatar} source={require("../../../assets/girl.png")} />
                             <View style={styles.nameGroup}>
-                                <Text>Rachel Brown</Text>
+                                <Text>{channelName}</Text>
                                 <View style={styles.badgeGroup}>
                                     <Text style={styles.proBadge}>Pro</Text>
                                     <Text>Creator</Text>
@@ -36,19 +59,25 @@ const ViewChannel = () => {
                     <View style={styles.socialGroup}>
                         <View style={styles.location}>
                             <Ionicons name="location-outline" size={20} color="#000" />
-                            <Text>Los Angeles, CA</Text>
+                            <Text>{location}</Text>
                         </View>
                         <View style={styles.socialItems}>
-                            <MaterialCommunityIcons name="instagram" size={30} color="#7579ff" />
-                            <MaterialCommunityIcons name="facebook" size={30} color="#7579ff" />
-                            <Zocial name="youtube" size={30} color="#7579ff" />
+                            <TouchableOpacity>
+                                <MaterialCommunityIcons name="instagram" size={30} color="#7579ff" />
+                            </TouchableOpacity>
+                            <TouchableOpacity>
+                                <MaterialCommunityIcons name="facebook" size={30} color="#7579ff" />
+                            </TouchableOpacity>
+                            <TouchableOpacity>
+                                <Zocial name="youtube" size={30} color="#7579ff" />
+                            </TouchableOpacity>
                         </View>
                     </View>
                     <View style={styles.moreData}>
-                        <Text style={styles.handleId}>@Web3man</Text>
-                        <Text style={styles.handleUrl}>https://web3in5.com</Text>
+                        <Text style={styles.handleId}>{handleName}</Text>
+                        <Text style={styles.handleUrl}>{handleURL}</Text>
                     </View>
-                    <View style={styles.exploreSection}>
+                    {/* <View style={styles.exploreSection}>
                         <View style={styles.exploreTab}>
                             <Tab.Navigator
                                 screenOptions={({ route }) => ({
@@ -63,7 +92,7 @@ const ViewChannel = () => {
                                 <Tab.Screen name="About" options={{ tabBarItemStyle: { width: 100 } }} children={() => <Videos />} />
                             </Tab.Navigator>
                         </View>
-                    </View>
+                    </View> */}
                 </View>
             </ScrollView>
         </View>
@@ -80,9 +109,9 @@ const styles = StyleSheet.create({
     },
     section: {
         backgroundColor: "#fff",
-        width: Dimensions.get("window").width * 0.9,
-        height: Dimensions.get("window").height * 0.8,
-        marginHorizontal: Dimensions.get("window").width * 0.05,
+        width: "90%",
+        height: "80%",
+        marginHorizontal: "5%",
         position: "absolute",
         top: Dimensions.get("window").height * 0.2,
         borderRadius: 15,
@@ -186,4 +215,8 @@ const styles = StyleSheet.create({
     }
 });
 
-export default ViewChannel;
+const mapStateToProps = (state) => ({
+    auth: state.auth,
+});
+
+export default connect(mapStateToProps, {})(ViewChannel);

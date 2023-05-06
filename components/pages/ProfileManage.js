@@ -6,6 +6,7 @@ import Explore from './Screens/Explore';
 import MainProfile from './Profiles';
 import EditChannel from './Screens/EditChannel';
 import ViewChannel from './Screens/ViewChannel';
+import ChannelLists from './Screens/ChannelLists';
 import Upload from './Screens/Upload';
 import MyVideos from './myvideo';
 import CustomSidebarMenu from './Screens/CustomSidebarMenu';
@@ -26,6 +27,7 @@ const ProfileManage = () => {
                 <Drawer.Screen name='YourVideos' component={MyVideos} options={{ headerTintColor: "#fff", headerStyle: { backgroundColor: "#5E1DA6" }, headerTitleStyle: { color: "#fff", fontSize: 24 } }} />
                 <Drawer.Screen name='Your Channel' component={ViewChannel} options={{ headerTintColor: "#fff", headerStyle: { backgroundColor: "#5E1DA6" }, headerTitleStyle: { color: "#fff", fontSize: 24 } }} />
                 <Drawer.Screen name='Create Channel' component={EditChannel} options={{ headerTintColor: "#fff", headerStyle: { backgroundColor: "#5E1DA6" }, headerTitleStyle: { color: "#fff", fontSize: 24 } }} />
+                <Drawer.Screen name='Channel Lists' component={ChannelLists} options={{ headerTintColor: "#fff", headerStyle: { backgroundColor: "#5E1DA6" }, headerTitleStyle: { color: "#fff", fontSize: 24 } }} />
                 <Drawer.Screen name='Subscriptions' component={HomeScreen} options={{ headerTintColor: "#fff", headerStyle: { backgroundColor: "#5E1DA6" }, headerTitleStyle: { color: "#fff", fontSize: 24 } }} />
                 <Drawer.Screen name='Add a Video' component={Upload} options={{ headerTintColor: "#fff", headerStyle: { backgroundColor: "#5E1DA6" }, headerTitleStyle: { color: "#fff", fontSize: 24 } }} />
                 <Drawer.Screen name='History' component={HomeScreen} options={{ headerTintColor: "#fff", headerStyle: { backgroundColor: "#5E1DA6" }, headerTitleStyle: { color: "#fff", fontSize: 24 } }} />

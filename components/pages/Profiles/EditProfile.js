@@ -33,8 +33,6 @@ const EditProfile = (props) => {
     };
 
     const setimagefunc = (imagedata) => {
-        console.log(imagedata);
-        console.log(typeof imagedata);
         setUploadimagedata(imagedata);
     };
 

@@ -58,7 +58,6 @@ const Browse = (props) => {
             res.data.data.sort((a, b) => {
                 return new Date(b.postDate) - new Date(a.postDate);
             });
-            console.log(res.data.data);
             setAlldata(res.data.data);
             setResult(res.data.data);
         }).catch((err) => {

@@ -342,11 +342,8 @@ const Upload = (props) => {
             }).catch((err) => console.log(err));
         }
     }
-
-
     return (
         <ScrollView style={styles.container} nestedScrollEnabled={true}>
-
             <Modal
                 isVisible={opened}
                 animationIn={'slideInRight'}
@@ -375,7 +372,6 @@ const Upload = (props) => {
                     </View>
                 </View>
             </Modal>
-
             {loading && <View style={styles.loadingView}>
                 <Image
                     source={require("../../../assets/loading.gif")}
@@ -383,7 +379,6 @@ const Upload = (props) => {
                 />
             </View>
             }
-
             <View>
                 {image ? (
                     <Video

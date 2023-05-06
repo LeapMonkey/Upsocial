@@ -13,29 +13,46 @@ import {
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import UploadChannel from "../upload/UploadChannel";
+import { connect } from "react-redux";
+import { apiURL } from "../../config/config";
+import axios from "axios";
 
 const EditChannel = (props) => {
-    const [result, setResult] = useState([]);
-    const [isEnabled, setIsEnabled] = useState(false);
     const [channelName, setChannelName] = useState("");
     const [handleUrl, setHandleUrl] = useState("");
     const [aboutChannel, setAboutChannel] = useState("");
     const [location, setLocation] = useState("");
-    const [tags, setTags] = useState("");
     const [url, setUrl] = useState("");
-    const [date, setDate] = useState("");
-    const [description, setDescription] = useState("");
     const [uploadimagedata, setUploadimagedata] = useState(null);
-
-    const toggleSwitch = () => {
-        setIsEnabled((previousState) => !previousState);
-    };
 
     const setimagefunc = (imagedata) => {
         setUploadimagedata(imagedata);
     };
 
-    const uploadData = () => {
+    // tags
+    const [keyword, setKeyword] = useState("");
+    const [keywords, setKeywords] = useState([]);
+    // end
+
+    const addKeyword = (e) => {
+        if (e.nativeEvent.key == "Enter") {
+            if (keywords.length == 10) {
+                alert("Max keywords number is 10 !");
+                setKeyword("");
+                return;
+            } else {
+                var tempkeys = keyword.split(/\s*,\s*/);
+                if (tempkeys.length + keywords.length > 10) {
+                    alert("Max keywords number is 10 !");
+                } else {
+                    setKeywords(keywords => [...keywords, ...tempkeys]);
+                    setKeyword("");
+                }
+            }
+        }
+    };
+
+    const uploadData = async () => {
         if (uploadimagedata === null) {
             if (Platform.OS === "android") {
                 ToastAndroid.show("Please select Image!", ToastAndroid.SHORT);
@@ -76,7 +93,7 @@ const EditChannel = (props) => {
             } else {
                 AlertIOS.alert("Please input location!");
             }
-        } else if (tags.trim() === "") {
+        } else if (keywords.length == 0) {
             if (Platform.OS === "android") {
                 ToastAndroid.show("Please input at least 1 tag!", ToastAndroid.SHORT);
             } else if (Platform.OS === "web") {
@@ -94,12 +111,29 @@ const EditChannel = (props) => {
             }
         } else {
             let formdata = new FormData();
+            formdata.append("userEmail", props.auth.user.curUser);
             formdata.append("photo", uploadimagedata);
             formdata.append("channelName", channelName);
-            formdata.append("date", date);
-            formdata.append("user_id", props.auth.user.id);
-            formdata.append("description", description);
-            formdata.append("flag", isEnabled);
+            formdata.append("handleUrl", handleUrl);
+            formdata.append("aboutChannel", aboutChannel);
+            formdata.append("location", location);
+            formdata.append("tags", keywords);
+            formdata.append("url", url);
+
+            const headers = {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            };
+
+            await axios.post(apiURL + "/api/Upsocial/create/channel", formdata, headers).then((res) => {
+                console.log(res.data);
+                if (res.data.status) {
+                    alert("Creating Channel success !");
+                }
+            }).catch((error) => {
+                console.log(error);
+            })
+
         }
     };
 
@@ -125,7 +159,7 @@ const EditChannel = (props) => {
                         <TextInput
                             style={styles.TextInput}
                             placeholder="Channel Name"
-                            placeholderTextColor="#fff"
+                            placeholderTextColor="#adb2b6"
                             onChangeText={(e) => setChannelName(e)}
                         />
                     </View>
@@ -133,7 +167,7 @@ const EditChannel = (props) => {
                         <TextInput
                             style={styles.TextInput}
                             placeholder="URL Handle(Coming Soon)"
-                            placeholderTextColor="#fff"
+                            placeholderTextColor="#adb2b6"
                             onChangeText={(e) => setHandleUrl(e)}
                         />
                     </View>
@@ -141,7 +175,7 @@ const EditChannel = (props) => {
                         <TextInput
                             style={styles.TextInput}
                             placeholder="About the channel"
-                            placeholderTextColor="#fff"
+                            placeholderTextColor="#adb2b6"
                             multiline={true}
                             numberOfLines={4}
                             onChangeText={(e) => setAboutChannel(e)}
@@ -151,23 +185,32 @@ const EditChannel = (props) => {
                         <TextInput
                             style={styles.TextInput}
                             placeholder="Location (City, State)"
-                            placeholderTextColor="#fff"
+                            placeholderTextColor="#adb2b6"
                             onChangeText={(e) => setLocation(e)}
                         />
                     </View>
                     <View style={styles.inputView}>
                         <TextInput
+                            value={keyword}
+                            onKeyPress={(e) => addKeyword(e)}
                             style={styles.TextInput}
                             placeholder="Channel Tags (Up to 10)"
-                            placeholderTextColor="#fff"
-                            onChangeText={(e) => setTags(e)}
+                            placeholderTextColor="#adb2b6"
+                            onChangeText={(e) => setKeyword(e)}
                         />
+                    </View>
+                    <View style={{ flexDirection: "row", gap: 20, width: "100%", flexWrap: "wrap" }}>
+                        {keywords.map((index, key) => {
+                            return (
+                                <Text style={{ color: "#fff", fontSize: 24 }} key={key}>{index}</Text>
+                            );
+                        })}
                     </View>
                     <View style={styles.inputView}>
                         <TextInput
                             style={styles.TextInput}
                             placeholder="URL"
-                            placeholderTextColor="#fff"
+                            placeholderTextColor="#adb2b6"
                             onChangeText={(e) => setUrl(e)}
                         />
                     </View>
@@ -290,4 +333,8 @@ const styles = StyleSheet.create({
 });
 
 
-export default EditChannel
+const mapStateToProps = (state) => ({
+    auth: state.auth,
+});
+
+export default connect(mapStateToProps, {})(EditChannel);

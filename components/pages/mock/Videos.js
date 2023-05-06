@@ -1,6 +1,7 @@
 import React, { useRef, useState, useEffect } from "react";
-import { View, Text, StyleSheet, Dimensions, TouchableOpacity, ScrollView, SectionList, Share } from "react-native";
+import { View, Text, StyleSheet, Dimensions, TouchableOpacity, ScrollView, SectionList, Share, Image } from "react-native";
 import { Entypo, FontAwesome, MaterialIcons } from "@expo/vector-icons";
+import { useMediaQuery } from "react-responsive";
 import { Video, ResizeMode } from "expo-av";
 import Modal from "react-native-modal";
 import axios from "axios";
@@ -12,6 +13,28 @@ const Videos = () => {
     const [opened, setOpened] = useState(false);
     const [alldata, setAlldata] = useState([]);
     const [limit, setLimit] = useState(5);
+
+    // Responsive
+    const isMobile = useMediaQuery({
+        query: "(max-device-width: 500px)"
+    });
+
+    const isTabletOrMobile = useMediaQuery({
+        query: "(min-device-width: 500px)"
+    });
+
+    const isTablet = useMediaQuery({
+        query: "(min-device-width: 768px)"
+    });
+
+    const isDesktop = useMediaQuery({
+        query: "(min-device-width: 1024px)"
+    });
+
+    const isWide = useMediaQuery({
+        query: "(min-device-width: 1441px)"
+    });
+    // End
 
     const [currentItem, setItem] = useState(null);
 
@@ -29,8 +52,10 @@ const Videos = () => {
             "Access-Control-Allow-Origin": "*",
             'Access-Control-Allow-Headers': '*',
         }).then((res) => {
+            res.data.data.sort((a, b) => {
+                return new Date(b.postDate) - new Date(a.postDate);
+            });
             setAlldata(res.data.data);
-            console.log(res.data.data)
         }).catch((err) => {
             console.warn(err);
         });
@@ -93,40 +118,32 @@ const Videos = () => {
             <ScrollView style={{ flex: 1 }}>
                 <Text style={styles.title}>Videos</Text>
 
-                {alldata && alldata.map((index, key) => {
-                    return (
-                        <View style={styles.Sections} key={key}>
-                            <View style={styles.VideoSections}>
-                                <Video
-                                    ref={video}
-                                    videoStyle={{ position: 'relative', aspectRatio: 1 / 1 }}
-                                    style={{ width: Dimensions.get("window").width * 0.35 }}
-                                    source={{ uri: index.ipfsUrl }}
-                                    rate={1.0}
-                                    isLooping
-                                    volume={1.0}
-                                    useNativeControls
-                                    resizeMode={ResizeMode.STRETCH}
-                                    onPlaybackStatusUpdate={status => setStatus(() => status)}
-                                    onLoad={() => { video.current.playAsync() }}
-                                />
-                                <View style={styles.videoDetails}>
-                                    <Text style={styles.videoTitle}>{index.title}</Text>
-                                    <Text style={styles.review}>{index.description}</Text>
-                                    <Text style={styles.date}>15 hours ago</Text>
+                <View style={styles.board}>
+                    {alldata && alldata.map((index, key) => {
+                        return (
+                            <TouchableOpacity style={isWide ? styles.wideitemview : isDesktop ? styles.desktopitemview : isTablet ? styles.tabletitemview : isTabletOrMobile ? styles.tabletormobileitemview : styles.mobileitemview} key={key} onPress={() => watchVideo(index, key)}>
+                                <View style={{ alignItems: 'center', width: "100%" }}>
+                                    <Image source={{ uri: index.thumbnail }} style={{ width: "100%", height: Dimensions.get("window").height * 0.3, borderRadius: 12 }} />
+                                    <Image source={require("../../../assets/logos/playvideo.png")} style={{ width: 50, height: 50, position: "absolute", top: "40%" }} />
                                 </View>
-                            </View>
-                            <TouchableOpacity style={styles.MenuSections}
-                                onPress={() => {
-                                    setOpened(true);
-                                    setItem(index);
-                                }
-                                }>
-                                <Entypo name="dots-three-vertical" size={30} color="#000" />
+                                <View style={{ flexDirection: "row", justifyContent: "space-between", width: "80%" }}>
+                                    <View style={{ flexDirection: "column", gap: 3 }}>
+                                        <Text>{index.title}</Text>
+                                        <Text>{index.description}</Text>
+                                    </View>
+                                    <TouchableOpacity style={styles.MenuSections}
+                                        onPress={() => {
+                                            setOpened(true);
+                                            setItem(index);
+                                        }
+                                        }>
+                                        <Entypo name="dots-three-vertical" size={30} color="#000" />
+                                    </TouchableOpacity>
+                                </View>
                             </TouchableOpacity>
-                        </View>
-                    )
-                })}
+                        )
+                    })}
+                </View>
                 <TouchableOpacity style={styles.moreBtn}>
                     <FontAwesome name="caret-down" color="#000" size={30} />
                 </TouchableOpacity>
@@ -164,6 +181,7 @@ const styles = StyleSheet.create({
     Sections: {
         flexDirection: "row",
         alignItems: "center",
+        justifyContent: "space-between",
         gap: 5,
         padding: 10
     },
@@ -221,6 +239,37 @@ const styles = StyleSheet.create({
         borderColor: 'rgba(0, 0, 0, 0.1)',
         backgroundColor: "#fff",
         color: "#000"
+    },
+    board: {
+        width: "100%",
+        flexDirection: "row",
+        flexWrap: "wrap",
+
+    },
+    tabletormobileitemview: {
+        alignItems: 'center',
+        width: "50%",
+        padding: 10
+    },
+    mobileitemview: {
+        alignItems: "center",
+        width: "50%",
+        padding: 10,
+    },
+    tabletitemview: {
+        alignItems: "center",
+        width: "33%",
+        padding: 10
+    },
+    desktopitemview: {
+        alignItems: "center",
+        width: "25%",
+        padding: 10
+    },
+    wideitemview: {
+        alignItems: "center",
+        width: "20%",
+        padding: 10
     }
 });
 
