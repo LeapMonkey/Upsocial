@@ -24,6 +24,7 @@ const EditChannel = (props) => {
     const [location, setLocation] = useState("");
     const [url, setUrl] = useState("");
     const [uploadimagedata, setUploadimagedata] = useState(null);
+    const [loading, setLoading] = useState(false);
 
     const setimagefunc = (imagedata) => {
         setUploadimagedata(imagedata);
@@ -110,6 +111,7 @@ const EditChannel = (props) => {
                 AlertIOS.alert("Please input url!");
             }
         } else {
+            setLoading(true);
             let formdata = new FormData();
             formdata.append("userEmail", props.auth.user.curUser);
             formdata.append("photo", uploadimagedata);
@@ -128,10 +130,12 @@ const EditChannel = (props) => {
             await axios.post(apiURL + "/api/Upsocial/create/channel", formdata, headers).then((res) => {
                 console.log(res.data);
                 if (res.data.status) {
+                    setLoading(false);
                     alert("Creating Channel success !");
                 }
             }).catch((error) => {
                 console.log(error);
+                setLoading(false);
             })
 
         }
@@ -142,6 +146,12 @@ const EditChannel = (props) => {
             colors={['#2ab4fad9', '#1D2145']}
             style={styles.container}
         >
+            {loading && <View style={styles.loadingView}>
+                <Image
+                    source={require("../../../assets/loading.gif")}
+                    style={{ width: 140, height: 140 }}
+                />
+            </View>}
             <View>
                 <Image source={require("../../../assets/logos/logo_wh.png")} style={{ height: 40, width: 230, marginTop: 10 }} />
             </View>
@@ -329,6 +339,17 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         fontSize: 20,
         textAlign: "center",
+    },
+    loadingView: {
+        position: "absolute",
+        top: 0,
+        left: 0,
+        backgroundColor: "rgba(0, 0, 0, 0.6)",
+        width: "100%",
+        height: "100%",
+        justifyContent: "center",
+        alignItems: "center",
+        zIndex: 10000,
     },
 });
 

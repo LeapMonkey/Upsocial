@@ -377,8 +377,7 @@ const Upload = (props) => {
                     source={require("../../../assets/loading.gif")}
                     style={{ width: 140, height: 140 }}
                 />
-            </View>
-            }
+            </View>}
             <View>
                 {image ? (
                     <Video
