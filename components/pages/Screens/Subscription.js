@@ -72,6 +72,7 @@ const Subscription = (props) => {
                         </TouchableOpacity>
                     )
                 })}
+                {!result && <Text>No Data</Text>}
             </View>
             <View style={styles.feedSection}>
                 <Text style={styles.Followed}>Recommended Videos</Text>
@@ -90,6 +91,7 @@ const Subscription = (props) => {
                         </TouchableOpacity>
                     )
                 })}
+                {isEmpty(feeds) && <Text>No Data</Text>}
             </View>
         </View>
     );

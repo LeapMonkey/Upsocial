@@ -214,6 +214,7 @@ const Browse = (props) => {
                             </TouchableOpacity>
                         )
                     })}
+                    {!result && <Text>No Data</Text>}
                 </View>
                 <TouchableOpacity style={styles.btnLoad} onPress={() => setLimit(limit + 5)}>
                     <View style={styles.btnCover}>

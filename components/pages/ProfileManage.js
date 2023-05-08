@@ -3,6 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import HomeScreen from './Screens/HomeScreen';
 import Subscription from './Screens/Subscription';
+import Personalize from './Screens/Personalize';
 import Explore from './Screens/Explore';
 import MainProfile from './Profiles';
 import EditChannel from './Screens/EditChannel';
@@ -31,6 +32,7 @@ const ProfileManage = () => {
                 <Drawer.Screen name='Subscriptions' component={Subscription} options={{ headerTintColor: "#fff", headerStyle: { backgroundColor: "#5E1DA6" }, headerTitleStyle: { color: "#fff", fontSize: 24 } }} />
                 <Drawer.Screen name='Add a Video' component={Upload} options={{ headerTintColor: "#fff", headerStyle: { backgroundColor: "#5E1DA6" }, headerTitleStyle: { color: "#fff", fontSize: 24 } }} />
                 <Drawer.Screen name='History' component={HomeScreen} options={{ headerTintColor: "#fff", headerStyle: { backgroundColor: "#5E1DA6" }, headerTitleStyle: { color: "#fff", fontSize: 24 } }} />
+                <Drawer.Screen name='Personalize Feeds' component={Personalize} options={{ headerTintColor: "#fff", headerStyle: { backgroundColor: "#5E1DA6" }, headerTitleStyle: { color: "#fff", fontSize: 24 } }} />
             </Drawer.Navigator>
         </NavigationContainer>
     );
