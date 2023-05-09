@@ -14,6 +14,15 @@ import { apiURL } from "../../config/config";
 const Tab = createMaterialTopTabNavigator();
 const ViewChannel = (props) => {
 
+
+    useEffect(() => {
+        setLocation(props.channelDetail.location);
+        setChannelName(props.channelDetail.channelName);
+        setHandleName(props.channelDetail.handleUrl);
+        setHandleURL(props.channelDetail.url);
+        setChannelAdmin(props.channelDetail.email);
+    }, []);
+
     const [location, setLocation] = useState("");
     const [channelName, setChannelName] = useState("");
     const [handleName, setHandleName] = useState("");
@@ -145,7 +154,7 @@ const ViewChannel = (props) => {
             description: description,
             keyword: keywords,
             category: selectedItems,
-            userEmail: "kogutstt2@gmail.com", //props.auth.user.curUser
+            userEmail: props.auth.user.curUser,
             ipfsUrl: cid,
             thumbnail: thumbnail
         };
@@ -174,6 +183,7 @@ const ViewChannel = (props) => {
 
     // Reset function
     const resetValues = () => {
+        setThumbnails([]);
         setTitle("");
         setDescription("");
         setKeyword("");
@@ -181,6 +191,8 @@ const ViewChannel = (props) => {
         setKeywords([]);
         setImage("");
         setVideoUri("");
+        setChannelAdmin("");
+        setChannelName("");
         setName("");
         setType("");
 
@@ -272,15 +284,15 @@ const ViewChannel = (props) => {
             Thumbnail_formData.append('userEmail', props.auth.user.curUser);
             Thumbnail_formData.append('video_src', cid);
             Thumbnail_formData.append('channelAdmin', channelAdmin);
+            Thumbnail_formData.append('channelName', channelName);
             Thumbnail_formData.append('category', selectedItems);
             Thumbnail_formData.append('status', true);
 
             await axios.post(apiURL + "/api/Upsocial/uploadContents/channel", Thumbnail_formData, headers).then((res) => {
                 if (res.data.status) {
                     setLoading(false);
-                    setOpened(true);
-                    alert("Success");
                     resetValues();
+                    alert("Success");
                 } else {
                     setLoading(false);
                 }
@@ -291,33 +303,15 @@ const ViewChannel = (props) => {
         }
     };
 
-    useEffect(() => {
-        axios.post(apiURL + "/api/Upsocial/get/channel", { userEmail: props.auth.user.curUser }, {
-            "Access-Control-Allow-Origin": "*",
-            'Access-Control-Allow-Headers': '*',
-        }).then((res) => {
-            setLocation(res.data.channelData[0].location);
-            setChannelName(res.data.channelData[0].channelName);
-            setHandleName(res.data.channelData[0].handleUrl);
-            setHandleURL(res.data.channelData[0].url);
-            setChannelAdmin(res.data.channelData[0].email);
-        }).catch((err) => {
-            console.warn(err);
-        });
-    }, []);
-
     return (
         <View style={styles.container}>
             <ScrollView style={{ flex: 1, zIndex: 1 }}>
                 <Image source={require("../../../assets/background.png")} style={styles.background} />
                 <View style={styles.section}>
-                    <ScrollView>
-                        <View style={styles.statusbar}>
+                    <ScrollView style={{ gap: 10 }}>
+                        <TouchableOpacity style={styles.statusbar} onPress={() => props.setflag("MyChannel")}>
                             <Text style={styles.statusLabel}>{channelName}</Text>
-                            <View style={styles.logo}>
-                                <Image style={styles.logoImage} source={require("../../../assets/logos/web3icon.png")} />
-                            </View>
-                        </View>
+                        </TouchableOpacity>
                         <View style={styles.userinfo}>
                             <View style={styles.sectionLeft}>
                                 <Image style={styles.avatar} source={require("../../../assets/girl.png")} />
@@ -546,14 +540,13 @@ const styles = StyleSheet.create({
     section: {
         backgroundColor: "#fff",
         width: "90%",
-        height: "93%",
+        height: "90%",
         marginHorizontal: "5%",
         position: "absolute",
         top: "5%",
         borderRadius: 15,
         paddingHorizontal: 10,
         paddingVertical: 5,
-        gap: 15
     },
     statusbar: {
         flexDirection: "row"

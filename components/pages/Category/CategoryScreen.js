@@ -150,7 +150,7 @@ const CategoryScreen = () => {
                             </TouchableOpacity>
                         )
                     })}
-                    {result.length == 0 && <Text style={{ justifyContent: "center", alignItems: "center", width: "100%" }}>Null</Text>}
+                    {result.length == 0 && <Text style={{ justifyContent: "center", alignItems: "center", width: "100%" }}>No Data</Text>}
                 </View>
             </ScrollView >
         </View >

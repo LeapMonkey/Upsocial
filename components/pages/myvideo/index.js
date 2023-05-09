@@ -4,6 +4,7 @@ import { apiURL } from "../../config/config";
 import { useMediaQuery } from "react-responsive";
 import { connect } from "react-redux";
 import axios from "axios";
+import isEmpty from "../../config/is-empty";
 
 const MyVideos = (props) => {
 
@@ -61,6 +62,12 @@ const MyVideos = (props) => {
                             </TouchableOpacity>
                         )
                     })}
+                    {isEmpty(result) && (
+                        <View style={styles.nodataContainer}>
+                            <Text style={styles.nodata_title}>No Videos yet!</Text>
+                            <Text style={styles.nodata_content}>Explore the moments. Upload your Videos</Text>
+                        </View>
+                    )}
                 </View>
             </View>
         </View>
@@ -133,6 +140,24 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         width: "50%",
         padding: 10
+    },
+    nodataContainer: {
+        flexDirection: "column",
+        marginVertical: 20,
+        width: "100%",
+        alignItems: "center",
+        justifyContent: "center"
+    },
+    nodata_title: {
+        color: "#3f29b2",
+        fontSize: 20,
+        fontWeight: "bold",
+        marginVertical: 2
+    },
+    nodata_content: {
+        color: "#000",
+        marginVertical: 2,
+        fontSize: 14,
     },
 });
 

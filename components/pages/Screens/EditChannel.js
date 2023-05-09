@@ -132,6 +132,10 @@ const EditChannel = (props) => {
                 if (res.data.status) {
                     setLoading(false);
                     alert("Creating Channel success !");
+                    props.navigation.navigate("Channel Lists");
+                } else {
+                    setLoading(false);
+                    alert(res.data.msg);
                 }
             }).catch((error) => {
                 console.log(error);

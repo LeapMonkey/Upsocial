@@ -134,15 +134,15 @@ const Profile = (props) => {
                 <View style={styles.contentsBox}>
                     <View style={styles.statusSection}>
                         <View style={styles.likeStatus}>
-                            <Text style={styles.statusValue}>3436</Text>
+                            <Text style={styles.statusValue}>0</Text>
                             <Text style={styles.statusLabel}>Ups</Text>
                         </View>
                         <View style={styles.likeStatus}>
-                            <Text style={styles.statusValue}>522</Text>
+                            <Text style={styles.statusValue}>0</Text>
                             <Text style={styles.statusLabel}>Pins</Text>
                         </View>
                         <View style={styles.likeStatus}>
-                            <Text style={styles.statusValue}>324,093</Text>
+                            <Text style={styles.statusValue}>0</Text>
                             <Text style={styles.statusLabel}>Followers</Text>
                         </View>
                     </View>

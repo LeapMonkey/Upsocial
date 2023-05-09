@@ -4,7 +4,8 @@ import {
     View,
     StyleSheet,
     Image,
-    Text
+    Text,
+    TouchableOpacity
 } from 'react-native';
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
@@ -18,13 +19,13 @@ const CustomSidebarMenu = (props) => {
                     style={styles.sideMenuProfileIcon}
                 />
                 <View style={styles.headerBody}>
-                    <Text style={styles.username}>Rachel Brown</Text>
+                    <Text style={styles.username}>{props.userName}</Text>
                     <View style={styles.userDetail}>
                         <Text style={styles.proBadge}>Pro</Text>
                         <Text style={styles.userRole}>Creator</Text>
                         <View style={styles.review}>
                             <Text style={styles.reviewMark}>4.8</Text>
-                            <Ionicons name="add-circle-outline" color="#F58422" size={24} />
+                            <TouchableOpacity onPress={() => props.navigation.navigate("Add a Video")}><Ionicons name="add-circle-outline" color="#F58422" size={24} /></TouchableOpacity>
                         </View>
                     </View>
                 </View>
@@ -32,6 +33,9 @@ const CustomSidebarMenu = (props) => {
             <DrawerContentScrollView {...props} >
                 <DrawerItemList {...props} />
             </DrawerContentScrollView>
+            <TouchableOpacity style={styles.footer} onPress={() => props.navigation.toggleDrawer()}>
+                <Text style={{ color: "#fff", backgroundColor: "#fe2472", borderRadius: 5, paddingHorizontal: 10, fontSize: 20, }}>Close</Text>
+            </TouchableOpacity>
         </SafeAreaView>
     );
 }
@@ -40,6 +44,12 @@ const styles = StyleSheet.create({
     header: {
         backgroundColor: "#560057",
         height: 150,
+    },
+    footer: {
+        height: 50,
+        backgroundColor: "#560057",
+        justifyContent: "center",
+        alignItems: "center"
     },
     headerBody: {
         flexDirection: "column",

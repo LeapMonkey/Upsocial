@@ -11,7 +11,7 @@ const MainProfile = (props) => {
     }
 
     const viewall = () => {
-        props.navigation.navigate("YourVideos");
+        props.navigation.navigate("Your Videos");
     }
 
     return (

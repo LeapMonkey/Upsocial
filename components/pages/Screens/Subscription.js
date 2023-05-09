@@ -72,7 +72,12 @@ const Subscription = (props) => {
                         </TouchableOpacity>
                     )
                 })}
-                {!result && <Text>No Data</Text>}
+                {isEmpty(result) && (
+                    <View style={styles.nodataContainer}>
+                        <Text style={styles.nodata_title}>No Followed Channels yet!</Text>
+                        <Text style={styles.nodata_content}>Explore the moments. Follow channels in channel list!</Text>
+                    </View>
+                )}
             </View>
             <View style={styles.feedSection}>
                 <Text style={styles.Followed}>Recommended Videos</Text>
@@ -91,7 +96,12 @@ const Subscription = (props) => {
                         </TouchableOpacity>
                     )
                 })}
-                {isEmpty(feeds) && <Text>No Data</Text>}
+                {isEmpty(feeds) && (
+                    <View style={styles.nodataContainer}>
+                        <Text style={styles.nodata_title}>No Videos yet!</Text>
+                        <Text style={styles.nodata_content}>Explore the moments!</Text>
+                    </View>
+                )}
             </View>
         </View>
     );
@@ -177,6 +187,24 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         width: "50%",
         padding: 10
+    },
+    nodataContainer: {
+        flexDirection: "column",
+        marginVertical: 20,
+        width: "100%",
+        alignItems: "center",
+        justifyContent: "center"
+    },
+    nodata_title: {
+        color: "#3f29b2",
+        fontSize: 20,
+        fontWeight: "bold",
+        marginVertical: 2
+    },
+    nodata_content: {
+        color: "#000",
+        marginVertical: 2,
+        fontSize: 14,
     },
 });
 
