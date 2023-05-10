@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { connect } from "react-redux";
 import { ScrollView, View, Text, StyleSheet, Image, TextInput, Dimensions, TouchableOpacity, Share, TouchableHighlight } from 'react-native';
 import Modal from "react-native-modal";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -34,6 +35,8 @@ const Browse = (props) => {
 
     const [opened, setOpened] = useState(false);
     const [limit, setLimit] = useState(5);
+
+    const [videoId, setVideoId] = useState("");
 
     const [source, SetSource] = useState();
     const [status, setStatus] = useState({});
@@ -78,6 +81,8 @@ const Browse = (props) => {
     }, [limit]);
 
     const watchVideo = (videoData, key) => {
+        console.log(videoData.ID);
+        setVideoId(videoData.ID);
         setOpened(true);
         setVideoProps(videoData);
         SetSource({ uri: videoData.ipfsUrl });
@@ -123,25 +128,100 @@ const Browse = (props) => {
     );
 
     const handleReaction = async (e) => {
-        console.log(e.value)
-        if (e.value > 300 && confirm("You Like this video") == true) {
+        if (e.value > 300 && confirm("You DisLike this video") == true) {
             if (curIndex == result.length - 1) {
+                console.log("here 1", videoId);
                 SetSource({ uri: result[0].ipfsUrl });
+                setVideoId(0);
                 setCurIndex(0);
+                console.log(videoId, props.auth.user.curUser);
+                await axios.post(apiURL + "/api/Upsocial/users/content/dislike", { videoId: videoId, userEmail: props.auth.user.curUser }, {
+                    "Access-Control-Allow-Origin": "*",
+                    'Access-Control-Allow-Headers': '*',
+                }).then((res) => {
+                    console.log(res.data);
+                }).catch((err) => {
+                    console.warn(err);
+                });
+                await axios.post(apiURL + "/api/Upsocial/content/dislike", { videoId: videoId, userEmail: props.auth.user.curUser }, {
+                    "Access-Control-Allow-Origin": "*",
+                    'Access-Control-Allow-Headers': '*',
+                }).then((res) => {
+                    console.log(res.data);
+                }).catch((err) => {
+                    console.warn(err);
+                });
+                return;
             } else {
-                console.log("here 1")
+                console.log("here 2", videoId);
                 SetSource({ uri: result[curIndex + 1].ipfsUrl });
+                setVideoId(curIndex + 1);
                 setCurIndex(curIndex + 1);
+                console.log(videoId, props.auth.user.curUser);
+                await axios.post(apiURL + "/api/Upsocial/users/content/dislike", { videoId: videoId, userEmail: props.auth.user.curUser }, {
+                    "Access-Control-Allow-Origin": "*",
+                    'Access-Control-Allow-Headers': '*',
+                }).then((res) => {
+                    console.log(res.data);
+                }).catch((err) => {
+                    console.warn(err);
+                });
+                await axios.post(apiURL + "/api/Upsocial/content/dislike", { videoId: videoId, userEmail: props.auth.user.curUser }, {
+                    "Access-Control-Allow-Origin": "*",
+                    'Access-Control-Allow-Headers': '*',
+                }).then((res) => {
+                    console.log(res.data);
+                }).catch((err) => {
+                    console.warn(err);
+                });
+                return;
             }
         } else if (e.value < -300 && confirm("You Like this video") == true) {
             if (curIndex == result.length - 1) {
-                console.log("here 2")
+                console.log("here 3", videoId);
                 SetSource({ uri: result[0].ipfsUrl });
+                setVideoId(0);
                 setCurIndex(0);
+                console.log(videoId, props.auth.user.curUser);
+                await axios.post(apiURL + "/api/Upsocial/users/content/like", { videoId: videoId, userEmail: props.auth.user.curUser }, {
+                    "Access-Control-Allow-Origin": "*",
+                    'Access-Control-Allow-Headers': '*',
+                }).then((res) => {
+                    console.log(res.data);
+                }).catch((err) => {
+                    console.warn(err);
+                });
+                await axios.post(apiURL + "/api/Upsocial/content/like", { videoId: videoId, userEmail: props.auth.user.curUser }, {
+                    "Access-Control-Allow-Origin": "*",
+                    'Access-Control-Allow-Headers': '*',
+                }).then((res) => {
+                    console.log(res.data);
+                }).catch((err) => {
+                    console.warn(err);
+                });
+                return;
             } else {
-                console.log("here 2")
+                console.log("here 4", videoId);
                 SetSource({ uri: result[curIndex + 1].ipfsUrl });
+                setVideoId(curIndex + 1);
                 setCurIndex(curIndex + 1);
+                await axios.post(apiURL + "/api/Upsocial/users/content/like", { videoId: videoId, userEmail: props.auth.user.curUser }, {
+                    "Access-Control-Allow-Origin": "*",
+                    'Access-Control-Allow-Headers': '*',
+                }).then((res) => {
+                    console.log(res.data);
+                }).catch((err) => {
+                    console.warn(err);
+                });
+                await axios.post(apiURL + "/api/Upsocial/content/like", { videoId: videoId, userEmail: props.auth.user.curUser }, {
+                    "Access-Control-Allow-Origin": "*",
+                    'Access-Control-Allow-Headers': '*',
+                }).then((res) => {
+                    console.log(res.data);
+                }).catch((err) => {
+                    console.warn(err);
+                });
+                return;
             }
         }
     };
@@ -179,7 +259,7 @@ const Browse = (props) => {
                             previewRowKey={'0'}
                             previewOpenValue={-40}
                             previewOpenDelay={3000}
-                            onSwipeValueChange={async (e) => await handleReaction(e)}
+                            onSwipeValueChange={(e) => handleReaction(e)}
                         />
                     </View>
                 </View>
@@ -376,4 +456,8 @@ const styles = StyleSheet.create({
     }
 });
 
-export default Browse;
+const mapStateToProps = (state) => ({
+    auth: state.auth,
+});
+
+export default connect(mapStateToProps, {})(Browse);

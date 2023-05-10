@@ -11,6 +11,7 @@ const Subscription = (props) => {
     const [result, setResult] = useState([]);
     const [feeds, setFeeds] = useState([]);
 
+    const [subscribedFeed, setSubscribedFeed] = useState([]);
     // mobile and desktop variable for responsive
     const isMobile = useMediaQuery({
         query: "(max-device-width: 500px)"
@@ -33,18 +34,6 @@ const Subscription = (props) => {
     });
     // end
 
-    const changeCategoryItem = (itemname) => {
-        setchannelName(itemname);
-        const feeds = result.filter((item) => item.channelName == itemname);
-        console.log("feeds===>>", feeds[0].contents);
-        if (!isEmpty(feeds[0].contents)) {
-            feeds[0].contents.sort((a, b) => {
-                return new Date(b.postDate) - new Date(a.postDate);
-            });
-        }
-        setFeeds(feeds[0].contents);
-    };
-
     useEffect(() => {
         axios.post(apiURL + "/api/Upsocial/getAll/channels", {
             "Access-Control-Allow-Origin": "*",
@@ -52,7 +41,13 @@ const Subscription = (props) => {
         }).then((res) => {
             const result = res.data.channelData.filter((item) => item.followers.includes(props.auth.user.curUser));
             setResult(result);
+
+            var arrayP = result.map(o => o.contents);
+            var videofeeds = Object.values(arrayP.reduce(((r, c) => Object.assign(r, c)), {}));
+            setSubscribedFeed(videofeeds);
+
             console.log(result);
+            console.log(videofeeds);
         }).catch((err) => {
             console.warn(err);
         });
@@ -66,7 +61,7 @@ const Subscription = (props) => {
             <View style={styles.channelList}>
                 {result && result.map((index, key) => {
                     return (
-                        <TouchableOpacity key={key} style={channelName === index.channelName ? styles.active_categoryitem : styles.categoryitem} onPress={() => changeCategoryItem(index.channelName)}>
+                        <TouchableOpacity key={key} style={channelName === index.channelName ? styles.active_categoryitem : styles.categoryitem}>
                             <Image source={{ uri: index.photo }} style={{ width: 40, height: 40, borderRadius: 12 }} />
                             <Text style={channelName === index.channelName ? styles.active_categorytext : styles.categorytext}>{index.channelName}</Text>
                         </TouchableOpacity>
@@ -83,7 +78,7 @@ const Subscription = (props) => {
                 <Text style={styles.Followed}>Recommended Videos</Text>
             </View>
             <View style={styles.board}>
-                {!isEmpty(feeds) && feeds.map((index, key) => {
+                {!isEmpty(subscribedFeed) && subscribedFeed.map((index, key) => {
                     return (
                         <TouchableOpacity style={isWide ? styles.wideitemview : isDesktop ? styles.desktopitemview : isTablet ? styles.tabletitemview : isTabletOrMobile ? styles.tabletormobileitemview : styles.mobileitemview} key={key} onPress={() => watchVideo(index)}>
                             <View style={{ alignItems: 'center', width: "100%" }}>
@@ -96,7 +91,7 @@ const Subscription = (props) => {
                         </TouchableOpacity>
                     )
                 })}
-                {isEmpty(feeds) && (
+                {isEmpty(subscribedFeed) && (
                     <View style={styles.nodataContainer}>
                         <Text style={styles.nodata_title}>No Videos yet!</Text>
                         <Text style={styles.nodata_content}>Explore the moments!</Text>

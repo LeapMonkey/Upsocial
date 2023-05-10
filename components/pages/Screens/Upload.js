@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { connect } from "react-redux";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { LinearGradient } from 'expo-linear-gradient';
 import MultiSelect from "react-native-multiple-select";
@@ -9,14 +10,13 @@ import * as VideoThumbnails from 'expo-video-thumbnails';
 import { Video, ResizeMode } from "expo-av";
 import { ToastAndroid, Platform } from 'react-native';
 import axios from 'axios';
-import { apiURL, API_UPLOAD_URL } from '../../config/config';
-import { connect } from "react-redux";
+import { apiURL } from '../../config/config';
 import Modal from "react-native-modal";
 import { generateVideoThumbnails } from "@rajesh896/video-thumbnails-generator";
 
 const Upload = (props) => {
 
-    const [image, setImage] = useState();
+    const [image, setImage] = useState(null);
     const video = useRef(null);
     const [status, setStatus] = useState({});
     const [cameraStatus, requestPermission] = ImagePicker.useCameraPermissions();
@@ -29,8 +29,6 @@ const Upload = (props) => {
     const [videoUri, setVideoUri] = useState("");
     const [name, setName] = useState("");
     const [type, setType] = useState("");
-
-    const [cid, setCID] = useState("");
 
     const [loading, setLoading] = useState(false);
 
@@ -46,6 +44,9 @@ const Upload = (props) => {
     // Keys
     const [keyword, setKeyword] = useState("");
     const [keywords, setKeywords] = useState([]);
+
+    const [file, setFile] = useState({ file: null, error: '' });
+    const [thumbnails, setThumbnails] = useState([]);
 
     const addKeyword = (e) => {
         if (e.nativeEvent.key == "Enter") {
@@ -103,15 +104,16 @@ const Upload = (props) => {
         setTitle("");
         setDescription("");
         setKeyword("");
-        setCategory([]);
         setKeywords([]);
-        setImage("");
-        setVideoUri("");
-        setName("");
-        setType("");
+        setSelectedItems([]);
+        setThumbnails([]);
+        setFile({ file: null, error: '' });
+        setImage(null);
 
         if (Platform.OS === "android") {
             ToastAndroid.show("All values are cleared! Try again!", ToastAndroid.SHORT);
+        } else {
+            alert("All values are cleared! Try again!");
         }
     };
 
@@ -253,11 +255,6 @@ const Upload = (props) => {
         setType(type);
     };
 
-
-    const [file, setFile] = useState({ file: null, error: '' });
-    const [thumbnails, setThumbnails] = useState([]);
-
-
     const uploadVideoWeb = async () => {
         if (file.file) {
             setLoading(true);
@@ -277,6 +274,7 @@ const Upload = (props) => {
             let formData = new FormData();
 
             formData.append('video', data.file);
+            console.log('video', data.file);
 
             await axios.post(apiURL + "/api/Upsocial/upload/generate-ipfs", formData, headers)
                 .then((response) => {
@@ -314,6 +312,14 @@ const Upload = (props) => {
             Thumbnail_formData.append('category', selectedItems);
             Thumbnail_formData.append('userEmail', props.auth.user.curUser);
             Thumbnail_formData.append('video_src', cid);
+
+            console.log('thumbnail', img_file);
+            console.log('title', title);
+            console.log('description', description);
+            console.log('keywords', keywords);
+            console.log('category', selectedItems);
+            console.log('userEmail', props.auth.user.curUser);
+            console.log('video_src', cid);
 
             await axios.post(apiURL + "/api/Upsocial/users/content/web/uploadContent", Thumbnail_formData, headers).then((res) => {
                 if (res.data.status) {

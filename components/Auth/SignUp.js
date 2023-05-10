@@ -15,6 +15,8 @@ const SignUP = (props) => {
         query: "(min-device-width: 500px)"
     });
 
+    const [loading, setLoading] = useState(false);
+
     const [isLogin, SetIsLogin] = useState(false);
 
     // User Register
@@ -52,6 +54,7 @@ const SignUP = (props) => {
             }
         } else {
             e.preventDefault();
+            setLoading(true);
             const userData = {
                 username: username,
                 email: email,
@@ -66,10 +69,12 @@ const SignUP = (props) => {
                     if (Platform.OS === "android") {
                         ToastAndroid.show(res.data.msg, ToastAndroid.SHORT);
                     }
-                    SetIsLogin(true)
+                    SetIsLogin(true);
+                    setLoading(false);
                 })
                 .catch((err) => {
-                    console.error(err)
+                    console.error(err);
+                    setLoading(false);
                 });
         }
     }
@@ -136,6 +141,12 @@ const SignUP = (props) => {
             colors={['#2ab4fad9', '#1D2145']}
             style={styles.container}
         >
+            {loading && <View style={styles.loadingView}>
+                <Image
+                    source={require("../../assets/loading.gif")}
+                    style={{ width: 140, height: 140 }}
+                />
+            </View>}
             <View style={isDesktopOrLaptop ? styles.mainview : styles.responsiveview}>
                 {!isLogin && (<ScrollView style={styles.main}>
                     <View style={styles.logoView}>
@@ -282,6 +293,17 @@ const styles = StyleSheet.create({
     },
     responsiveview: {
         width: "100%",
+    },
+    loadingView: {
+        position: "absolute",
+        top: 0,
+        left: 0,
+        backgroundColor: "rgba(0, 0, 0, 0.6)",
+        width: "100%",
+        height: "100%",
+        justifyContent: "center",
+        alignItems: "center",
+        zIndex: 10000,
     },
     mainview: {
         width: 400
