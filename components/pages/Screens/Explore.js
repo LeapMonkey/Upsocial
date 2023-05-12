@@ -5,9 +5,6 @@ import Browse from "../Browse";
 
 const Tab = createMaterialTopTabNavigator();
 const Explore = (props) => {
-    const setName = (name) => {
-        props.setName(name);
-    };
 
     return (
         <Tab.Navigator
@@ -19,8 +16,10 @@ const Explore = (props) => {
                 tabBarScrollEnabled: true,
             })}
         >
-            <Tab.Screen name="Browse" options={{ tabBarItemStyle: { width: 150 } }} children={() => <Browse setName={setName} setvideoflag={props.setvideoflag} />} />
-            <Tab.Screen name="Watch" options={{ tabBarItemStyle: { width: 150 } }} children={() => <Watch setName={setName} />} />
+            <Tab.Screen name="NEWEST" options={{ tabBarItemStyle: { width: 150 } }} children={() => <Browse />} />
+            <Tab.Screen name="FOR ME" options={{ tabBarItemStyle: { width: 150 } }} children={() => <Browse />} />
+            <Tab.Screen name="SUBSCRIBED" options={{ tabBarItemStyle: { width: 150 } }} children={() => <Browse />} />
+            <Tab.Screen name="ANIMATION" options={{ tabBarItemStyle: { width: 150 } }} children={() => <Browse />} />
             {/* <Tab.Screen name="Animation" options={{ tabBarItemStyle: { width: 150 } }} children={() => <Watch setName={setName} />} />
             <Tab.Screen name="Autos & Vehicles" options={{ tabBarItemStyle: { width: 150 } }} children={() => <Watch setName={setName} />} />
             <Tab.Screen name="Beauty & Fashion" options={{ tabBarItemStyle: { width: 150 } }} children={() => <Watch setName={setName} />} />

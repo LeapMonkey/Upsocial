@@ -19,6 +19,8 @@ const SignUP = (props) => {
 
     const [isLogin, SetIsLogin] = useState(false);
 
+    const [forgotPassword, setForgotPassword] = useState(false);
+
     // User Register
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
@@ -32,6 +34,18 @@ const SignUP = (props) => {
     // User Login
     const [uEmail, setUEmail] = useState("");
     const [uPassword, setUPassword] = useState("");
+
+    //forgot password email
+    const [forEmail, setForEmail] = useState("");
+    const [codeFlag, setCodeFlag] = useState(false);
+    const [recoveryCode, setCode] = useState("");
+    const [verified, setVerified] = useState(false);
+    const [newPass, setNewPass] = useState("");
+    const [confirmPass, setConfirmPass] = useState("");
+
+    const ForgotPassword = () => {
+        setForgotPassword(true);
+    };
 
     const UserRegister = (e) => {
         if (username.trim() === "") {
@@ -106,6 +120,7 @@ const SignUP = (props) => {
         if (validate(e)) {
             setEmail(e);
             setUEmail(e);
+            setForEmail(e);
             setInvalid(true);
         } else {
             setInvalid(false);
@@ -133,6 +148,71 @@ const SignUP = (props) => {
 
         if (pass_length && pass_cap && pass_num) {
             setPassword(e);
+            setNewPass(e);
+            setConfirmPass(e);
+        }
+    }
+
+    const setRecoveryCode = (e) => {
+        setCode(e);
+    };
+
+    const GetCode = () => {
+        axios.post(apiURL + "/api/Upsocial/users/reset-password", { userEmail: forEmail }, {
+            "Access-Control-Allow-Origin": "*",
+            'Access-Control-Allow-Headers': '*',
+        }).then((res) => {
+            if (res.data.status) {
+                alert(res.data.msg);
+                setCodeFlag(true);
+            } else {
+                alert(res.data.msg);
+            }
+        }).catch((err) => {
+            console.warn(err);
+        });
+    };
+
+    const confirmCode = () => {
+        console.log(recoveryCode);
+        axios.post(apiURL + "/api/Upsocial/users/verify-code", { userEmail: forEmail, code: recoveryCode }, {
+            "Access-Control-Allow-Origin": "*",
+            'Access-Control-Allow-Headers': '*',
+        }).then((res) => {
+            console.log(res.data);
+            if (res.data.status) {
+                alert(res.data.msg);
+                setVerified(true);
+            } else {
+                alert(res.data.msg);
+                setCodeFlag(false);
+            }
+        }).catch((err) => {
+            console.warn(err);
+        });
+
+    };
+
+    const confirmNewPass = () => {
+        if (newPass == confirmPass) {
+            axios.post(apiURL + "/api/Upsocial/users/set-new-password", { userEmail: forEmail, password: newPass }, {
+                "Access-Control-Allow-Origin": "*",
+                'Access-Control-Allow-Headers': '*',
+            }).then((res) => {
+                if (res.data.status) {
+                    alert(res.data.msg);
+                    setCodeFlag(false);
+                    SetIsLogin(true);
+                    setVerified(false);
+                    setForgotPassword(false);
+                } else {
+                    alert(res.data.msg);
+                }
+            }).catch((err) => {
+                console.warn(err);
+            });
+        } else {
+            alert("Please input correct confirm password!")
         }
     }
 
@@ -148,7 +228,7 @@ const SignUP = (props) => {
                 />
             </View>}
             <View style={isDesktopOrLaptop ? styles.mainview : styles.responsiveview}>
-                {!isLogin && (<ScrollView style={styles.main}>
+                {!isLogin && !forgotPassword && (<ScrollView style={styles.main}>
                     <View style={styles.logoView}>
                         <Image
                             source={require("../../assets/logos/logo.png")}
@@ -228,7 +308,7 @@ const SignUP = (props) => {
                         </View>
                     </View>
                 </ScrollView>)}
-                {isLogin && (<ScrollView style={styles.main}>
+                {isLogin && !forgotPassword && (<ScrollView style={styles.main}>
                     <View style={styles.logoView}>
                         <Image
                             source={require("../../assets/logos/logo.png")}
@@ -253,7 +333,7 @@ const SignUP = (props) => {
                                 style={styles.TextInput} />
                         </View>
                         <View style={styles.RouteView}>
-                            <TouchableOpacity style={styles.forgotLabel}>
+                            <TouchableOpacity style={styles.forgotLabel} onPress={() => ForgotPassword()}>
                                 <Text style={styles.routetext}>Forgot Password?</Text>
                             </TouchableOpacity>
                         </View>
@@ -275,6 +355,98 @@ const SignUP = (props) => {
                             </View>
                             <TouchableOpacity onPress={() => SetIsLogin(false)}>
                                 <Text style={styles.routetext}>SIGN UP</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </ScrollView>)}
+                {forgotPassword && !codeFlag && (<ScrollView style={styles.main}>
+                    <View style={styles.logoView}>
+                        <Image
+                            source={require("../../assets/logos/logo.png")}
+                            style={styles.logoImage}
+                        />
+                    </View>
+                    <View style={styles.CreateAccountView}>
+                        <TouchableOpacity onPress={() => setForgotPassword(false)}>
+                            <Ionicons name="md-chevron-back" color="#fff" size={24} />
+                        </TouchableOpacity>
+                        <Text style={styles.create_account_title}>Forgot Password</Text>
+                    </View>
+                    <View style={styles.TextGroupView}>
+                        <View style={styles.TextView}>
+                            <TextInput placeholder="Email" placeholderTextColor="#adb2b6" onChangeText={(e) => ValidateEmail(e)}
+                                style={styles.TextInput} />
+                            {!invalid && <Text style={{ color: "red" }}>Invalid Email Address!</Text>}
+                        </View>
+                        <View style={styles.RouteView}>
+                            <TouchableOpacity style={styles.forgotLabel} onPress={() => setForgotPassword(false)}>
+                                <Text style={styles.routetext}>Return to Login</Text>
+                            </TouchableOpacity>
+                        </View>
+                        <View style={styles.TextView}>
+                            <TouchableOpacity style={styles.regbtn} onPress={GetCode}>
+                                <Text style={styles.regbtntext}>Get Code</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </ScrollView>)}
+                {codeFlag && !verified && (<ScrollView style={styles.main}>
+                    <View style={styles.logoView}>
+                        <Image
+                            source={require("../../assets/logos/logo.png")}
+                            style={styles.logoImage}
+                        />
+                    </View>
+                    <View style={styles.CreateAccountView}>
+                        <TouchableOpacity onPress={() => setCodeFlag(false)}>
+                            <Ionicons name="md-chevron-back" color="#fff" size={24} />
+                        </TouchableOpacity>
+                        <Text style={styles.create_account_title}>Input Recovery Code</Text>
+                    </View>
+                    <View style={styles.TextGroupView}>
+                        <View style={styles.TextView}>
+                            <TextInput placeholder="Recovery Code" placeholderTextColor="#adb2b6" style={styles.TextInput} onChangeText={(e) => setRecoveryCode(e)} />
+                        </View>
+                        <View style={styles.TextView}>
+                            <TouchableOpacity style={styles.regbtn} onPress={confirmCode}>
+                                <Text style={styles.regbtntext}>Confirm</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </ScrollView>)}
+                {verified && (<ScrollView style={styles.main}>
+                    <View style={styles.logoView}>
+                        <Image
+                            source={require("../../assets/logos/logo.png")}
+                            style={styles.logoImage}
+                        />
+                    </View>
+                    <View style={styles.CreateAccountView}>
+                        <TouchableOpacity onPress={() => setCodeFlag(false)}>
+                            <Ionicons name="md-chevron-back" color="#fff" size={24} />
+                        </TouchableOpacity>
+                        <Text style={styles.create_account_title}>Reset your Password</Text>
+                    </View>
+                    <View style={styles.TextGroupView}>
+                        <View style={styles.TextView}>
+                            <TextInput placeholder="New Password" placeholderTextColor="#adb2b6"
+                                secureTextEntry={true}
+                                style={pass_length && pass_num && pass_cap ? styles.TextInput : styles.Error_TextInput} onChangeText={(e) => ValidatePassword(e)} />
+                            {!pass_length && <Text style={{ color: "red", fontSize: 16 }}>Password has more than 8 characters!</Text>}
+                            {!pass_num && <Text style={{ color: "red", fontSize: 16 }}>Password has a number!</Text>}
+                            {!pass_cap && <Text style={{ color: "red", fontSize: 16 }}>Password has a capital letter!</Text>}
+                        </View>
+                        <View style={styles.TextView}>
+                            <TextInput placeholder="Confirm Password" placeholderTextColor="#adb2b6"
+                                secureTextEntry={true}
+                                style={pass_length && pass_num && pass_cap ? styles.TextInput : styles.Error_TextInput} onChangeText={(e) => ValidatePassword(e)} />
+                            {!pass_length && <Text style={{ color: "red", fontSize: 16 }}>Password has more than 8 characters!</Text>}
+                            {!pass_num && <Text style={{ color: "red", fontSize: 16 }}>Password has a number!</Text>}
+                            {!pass_cap && <Text style={{ color: "red", fontSize: 16 }}>Password has a capital letter!</Text>}
+                        </View>
+                        <View style={styles.TextView}>
+                            <TouchableOpacity style={styles.regbtn} onPress={confirmNewPass}>
+                                <Text style={styles.regbtntext}>Confirm</Text>
                             </TouchableOpacity>
                         </View>
                     </View>

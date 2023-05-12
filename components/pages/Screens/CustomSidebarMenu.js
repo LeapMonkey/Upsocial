@@ -14,10 +14,16 @@ const CustomSidebarMenu = (props) => {
     return (
         <SafeAreaView style={{ flex: 1 }}>
             <View style={styles.header}>
-                <Image
-                    source={require("../../../assets/logos/logo_wh.png")}
-                    style={styles.sideMenuProfileIcon}
-                />
+                <View style={styles.topSection}>
+                    <Image
+                        source={require("../../../assets/girl.png")}
+                        style={styles.sideMenuUserIcon}
+                    />
+                    <Image
+                        source={require("../../../assets/logos/logo_wh.png")}
+                        style={styles.sideMenuProfileIcon}
+                    />
+                </View>
                 <View style={styles.headerBody}>
                     <Text style={styles.username}>{props.userName}</Text>
                     <View style={styles.userDetail}>
@@ -44,6 +50,7 @@ const styles = StyleSheet.create({
     header: {
         backgroundColor: "#560057",
         height: 150,
+        paddingVertical: 10,
     },
     footer: {
         height: 50,
@@ -85,10 +92,20 @@ const styles = StyleSheet.create({
         color: "white",
         fontSize: 30
     },
+    topSection: {
+        flexDirection: "row",
+        justifyContent: "center",
+        alignItems: "center"
+    },
+    sideMenuUserIcon: {
+        resizeMode: 'contain',
+        width: '35%',
+        height: 40,
+    },
     sideMenuProfileIcon: {
         resizeMode: 'contain',
-        width: '95%',
-        height: 60,
+        width: '55%',
+        height: 40,
     }
 });
 
