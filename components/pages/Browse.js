@@ -8,6 +8,7 @@ import axios from 'axios';
 import { apiURL } from '../config/config';
 import { Video, ResizeMode, Audio, InterruptionModeAndroid, InterruptionModeIOS } from "expo-av";
 import { useMediaQuery } from "react-responsive";
+import isEmpty from '../config/is-empty';
 
 const Browse = (props) => {
     const isMobile = useMediaQuery({
@@ -294,7 +295,12 @@ const Browse = (props) => {
                             </TouchableOpacity>
                         )
                     })}
-                    {!result && <Text>No Data</Text>}
+                    {isEmpty(result) && (
+                        <View style={styles.nodataContainer}>
+                            <Text style={styles.nodata_title}>No Videos yet!</Text>
+                            <Text style={styles.nodata_content}>Upload your first video!</Text>
+                        </View>
+                    )}
                 </View>
                 <TouchableOpacity style={styles.btnLoad} onPress={() => setLimit(limit + 5)}>
                     <View style={styles.btnCover}>
@@ -453,7 +459,25 @@ const styles = StyleSheet.create({
     backRightBtnRight: {
         backgroundColor: '#000',
         right: 0,
-    }
+    },
+    nodataContainer: {
+        flexDirection: "column",
+        marginVertical: 20,
+        width: "100%",
+        alignItems: "center",
+        justifyContent: "center"
+    },
+    nodata_title: {
+        color: "#3f29b2",
+        fontSize: 20,
+        fontWeight: "bold",
+        marginVertical: 2
+    },
+    nodata_content: {
+        color: "#000",
+        marginVertical: 2,
+        fontSize: 14,
+    },
 });
 
 const mapStateToProps = (state) => ({

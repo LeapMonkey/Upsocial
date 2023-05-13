@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import { TextInput, StyleSheet, View, Text, Image, ScrollView, TouchableOpacity } from "react-native";
+import { TextInput, StyleSheet, View, Text, Image, ScrollView, TouchableOpacity, Dimensions } from "react-native";
 import { connect } from "react-redux";
 import { loginUser } from "../Actions/authAction";
 import axios from "axios";
@@ -472,7 +472,7 @@ const styles = StyleSheet.create({
         left: 0,
         backgroundColor: "rgba(0, 0, 0, 0.6)",
         width: "100%",
-        height: "100%",
+        height: Dimensions.get('window').height,
         justifyContent: "center",
         alignItems: "center",
         zIndex: 10000,

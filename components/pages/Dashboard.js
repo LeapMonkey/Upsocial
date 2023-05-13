@@ -3,7 +3,7 @@ import Onboarding from './Onboarding';
 import SignUp from '../Auth/SignUp';
 
 const Dashboard = () => {
-    const [routeflag, setRouteflag] = useState("SignUp");
+    const [routeflag, setRouteflag] = useState("onboarding");
 
     const setflag = (flag) => {
         setRouteflag(flag);

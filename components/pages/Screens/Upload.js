@@ -4,10 +4,12 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import { LinearGradient } from 'expo-linear-gradient';
 import MultiSelect from "react-native-multiple-select";
 import { FontAwesome5, MaterialCommunityIcons } from 'react-native-vector-icons';
-import { ScrollView, StyleSheet, View, TouchableOpacity, Text, TextInput, Image, Dimensions } from 'react-native';
+import { ScrollView, StyleSheet, View, TouchableOpacity, Text, TextInput, Image, Button, Dimensions } from 'react-native';
 import * as ImagePicker from "expo-image-picker";
 import * as VideoThumbnails from 'expo-video-thumbnails';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { Video, ResizeMode } from "expo-av";
+import { QRCodeCanvas } from "qrcode.react";
 import { ToastAndroid, Platform } from 'react-native';
 import axios from 'axios';
 import { apiURL } from '../../config/config';
@@ -17,6 +19,8 @@ import { generateVideoThumbnails } from "@rajesh896/video-thumbnails-generator";
 const Upload = (props) => {
 
     const [image, setImage] = useState(null);
+    const [email, setEmail] = useState('');
+    const [showQRCode, setShowQRCode] = useState(false);
     const video = useRef(null);
     const [status, setStatus] = useState({});
     const [cameraStatus, requestPermission] = ImagePicker.useCameraPermissions();
@@ -35,7 +39,7 @@ const Upload = (props) => {
     const [hashCode, setHashCode] = useState("");
     const [url, setURL] = useState("");
     const [embedCode, setEmbedCode] = useState("");
-    const [opened, setOpened] = useState(false);
+    const [opened, setOpened] = useState(true);
 
     // multi select options
     const [selectedItems, setSelectedItems] = useState([]);
@@ -348,6 +352,33 @@ const Upload = (props) => {
             }).catch((err) => console.log(err));
         }
     }
+
+    const onShareSocial = (type) => {
+        let shareUrl = ''
+        if (type === 'whatsapp') {
+            shareUrl = `https://api.whatsapp.com/send?text=${url}`;
+        } else if (type === 'facebook') {
+            shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
+        } else if (type === 'twitter') {
+            shareUrl = `https://twitter.com/share?url=${url}`;
+        } else if (type === 'wordpress') {
+            shareUrl = `https://upsocial.com/wp/v2/posts?url=${url}`;
+        }
+        window.open(shareUrl, '_blank');
+    }
+    const onGenerateQRCode = () => {
+        setShowQRCode(true);
+    }
+
+    const onCloseQRCode = () => {
+        setShowQRCode(false);
+    }
+
+
+    const onNotify = () => {
+
+    }
+
     return (
         <ScrollView style={styles.container} nestedScrollEnabled={true}>
             <Modal
@@ -356,27 +387,85 @@ const Upload = (props) => {
                 animationOut={'slideOutRight'}
                 style={{ margin: 0, padding: 0 }}
             >
-                <View style={styles.videopage}>
-                    <View style={{ flexDirection: "row", justifyContent: "space-between", width: "100%", alignItems: "center", position: 'absolute', top: 0, left: 0, zIndex: 1000000 }}>
-                        <TouchableOpacity onPress={() => setOpened(false)}>
-                            <Ionicons name="arrow-back-sharp" color="#000" size={30} />
-                        </TouchableOpacity>
+                {showQRCode ? (
+                    <View style={styles.qrCodeDialogWrapper}>
+                        <div style={styles.qrCodeDialog}>
+                            <img style={styles.closeImage} source={require("../../../assets/modal/icon_close.png")} onClick={onCloseQRCode} />
+                            <QRCodeCanvas
+                                id="qrCode"
+                                value={url}
+                                size={300}
+                                bgColor={"#ffffff"}
+                                level={"H"}
+                            />
+                        </div>
                     </View>
-                    <View style={{ flexDirection: "column", width: "100%", padding: 20, justifyContent: "center", alignItems: "center" }}>
-                        <View style={{ flexDirection: "column", width: "100%", justifyContent: "center", alignItems: "center" }}>
-                            <Text style={{ fontSize: 20, color: "#3f29b2" }}>HashCode: </Text>
-                            <Text style={{ fontSize: 20 }}>{hashCode}</Text>
+                ) : (
+                    <View style={styles.videopage}>
+                        <View style={{ flexDirection: "row", justifyContent: "space-between", width: "100%", alignItems: "center", position: 'absolute', top: 0, left: 0, zIndex: 1000000 }}>
+                            <TouchableOpacity onPress={() => setOpened(false)}>
+                                <Ionicons name="arrow-back-sharp" color="#000" size={30} />
+                            </TouchableOpacity>
                         </View>
-                        <View style={{ flexDirection: "column", width: "100%", justifyContent: "center", alignItems: "center" }}>
-                            <Text style={{ fontSize: 20, color: "#3f29b2" }}>url: </Text>
-                            <Text style={{ fontSize: 20 }}>{url}</Text>
+                        <View style={styles.inputWrapper}>
+                            <Text style={styles.labelText}>Your shareable URL:</Text>
+                            <View style={styles.rowCenter}>
+                                <TextInput
+                                    style={styles.urlInput}
+                                    type={'text'}
+                                    value={url}
+                                    editable={false}
+                                />
+                                <CopyToClipboard text={url}
+                                    onCopy={() => console.log('copied')}>
+                                    <Image style={styles.actionImage} source={require("../../../assets/modal/icon_copy_link.png")} />
+                                </CopyToClipboard>
+                            </View>
+                            <View style={styles.codeWrapper}>
+                                <Text style={styles.labelText}>Your Embed Code</Text>
+                                <View style={[styles.rowCenter, { width: "100% !important" }]}>
+                                    <TextInput
+                                        style={styles.urlInput}
+                                        multiline={true}
+                                        numberOfLines={5}
+                                        type={'textarea'}
+                                        value={embedCode}
+                                        editable={false}
+                                    />
+                                    <View style={styles.actionsWrapper}>
+                                        <CopyToClipboard text={embedCode}
+                                            onCopy={() => console.log('copied')}>
+                                            <Image style={styles.actionImage} source={require("../../../assets/modal/icon_copy_link.png")} />
+                                        </CopyToClipboard>
+                                        <Image style={styles.actionImage} source={require("../../../assets/modal/icon_wordpress.png")} onClick={() => onShareSocial('wordpress')} />
+                                        <Image style={styles.actionImage} source={require("../../../assets/modal/icon_facebook.png")} onClick={() => onShareSocial('facebook')} />
+                                        <Image style={styles.actionImage} source={require("../../../assets/modal/icon_twitter.png")} onClick={() => onShareSocial('twitter')} />
+                                        <Image style={styles.actionImage} source={require("../../../assets/modal/icon_whatsapp.png")} onClick={() => onShareSocial('whatsapp')} />
+                                        <Image style={styles.actionImage} source={require("../../../assets/modal/icon_chat.png")} />
+                                        {/* <Image style={styles.actionImage} source={require("../../../assets/modal/icon_qr_code.png")} onClick={onGenerateQRCode} /> */}
+                                    </View>
+                                </View>
+                            </View>
+                            <View style={styles.soonWrapper}>
+                                <Text style={styles.labelText}>Coming Soon!</Text>
+                                <Text style={styles.descriptionText}>Want to automatically backup all new videos posted to your youtube channel forever?</Text>
+                                <TextInput
+                                    style={styles.urlInput}
+                                    type={'text'}
+                                    value={email}
+                                    onChange={(text) => setEmail(email)}
+                                />
+                            </View>
+                            <View style={styles.rowCenter}>
+                                <Button
+                                    style={styles.button}
+                                    title={'Notify Me'}
+                                    disabled={true}
+                                    onClick={onNotify}
+                                />
+                            </View>
                         </View>
-                        <View style={{ flexDirection: "column", width: "100%", justifyContent: "center", alignItems: "center" }}>
-                            <Text style={{ fontSize: 20, color: "#3f29b2" }}>embedCode: </Text>
-                            <Text style={{ fontSize: 20 }}>{embedCode}</Text>
-                        </View>
-                    </View>
-                </View>
+                    </View>)}
             </Modal>
             {loading && <View style={styles.loadingView}>
                 <Image
@@ -712,6 +801,84 @@ const styles = StyleSheet.create({
         paddingHorizontal: 30,
         position: "relative",
         overflow: "hidden"
+    },
+    inputWrapper: {
+        marginTop: 20,
+        width: "100%",
+        justifyContent: "center",
+        alignItems: "center"
+    },
+    labelText: {
+        fontSize: 16,
+        fontWeight: 600,
+        color: 'rgb(51, 51, 51)',
+        textAlign: 'center',
+        marginBottom: 10
+    },
+    rowCenter: {
+        flex: 1,
+        width: "50%",
+        flexDirection: "row",
+        justifyContent: "center",
+        alignItems: "center"
+    },
+    urlInput: {
+        flexGrow: 1,
+        marginRight: 10,
+        width: '100%'
+    },
+    actionsWrapper: {
+        flexDirection: 'column',
+        justifyContent: 'center'
+    },
+    actionImage: {
+        width: 24,
+        height: 24,
+        marginBottom: 10
+    },
+    codeWrapper: {
+        width: "50%",
+        marginTop: 40
+    },
+    soonWrapper: {
+        marginTop: 20,
+        marginBottom: 20
+    },
+    descriptionText: {
+        fontSize: 15,
+        textAlign: 'center',
+        marginBottom: 10
+    },
+    button: {
+        marginTop: 30,
+        marginLeft: 'auto',
+        marginRight: 'auto'
+    },
+    qrCodeDialogWrapper: {
+        position: 'fixed',
+        width: '100%',
+        height: '100%',
+        backgroundColor: 'rgba(0, 0, 0, 0.1)',
+        left: 0,
+        top: 0,
+    },
+    qrCodeDialog: {
+        position: 'absolute',
+        maxWidth: 330,
+        maxHeight: 360,
+        padding: 15,
+        borderRadius: 5,
+        left: '50%',
+        top: '50%',
+        transform: 'translate(-50%, -50%)',
+        textAlign: 'right',
+        backgroundColor: 'white'
+    },
+    closeImage: {
+        width: 15,
+        height: 15,
+        marginBottom: 10,
+        marginLeft: 'auto'
     }
 });
 
