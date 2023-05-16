@@ -31,6 +31,8 @@ const Browse = (props) => {
         query: "(min-device-width: 1441px)"
     });
 
+    const [loading, setLoading] = useState(false);
+
     const [alldata, setAlldata] = useState([]);
     const [result, setResult] = useState([]);
 
@@ -55,6 +57,13 @@ const Browse = (props) => {
     );
 
     useEffect(() => {
+        window.addEventListener('scroll', function (event) {
+            console.log(event.target);
+            console.log("hi");
+        });
+    })
+
+    useEffect(() => {
         axios.post(apiURL + "/api/Upsocial/users/getAll/UploadedContent", { limit: limit }, {
             "Access-Control-Allow-Origin": "*",
             'Access-Control-Allow-Headers': '*',
@@ -64,8 +73,10 @@ const Browse = (props) => {
             });
             setAlldata(res.data.data);
             setResult(res.data.data);
+            setLoading(false);
         }).catch((err) => {
             console.warn(err);
+            setLoading(false);
         });
     }, [limit]);
 
@@ -231,6 +242,25 @@ const Browse = (props) => {
         <View style={styles.rowBack}></View>
     );
 
+    const [scrollVal, setScrollVal] = useState(0);
+    const [viewVal, setViewVal] = useState(0);
+
+    const find_dimesions = (layout) => {
+        const { height } = layout;
+        setViewVal(height);
+    }
+    const find_scroll = (layout) => {
+        const { height } = layout;
+        setScrollVal(height);
+    }
+    const handleScroll = (event) => {
+        if (event.nativeEvent.contentOffset.y + scrollVal == viewVal) {
+            console.log("load more....");
+            setLoading(true);
+            setLimit(limit + 5);
+        }
+    };
+
     return (
         <View style={styles.container}>
             <Modal
@@ -281,8 +311,8 @@ const Browse = (props) => {
                 <TextInput placeholder="search by title & Tags" placeholderTextColor="#adb2b6"
                     style={styles.TextInput} value={searchtext} onChangeText={(e) => onSearch(e)} />
             </View>}
-            <ScrollView style={{ flex: 1 }}>
-                <View style={styles.board}>
+            <ScrollView onLayout={(event) => { find_scroll(event.nativeEvent.layout) }} onScroll={handleScroll} style={{ flex: 1 }}>
+                <View onLayout={(event) => { find_dimesions(event.nativeEvent.layout) }} style={styles.board}>
                     {result && result.map((index, key) => {
                         return (
                             <TouchableOpacity style={isWide ? styles.wideitemview : isDesktop ? styles.desktopitemview : isTablet ? styles.tabletitemview : isTabletOrMobile ? styles.tabletormobileitemview : styles.mobileitemview} key={key} onPress={() => watchVideo(index, key)}>
@@ -302,11 +332,12 @@ const Browse = (props) => {
                         </View>
                     )}
                 </View>
-                <TouchableOpacity style={styles.btnLoad} onPress={() => setLimit(limit + 5)}>
-                    <View style={styles.btnCover}>
-                        <Text style={styles.btnLable}>Load More</Text>
-                    </View>
-                </TouchableOpacity>
+                {loading && <View style={styles.loadingView}>
+                    <Image
+                        source={require("../../assets/loading.gif")}
+                        style={{ width: 140, height: 140 }}
+                    />
+                </View>}
             </ScrollView>
         </View>
     );
@@ -411,8 +442,8 @@ const styles = StyleSheet.create({
         top: 0,
         left: 0,
         backgroundColor: "rgba(0, 0, 0, 0.6)",
-        width: 400,
-        height: Dimensions.get('window').height,
+        width: "100%",
+        height: "100%",
         justifyContent: "center",
         alignItems: "center",
         zIndex: 10000,

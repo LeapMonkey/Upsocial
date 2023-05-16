@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
-import { StyleSheet, View, Text, Image, TouchableOpacity, ScrollView, Dimensions } from "react-native";
+import { StyleSheet, View, Text, Image, TouchableOpacity, ScrollView, Dimensions, TextInput } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { Video, ResizeMode } from "expo-av";
 import GestureRecognizer, { swipeDirections } from 'react-native-swipe-gestures';
@@ -14,6 +14,22 @@ const Onboarding = (props) => {
     const [videoFinished, setvideoFinished] = useState(true);
     const [gestureName, setgestureName] = useState("none");
     const [count, setCount] = useState(0);
+
+    const [searchflag, setSearchflag] = useState(false);
+    const [searchtext, setSearchtext] = useState("");
+
+
+    const onSearch = (e) => {
+        setSearchtext(e);
+        // var searchresult = alldata.filter((item) => {
+        //     return item.title.toLowerCase().indexOf(e.toLowerCase()) > -1 || item.keyword.toLowerCase().includes(e.toLowerCase());
+        // });
+        // if (e === "") {
+        //     setResult(alldata);
+        // } else {
+        //     setResult(searchresult);
+        // }
+    }
 
     const isDesktopOrLaptop = useMediaQuery({
         query: "(min-device-width: 500px)"
@@ -62,14 +78,21 @@ const Onboarding = (props) => {
         >
             <View style={isDesktopOrLaptop ? styles.mainview : styles.responsiveview}>
                 <View style={styles.topBarContainer}>
-                    <Image
-                        source={require("../../assets/logos/logo.png")}
-                        style={styles.topLogo}
-                    />
-                    <TouchableOpacity>
-                        <Ionicons name="search" color="#000" size={30} style={styles.searchIcon} />
-                    </TouchableOpacity>
+                    <View style={{ flexDirection: "row", justifyContent: "space-between", width: "100%" }}>
+                        <Image
+                            source={require("../../assets/logos/logo.png")}
+                            style={styles.topLogo}
+                        />
+                        <TouchableOpacity>
+                            <Ionicons name="search" color="#000" size={30} style={styles.searchIcon} onPress={() => setSearchflag(!searchflag)} />
+                        </TouchableOpacity>
+                    </View>
+                    {searchflag && <View style={styles.searchbar}>
+                        <TextInput placeholder="search by title & Tags" placeholderTextColor="#fff"
+                            style={styles.TextInput} value={searchtext} onChangeText={(e) => onSearch(e)} />
+                    </View>}
                 </View>
+
                 <ScrollView style={{ flex: 1, zIndex: 1 }}>
                     <View style={{ position: "relative" }}>
                         <Video
@@ -133,7 +156,7 @@ const styles = StyleSheet.create({
     topBarContainer: {
         width: "100%",
         backgroundColor: "rgba(0, 0, 0, 0.1)",
-        flexDirection: "row",
+        flexDirection: "column",
         justifyContent: "space-between",
         height: 40,
         alignItems: "center",
@@ -198,7 +221,24 @@ const styles = StyleSheet.create({
     },
     nonVisible: {
         opacity: 0
-    }
+    },
+    searchbar: {
+        flexDirection: "row",
+        width: "100%",
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    TextInput: {
+        paddingVertical: 10,
+        paddingHorizontal: 10,
+        fontSize: 16,
+        borderColor: "#3b8ad0",
+        borderWidth: 2,
+        borderRadius: 20,
+        width: "90%",
+        marginVertical: 10,
+        color: '#fff'
+    },
 });
 
 export default Onboarding;

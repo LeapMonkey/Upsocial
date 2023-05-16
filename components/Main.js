@@ -8,7 +8,8 @@ const Main = (props) => {
     return (
         <View style={styles.container}>
             <StatusBar />
-            {props.auth.isAuthenticated ? <ProfileManage /> : <Dashboard />}
+            <ProfileManage />
+            {/* {props.auth.isAuthenticated ? <ProfileManage /> : <Dashboard />}
             {props.loading.loading && (
                 <View style={styles.loadingView}>
                     <Image
@@ -16,7 +17,7 @@ const Main = (props) => {
                         style={{ width: 140, height: 140 }}
                     />
                 </View>
-            )}
+            )} */}
         </View>
     );
 };

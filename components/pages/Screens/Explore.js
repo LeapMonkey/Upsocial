@@ -20,30 +20,6 @@ const Explore = (props) => {
             <Tab.Screen name="FOR ME" options={{ tabBarItemStyle: { width: 150 } }} children={() => <Browse />} />
             <Tab.Screen name="SUBSCRIBED" options={{ tabBarItemStyle: { width: 150 } }} children={() => <Browse />} />
             <Tab.Screen name="ANIMATION" options={{ tabBarItemStyle: { width: 150 } }} children={() => <Browse />} />
-            {/* <Tab.Screen name="Animation" options={{ tabBarItemStyle: { width: 150 } }} children={() => <Watch setName={setName} />} />
-            <Tab.Screen name="Autos & Vehicles" options={{ tabBarItemStyle: { width: 150 } }} children={() => <Watch setName={setName} />} />
-            <Tab.Screen name="Beauty & Fashion" options={{ tabBarItemStyle: { width: 150 } }} children={() => <Watch setName={setName} />} />
-            <Tab.Screen name="Comedy" options={{ tabBarItemStyle: { width: 150 } }} children={() => <Watch setName={setName} />} />
-            <Tab.Screen name="Cooking & Food" options={{ tabBarItemStyle: { width: 150 } }} children={() => <Watch setName={setName} />} />
-            <Tab.Screen name="DIY & Crafts" options={{ tabBarItemStyle: { width: 150 } }} children={() => <Watch setName={setName} />} />
-            <Tab.Screen name="Documentary" options={{ tabBarItemStyle: { width: 150 } }} children={() => <Watch setName={setName} />} />
-            <Tab.Screen name="Education" options={{ tabBarItemStyle: { width: 150 } }} children={() => <Watch setName={setName} />} />
-            <Tab.Screen name="Entertainment" options={{ tabBarItemStyle: { width: 150 } }} children={() => <Watch setName={setName} />} />
-            <Tab.Screen name="Film & Animation" options={{ tabBarItemStyle: { width: 150 } }} children={() => <Watch setName={setName} />} />
-            <Tab.Screen name="Gaming" options={{ tabBarItemStyle: { width: 150 } }} children={() => <Watch setName={setName} />} />
-            <Tab.Screen name="Health & Fitness" options={{ tabBarItemStyle: { width: 150 } }} children={() => <Watch setName={setName} />} />
-            <Tab.Screen name="How-to & Style" options={{ tabBarItemStyle: { width: 150 } }} children={() => <Watch setName={setName} />} />
-            <Tab.Screen name="Kids & Family" options={{ tabBarItemStyle: { width: 150 } }} children={() => <Watch setName={setName} />} />
-            <Tab.Screen name="Music" options={{ tabBarItemStyle: { width: 150 } }} children={() => <Watch setName={setName} />} />
-            <Tab.Screen name="News & Politics" options={{ tabBarItemStyle: { width: 150 } }} children={() => <Watch setName={setName} />} />
-            <Tab.Screen name="Nonprofits & Activism" options={{ tabBarItemStyle: { width: 150 } }} children={() => <Watch setName={setName} />} />
-            <Tab.Screen name="People & Blogs" options={{ tabBarItemStyle: { width: 150 } }} children={() => <Watch setName={setName} />} />
-            <Tab.Screen name="Pets & Animals" options={{ tabBarItemStyle: { width: 150 } }} children={() => <Watch setName={setName} />} />
-            <Tab.Screen name="Science & Technology" options={{ tabBarItemStyle: { width: 150 } }} children={() => <Watch setName={setName} />} />
-            <Tab.Screen name="Sports" options={{ tabBarItemStyle: { width: 150 } }} children={() => <Watch setName={setName} />} />
-            <Tab.Screen name="Travel & Events" options={{ tabBarItemStyle: { width: 150 } }} children={() => <Watch setName={setName} />} />
-            <Tab.Screen name="Unboxing & Reviews" options={{ tabBarItemStyle: { width: 150 } }} children={() => <Watch setName={setName} />} />
-            <Tab.Screen name="Blogs" options={{ tabBarItemStyle: { width: 150 } }} children={() => <Watch setName={setName} />} /> */}
         </Tab.Navigator>
     );
 };

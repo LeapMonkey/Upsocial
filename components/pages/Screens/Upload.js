@@ -39,7 +39,7 @@ const Upload = (props) => {
     const [hashCode, setHashCode] = useState("");
     const [url, setURL] = useState("");
     const [embedCode, setEmbedCode] = useState("");
-    const [opened, setOpened] = useState(true);
+    const [opened, setOpened] = useState(false);
 
     // multi select options
     const [selectedItems, setSelectedItems] = useState([]);
@@ -387,6 +387,9 @@ const Upload = (props) => {
                 animationOut={'slideOutRight'}
                 style={{ margin: 0, padding: 0 }}
             >
+                <TouchableOpacity onPress={() => setOpened(false)}>
+                    <Ionicons name="arrow-back-sharp" color="#000" size={30} />
+                </TouchableOpacity>
                 {showQRCode ? (
                     <View style={styles.qrCodeDialogWrapper}>
                         <div style={styles.qrCodeDialog}>

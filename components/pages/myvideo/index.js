@@ -6,7 +6,7 @@ import { connect } from "react-redux";
 import axios from "axios";
 import isEmpty from "../../config/is-empty";
 
-const MyVideos = (props) => {
+const My_Videos = (props) => {
 
     const [result, setResult] = useState([]);
 
@@ -166,4 +166,4 @@ const mapStateToProps = (state) => ({
     auth: state.auth,
 });
 
-export default connect(mapStateToProps, {})(MyVideos);
+export default connect(mapStateToProps, {})(My_Videos);
