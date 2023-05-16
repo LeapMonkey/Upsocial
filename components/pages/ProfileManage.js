@@ -32,9 +32,9 @@ const Drawer = createDrawerNavigator();
 
 const ProfileManage = (props) => {
     const [userName, setUserName] = useState("");
-    // useEffect(() => {
-    //     setUserName(props.auth.user.Data.username);
-    // }, []);
+    useEffect(() => {
+        setUserName(props.auth.user.Data.username);
+    }, []);
 
     return (
         <NavigationContainer >
