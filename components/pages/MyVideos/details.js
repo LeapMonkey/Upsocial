@@ -1,27 +1,17 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { connect } from "react-redux";
+import { Text, StyleSheet, Image, View, ScrollView, TouchableOpacity, Dimensions, Platform, TextInput } from 'react-native';
 import { MaterialCommunityIcons, MaterialIcons, Feather, Ionicons, FontAwesome, AntDesign, Entypo } from 'react-native-vector-icons';
-import {
-    Text, StyleSheet, Image, View, ScrollView, TouchableOpacity, Dimensions,
-    Platform, TextInput
-} from 'react-native';
+import isEmpty from '../../config/is-empty';
 import SelectDropdown from "react-native-select-dropdown";
-import Modal from "react-native-modal";
+import * as ImagePicker from "expo-image-picker";
 import { MultiSelect } from 'react-native-element-dropdown';
-import { useMediaQuery } from "react-responsive";
 import { Video, ResizeMode } from "expo-av";
 import { generateVideoThumbnails } from "@rajesh896/video-thumbnails-generator";
-import isEmpty from '../../config/is-empty';
-import { apiURL } from '../../config/config';
+import Modal from "react-native-modal";
+import { useMediaQuery } from "react-responsive";
 import axios from 'axios';
-import UploadChannel from '../upload/UploadChannel';
-import * as ImagePicker from "expo-image-picker";
-
-const items = [
-    { id: 1, name: 'CHANNELS' },
-    { id: 2, name: 'RECENT UPLOADS' },
-    { id: 3, name: 'HISTORY' },
-];
+import { apiURL } from '../../config/config';
 
 const DATA = [
     { value: '1', label: 'Animation' },
@@ -50,8 +40,8 @@ const DATA = [
     { value: '24', label: 'Blogs' },
 ];
 
+const Details = (props) => {
 
-const MyVideos = (props) => {
     // mobile and desktop variable for responsive
     const isTabletOrMobile = useMediaQuery({
         query: "(min-device-width: 500px)"
@@ -70,123 +60,24 @@ const MyVideos = (props) => {
     });
     // end
 
-    const [categoryName, setCategoryName] = useState("CHANNELS");
-    const [optionName, setOptionName] = useState("My Channels");
-    const [result, setResult] = useState([]);
-    const [channelAllData, setChannelAllData] = useState([]);
+    const [optionName, setOptionName] = useState("Recent Uploads");
+    const [options, setOptions] = useState([
+        { id: 1, name: 'Recent Uploads', icon: "list-sharp" },
+        { id: 2, name: 'Add a Video', icon: "add-circle" },
+    ]);
+
     const [recentUploads, setRecentUploads] = useState([]);
     const [recentAllUploads, setRecentAllUploads] = useState([]);
-    const [limit, setLimit] = useState(5);
-    const [searchflag, setSearchflag] = useState(false);
-    const [searchtext, setSearchtext] = useState("");
 
-    const [channels, setChannels] = useState([{ channelName: "Personal Profile" }]);
-
-    const [selected, setSelected] = useState([]);
-
-    const [options, setOptions] = useState([
-        { id: 1, name: 'My Channels', icon: "list-sharp" },
-        { id: 2, name: 'Add a Channel', icon: "add-circle" },
-    ])
-
-    const [optionlists, setOptionLists] = useState(null);
-
-    const changeCategoryItem = (itemname) => {
-        setCategoryName(itemname);
-        if (itemname == 'CHANNELS') {
-            setOptions([
-                { id: 1, name: 'My Channels', icon: "list-sharp" },
-                { id: 2, name: 'Add a Channel', icon: "add-circle" },
-            ]);
-            setOptionName('My Channels');
-        } else if (itemname == 'RECENT UPLOADS') {
-            setOptions([
-                { id: 1, name: 'Recent Uploads', icon: "list-sharp" },
-                { id: 2, name: 'Add a Video', icon: "add-circle" },
-            ]);
-            setOptionName('Recent Uploads');
-        } else {
-            setOptions([]);
-        }
-    };
-
-    const onSearch = (e) => {
-        setSearchtext(e);
-        if (categoryName == "CHANNELS" && optionName == "My Channels") {
-            var searchresult = result.filter((item) => {
-                return item.channelName.toLowerCase().indexOf(e.toLowerCase()) > -1;
-            });
-            if (e === "") {
-                setResult(channelAllData);
-            } else {
-                setResult(searchresult);
-            }
-        } else if (categoryName == "RECENT UPLOADS" && optionName == "Recent Uploads") {
-            var searchresult = recentUploads.filter((item) => {
-                return item.title.toLowerCase().indexOf(e.toLowerCase()) > -1 || item.keyword.toLowerCase().includes(e.toLowerCase());
-            });
-            if (e === "") {
-                setRecentUploads(recentAllUploads);
-            } else {
-                setRecentUploads(searchresult);
-            }
-
-        }
-    };
-
-    const changeOptionItem = (itemname) => {
-        setOptionName(itemname);
-        console.log(itemname);
-        if (itemname === "My Channels") {
-            axios.post(apiURL + "/api/Upsocial/getAll/channels", {
-                "Access-Control-Allow-Origin": "*",
-                'Access-Control-Allow-Headers': '*',
-            }).then((res) => {
-                const result = res.data.channelData.filter((item) => item.email == props.auth.user.curUser);
-                setResult(result);
-                setChannelAllData(result);
-            }).catch((err) => {
-                console.warn(err);
-            });
-        }
-    };
-
-    const channelDetail = async (index) => {
-        props.setflag("detail");
-        props.setChannelData(index);
-    };
-
-    const addChannel = () => {
-        setCategoryName("CHANNELS");
-        setOptionName("Add a Channel");
-        setOptions([
-            { id: 1, name: 'My Channels', icon: "list-sharp" },
-            { id: 2, name: 'Add a Channel', icon: "add-circle" },
-        ]);
-    };
-
-    // add a channel
-
-    const [channelName, setChannelName] = useState("");
-    const [handleUrl, setHandleUrl] = useState("");
-    const [aboutChannel, setAboutChannel] = useState("");
+    const [isSelectable, setIsSelectable] = useState(false);
     const [location, setLocation] = useState("");
-    const [url, setUrl] = useState("");
-    const [loading, setLoading] = useState(false);
-    const [uploadimagedata, setUploadimagedata] = useState(null);
-    const [keyword, setKeyword] = useState("");
-    const [keywords, setKeywords] = useState([]);
-
-    // Video Data
-    const [videoKeyword, setVideoKeyword] = useState("");
-    const [videoKeywords, setVideoKeywords] = useState([]);
-
+    const [optionlists, setOptionLists] = useState(null);
     const [v_title, setV_title] = useState("");
     const [v_description, setV_description] = useState("");
     const [v_channelName, setV_channelName] = useState("");
     const [v_channelAdmin, setV_channelAdmin] = useState("");
-    // End
-
+    const [videoKeyword, setVideoKeyword] = useState("");
+    const [videoKeywords, setVideoKeywords] = useState([]);
     // Video Picker
     const [cameraStatus, requestPermission] = ImagePicker.useCameraPermissions();
     const [videoSrc, setVideoSrc] = useState(null);
@@ -194,27 +85,27 @@ const MyVideos = (props) => {
     const video = useRef(null);
     const [status, setStatus] = useState({});
     const [thumbnails, setThumbnails] = useState([]);
+    const [channels, setChannels] = useState([{ channelName: "Personal Profile" }]);
+    const [selected, setSelected] = useState([]);
 
-    const setimagefunc = (imagedata) => {
-        setUploadimagedata(imagedata);
+    const [opened, setOpened] = useState(false);
+    const [loading, setLoading] = useState(false);
+
+    const changeOptionItem = (itemname) => {
+        setOptionName(itemname);
     };
 
-    const addKeyword = (e) => {
-        if (e.nativeEvent.key == "Enter") {
-            if (keywords.length == 10) {
-                alert("Max keywords number is 10 !");
-                setKeyword("");
-                return;
-            } else {
-                var tempkeys = keyword.split(/\s*,\s*/);
-                if (tempkeys.length + keywords.length > 10) {
-                    alert("Max keywords number is 10 !");
-                } else {
-                    setKeywords(keywords => [...keywords, ...tempkeys]);
-                    setKeyword("");
-                }
-            }
-        }
+    const cameraOption = () => {
+        setOpened(true);
+    };
+
+    const renderDataItem = (item) => {
+        return (
+            <View style={styles.item}>
+                <Text style={styles.selectedTextStyle}>{item.label}</Text>
+                <AntDesign style={styles.icon} color="black" name="Safety" size={20} />
+            </View>
+        );
     };
 
     const addVideoKeyword = (e) => {
@@ -235,107 +126,42 @@ const MyVideos = (props) => {
         }
     };
 
-    useEffect(() => {
-        fetch("http://api.geonames.org/searchJSON?q=" + location + "&maxRows=10&username=secretsuperdev")
-            .then(response => response.json())
-            .then(data => {
-                var fakeoptionlists = [];
-                // iterate through the data and add each location to the datalist
-                data.geonames.forEach(location => {
-                    fakeoptionlists.push(location.name);
-                });
-                setOptionLists(fakeoptionlists);
-            })
-            .catch(err => console.log(err));
-    }, [location]);
-
-    const uploadData = async () => {
-        if (uploadimagedata === null) {
-            if (Platform.OS === "android") {
-                ToastAndroid.show("Please select Image!", ToastAndroid.SHORT);
-            } else if (Platform.OS === "web") {
-                alert("Please select image!");
-            } else {
-                AlertIOS.alert("Please select image!");
-            }
-        } else if (channelName.trim() === "") {
-            if (Platform.OS === "android") {
-                ToastAndroid.show("Please input Channel Name!", ToastAndroid.SHORT);
-            } else if (Platform.OS === "web") {
-                alert("Please input Channel Name!");
-            } else {
-                AlertIOS.alert("Please Channel Name!");
-            }
-        } else if (handleUrl.trim() === "") {
-            if (Platform.OS === "android") {
-                ToastAndroid.show("Please input handle Url!", ToastAndroid.SHORT);
-            } else if (Platform.OS === "web") {
-                alert("Please input handle Url!");
-            } else {
-                AlertIOS.alert("Please handle Url!");
-            }
-        } else if (aboutChannel.trim() === "") {
-            if (Platform.OS === "android") {
-                ToastAndroid.show("Please input description!", ToastAndroid.SHORT);
-            } else if (Platform.OS === "web") {
-                alert("Please input description!");
-            } else {
-                AlertIOS.alert("Please input description!");
-            }
-        } else if (location.trim() === "") {
-            if (Platform.OS === "android") {
-                ToastAndroid.show("Please input location!", ToastAndroid.SHORT);
-            } else if (Platform.OS === "web") {
-                alert("Please input location!");
-            } else {
-                AlertIOS.alert("Please input location!");
-            }
-        } else if (keywords.length == 0) {
-            if (Platform.OS === "android") {
-                ToastAndroid.show("Please input at least 1 tag!", ToastAndroid.SHORT);
-            } else if (Platform.OS === "web") {
-                alert("Please input at least 1 tag!");
-            } else {
-                AlertIOS.alert("Please input at least 1 tag!");
-            }
-        } else if (url.trim() === "") {
-            if (Platform.OS === "android") {
-                ToastAndroid.show("Please input url!", ToastAndroid.SHORT);
-            } else if (Platform.OS === "web") {
-                alert("Please input url!");
-            } else {
-                AlertIOS.alert("Please input url!");
-            }
-        } else {
-            setLoading(true);
-            let formdata = new FormData();
-            formdata.append("userEmail", props.auth.user.curUser);
-            formdata.append("photo", uploadimagedata);
-            formdata.append("channelName", channelName);
-            formdata.append("handleUrl", handleUrl);
-            formdata.append("aboutChannel", aboutChannel);
-            formdata.append("location", location);
-            formdata.append("tags", keywords);
-            formdata.append("url", url);
-
-            const headers = {
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*'
-            };
-
-            await axios.post(apiURL + "/api/Upsocial/create/channel", formdata, headers).then((res) => {
-                if (res.data.status) {
-                    setLoading(false);
-                    alert("Creating Channel success !");
-                } else {
-                    setLoading(false);
-                    alert(res.data.msg);
-                }
-            }).catch((error) => {
-                console.log(error);
-                setLoading(false);
-            });
+    const onFileChange = (event) => {
+        const file = event.target.files[0];
+        setFile({ file });
+        const url = URL.createObjectURL(file);
+        setVideoSrc({ uri: url });
+        if (file) {
+            generateVideoThumbnails(file, 0).then((res) => {
+                setThumbnails(res);
+            }).catch((err) => console.log(err));
         }
+    };
+
+    const addImageCamera = async () => {
+        if (cameraStatus && !cameraStatus.granted) {
+            await requestPermission()
+        }
+        let result = await ImagePicker.launchCameraAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Videos,
+            allowsEditing: true,
+            aspect: [4, 4],
+            quality: 0.5
+        });
+
+        if (result.canceled) {
+            return;
+        }
+
+        // ImagePicker saves the taken photo to disk and returns a local URI to it
+        let localUri = result.assets[0].uri;
+        let filename = localUri.split("/").pop();
+
+        // Infer the type of the image
+        let match = /\.(\w+)$/.exec(filename);
+        let type = match ? `video/${match[1]}` : `video`;
+
+        console.log(localUri, filename, match, type);
     };
 
     // Reset function
@@ -540,126 +366,53 @@ const MyVideos = (props) => {
         }
     };
 
-    const renderDataItem = (item) => {
-        return (
-            <View style={styles.item}>
-                <Text style={styles.selectedTextStyle}>{item.label}</Text>
-                <AntDesign style={styles.icon} color="black" name="Safety" size={20} />
-            </View>
-        );
-    };
-
-    const [opened, setOpened] = useState(false);
-
-    const cameraOption = () => {
-        setOpened(true);
-    };
-
-    const addImageCamera = async () => {
-        if (cameraStatus && !cameraStatus.granted) {
-            await requestPermission()
-        }
-        let result = await ImagePicker.launchCameraAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Videos,
-            allowsEditing: true,
-            aspect: [4, 4],
-            quality: 0.5
-        });
-
-        if (result.canceled) {
-            return;
-        }
-
-        // ImagePicker saves the taken photo to disk and returns a local URI to it
-        let localUri = result.assets[0].uri;
-        let filename = localUri.split("/").pop();
-
-        // Infer the type of the image
-        let match = /\.(\w+)$/.exec(filename);
-        let type = match ? `video/${match[1]}` : `video`;
-
-        console.log(localUri, filename, match, type);
-    };
-
-    const onFileChange = (event) => {
-        const file = event.target.files[0];
-        setFile({ file });
-        const url = URL.createObjectURL(file);
-        setVideoSrc({ uri: url });
-        if (file) {
-            generateVideoThumbnails(file, 0).then((res) => {
-                setThumbnails(res);
-            }).catch((err) => console.log(err));
-        }
-    };
-
-    const [isSelectable, setIsSelectable] = useState(false);
-
-    const [scrollVal, setScrollVal] = useState(0);
-    const [viewVal, setViewVal] = useState(0);
-
-    const find_dimesions = (layout) => {
-        const { height } = layout;
-        setViewVal(height);
-    }
-    const find_scroll = (layout) => {
-        const { height } = layout;
-        setScrollVal(height);
-    }
-    const handleScroll = (event) => {
-        if (event.nativeEvent.contentOffset.y + scrollVal == viewVal) {
-            console.log("load more....");
-            setLoading(true);
-            setLimit(limit + 5);
-        }
-    };
-
-
     useEffect(() => {
         axios.post(apiURL + "/api/Upsocial/getAll/channels", {
             "Access-Control-Allow-Origin": "*",
             'Access-Control-Allow-Headers': '*',
         }).then((res) => {
             const result = res.data.channelData.filter((item) => item.email == props.auth.user.curUser);
-            setResult(result);
-            setChannelAllData(result);
-            setChannels([...channels, ...res.data.channelData]);
+            setChannels([...channels, ...result]);
         }).catch((err) => {
             console.warn(err);
         });
     }, [optionName]);
 
     useEffect(() => {
-        axios.post(apiURL + "/api/Upsocial/users/getAll/UploadedContent", { limit: limit }, {
+        axios.post(apiURL + "/api/Upsocial/getAll/channels", {
             "Access-Control-Allow-Origin": "*",
             'Access-Control-Allow-Headers': '*',
-        }).then((resp) => {
-            axios.post(apiURL + "/api/Upsocial/getAll/channels", {
-                "Access-Control-Allow-Origin": "*",
-                'Access-Control-Allow-Headers': '*',
-            }).then((res) => {
-                var videofeeds1 = resp.data.data;
-                const results = res.data.channelData.filter((item) => !isEmpty(item.contents) && item.contents);
-                var arrayP = results.map(o => o.contents);
-                var videofeeds2 = arrayP.flat();
-                var resultVideo = [...videofeeds1, ...videofeeds2];
-                resultVideo.sort((a, b) => {
-                    return new Date(b.postDate) - new Date(a.postDate);
-                });
-                setRecentUploads(resultVideo);
-                setRecentAllUploads(resultVideo);
-                setLoading(false);
-            }).catch((err) => {
-                console.warn(err);
+        }).then((res) => {
+            const result = res.data.channelData.filter((item) => item.channelName == props.data.channelName);
+            const results = result.filter((item) => !isEmpty(item.contents) && item.contents);
+            var arrayP = results.map(o => o.contents);
+            var resultVideo = arrayP.flat();
+            resultVideo.sort((a, b) => {
+                return new Date(b.postDate) - new Date(a.postDate);
             });
+            setRecentUploads(resultVideo);
+            setRecentAllUploads(resultVideo);
         }).catch((err) => {
             console.warn(err);
-            setLoading(false);
         });
-    }, [limit]);
+    }, [props.data]);
+
+    useEffect(() => {
+        fetch("http://api.geonames.org/searchJSON?q=" + location + "&maxRows=10&username=secretsuperdev")
+            .then(response => response.json())
+            .then(data => {
+                var fakeoptionlists = [];
+                // iterate through the data and add each location to the datalist
+                data.geonames.forEach(location => {
+                    fakeoptionlists.push(location.name);
+                });
+                setOptionLists(fakeoptionlists);
+            })
+            .catch(err => console.log(err));
+    }, [location]);
 
     return (
-        <View style={styles.main}>
+        <View style={styles.container}>
             {loading && <View style={styles.loadingView}>
                 <Image
                     source={require("../../../assets/loading.gif")}
@@ -675,33 +428,12 @@ const MyVideos = (props) => {
                         />
                     </View>
                     <View style={styles.iconsection}>
-                        <TouchableOpacity style={styles.iconbtn}>
-                            <MaterialCommunityIcons name="cast" color="#fff" size={35} />
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.iconbtn}>
-                            <MaterialCommunityIcons name="bell" color="#fff" size={35} />
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.iconbtn} onPress={() => setSearchflag(!searchflag)}>
-                            <MaterialIcons name="search" color="#fff" size={35} />
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.iconbtn} onPress={() => props.toggle()}>
-                            <Feather name="menu" color="#fff" size={35} />
+                        <TouchableOpacity style={{ flexDirection: "row", alignItems: "center" }} onPress={() => props.setflag("main")}>
+                            <Text style={{ color: "#fff", fontSize: 20, fontWeight: "bold" }}>BACK</Text>
+                            <AntDesign name="right" size={20} color="#fff" />
                         </TouchableOpacity>
                     </View>
                 </View>
-            </View>
-            {searchflag && <View style={styles.searchbar}>
-                <TextInput placeholder="search by title & Tags" placeholderTextColor="#fff"
-                    style={styles.SearchTextInput} value={searchtext} onChangeText={(e) => onSearch(e)} />
-            </View>}
-            <View style={styles.categoryview}>
-                {items.map((item, key) => {
-                    return (
-                        <TouchableOpacity key={key} style={categoryName === item.name ? styles.active_categoryitem : styles.categoryitem} onPress={() => changeCategoryItem(item.name)}>
-                            <Text style={categoryName === item.name ? styles.active_categorytext : styles.categorytext}>{item.name}</Text>
-                        </TouchableOpacity>
-                    )
-                })}
             </View>
             <View style={styles.optionsView}>
                 {options.map((item, key) => {
@@ -718,131 +450,9 @@ const MyVideos = (props) => {
                     </View>
                 )}
             </View>
-            {categoryName == "CHANNELS" && optionName == "My Channels" && (<View style={styles.feedsContainer}>
-                <ScrollView style={styles.scrollview}>
+            {optionName == "Recent Uploads" && (
+                <ScrollView style={{ flex: 1 }}>
                     <View style={styles.contentview}>
-                        {result && result.map((index, key) => {
-                            return (
-                                <TouchableOpacity key={key} style={isWide ? styles.wideitemview : isDesktop ? styles.desktopitemview : isTablet ? styles.tabletitemview : isTabletOrMobile ? styles.tabletormobileitemview : styles.mobileitemview} >
-                                    <TouchableOpacity style={{ position: "relative", alignItems: 'center', width: "100%" }} onPress={() => channelDetail(index)}>
-                                        <Image source={{ uri: index.photo }} style={{ width: "100%", height: Dimensions.get("window").height * 0.3, borderRadius: 8 }} />
-                                    </TouchableOpacity>
-                                    <View style={styles.channelDetail}>
-                                        <Text style={styles.channelTitle} >{index.channelName}</Text>
-                                    </View>
-                                </TouchableOpacity>
-                            )
-                        })}
-                        {isEmpty(result) && (
-                            <View style={styles.nodataContainer}>
-                                <Text style={styles.nodata_title}>No Datas!</Text>
-                            </View>
-                        )}
-                    </View>
-                </ScrollView>
-            </View>)}
-            {categoryName == "CHANNELS" && optionName == "Add a Channel" && (<View style={styles.addChannel_container}>
-                <ScrollView
-                    style={styles.mainsection}
-                    contentContainerStyle={{
-                        alignItems: "center",
-                    }}
-                >
-                    <View style={styles.uploadsection}>
-                        <View style={styles.imagesection}>
-                            <UploadChannel setimagefunc={setimagefunc} />
-                        </View>
-                        <View style={styles.inputView}>
-                            <TextInput
-                                style={styles.TextInput}
-                                placeholder="Channel Name"
-                                placeholderTextColor="#adb2b6"
-                                onChangeText={(e) => setChannelName(e)}
-                            />
-                        </View>
-                        <View style={styles.inputView}>
-                            <TextInput
-                                style={styles.TextInput}
-                                placeholder="URL Handle(Coming Soon)"
-                                placeholderTextColor="#adb2b6"
-                                onChangeText={(e) => setHandleUrl(e)}
-                            />
-                        </View>
-                        <View style={styles.inputView}>
-                            <TextInput
-                                style={styles.TextInput}
-                                placeholder="About the channel"
-                                placeholderTextColor="#adb2b6"
-                                multiline={true}
-                                numberOfLines={4}
-                                onChangeText={(e) => setAboutChannel(e)}
-                            />
-                        </View>
-                        <View style={styles.inputView}>
-                            <TextInput
-                                style={styles.TextInput}
-                                placeholder="Location (City, State)"
-                                placeholderTextColor="#adb2b6"
-                                value={location}
-                                onChangeText={(e) => setLocation(e)}
-                                onFocus={() => setIsSelectable(true)}
-                            />
-                            {isSelectable && (
-                                <View style={{ marginVertical: 5 }}>
-                                    {optionlists && optionlists.map((item, key) => {
-                                        return (
-                                            <TouchableOpacity style={{ paddingVertical: 2 }} onPress={() => {
-                                                setLocation(item);
-                                                setIsSelectable(false)
-                                            }} key={key}>
-                                                <Text>
-                                                    {item}
-                                                </Text>
-                                            </TouchableOpacity>
-                                        )
-                                    })}
-                                </View>
-                            )}
-                        </View>
-                        <View style={styles.inputView}>
-                            <TextInput
-                                value={keyword}
-                                onKeyPress={(e) => addKeyword(e)}
-                                style={styles.TextInput}
-                                placeholder="Channel Tags (Up to 10)"
-                                placeholderTextColor="#adb2b6"
-                                onChangeText={(e) => setKeyword(e)}
-                            />
-                        </View>
-                        <View style={{ flexDirection: "row", gap: 20, width: "100%", flexWrap: "wrap" }}>
-                            {keywords.map((index, key) => {
-                                return (
-                                    <Text style={{ color: "#000", fontSize: 24 }} key={key}>{index}</Text>
-                                );
-                            })}
-                        </View>
-                        <View style={styles.inputView}>
-                            <TextInput
-                                style={styles.TextInput}
-                                placeholder="URL"
-                                placeholderTextColor="#adb2b6"
-                                onChangeText={(e) => setUrl(e)}
-                            />
-                        </View>
-                        <View style={styles.TextInput}>
-                            <TouchableOpacity
-                                style={styles.uploadbtn}
-                                onPress={() => uploadData()}
-                            >
-                                <Text style={styles.uploadbtntext}>Save</Text>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                </ScrollView>
-            </View >)}
-            {categoryName == "RECENT UPLOADS" && optionName == "Recent Uploads" && (
-                <ScrollView style={{ flex: 1 }} onLayout={(event) => { find_scroll(event.nativeEvent.layout) }} onScroll={handleScroll}>
-                    <View style={styles.contentview} onLayout={(event) => { find_dimesions(event.nativeEvent.layout) }}>
                         {recentUploads && recentUploads.map((index, key) => {
                             return (
                                 <TouchableOpacity style={isWide ? styles.wideitemview : isDesktop ? styles.desktopitemview : isTablet ? styles.tabletitemview : isTabletOrMobile ? styles.tabletormobileitemview : styles.mobileView} key={key}>
@@ -864,7 +474,7 @@ const MyVideos = (props) => {
                     </View>
                 </ScrollView>
             )}
-            {categoryName == "RECENT UPLOADS" && optionName == "Add a Video" && (<View style={styles.contentsection}>
+            {optionName == "Add a Video" && (<View style={styles.contentsection}>
                 <ScrollView style={styles.scrollcontentsection}>
                     <View style={styles.scrollviewcontent}>
                         <View style={styles.mainview}>
@@ -931,9 +541,6 @@ const MyVideos = (props) => {
                                     rowStyle={styles.dropdown4RowStyle}
                                     rowTextStyle={styles.dropdown4RowTxtStyle}
                                 />
-                                <TouchableOpacity style={styles.DropBtnIcon} onPress={addChannel}>
-                                    <MaterialCommunityIcons name='plus-circle-outline' color="#000" size={30} />
-                                </TouchableOpacity>
                             </View>
                             <View style={styles.Multiview}>
                                 <Text style={{ color: "#adb2b6", fontSize: 16, paddingHorizontal: 10 }}>Categories</Text>
@@ -1031,37 +638,26 @@ const MyVideos = (props) => {
                     <input style={{ display: "none" }} type='file' id='fileuploadinput' accept='video/mp4,video/x-m4v,video/*' onChange={onFileChange} />
                 </View>
             </Modal>
-        </View >
+        </View>
     );
-};
+}
 
 const styles = StyleSheet.create({
-    main: {
+    container: {
         flex: 1,
         width: "100%",
         position: "relative"
     },
-    searchbar: {
-        flexDirection: "row",
+    loadingView: {
+        position: "absolute",
+        top: 0,
+        left: 0,
+        backgroundColor: "rgba(0, 0, 0, 0.6)",
         width: "100%",
+        height: "100%",
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: "#2AB4FA"
-    },
-    SearchTextInput: {
-        paddingVertical: 10,
-        paddingHorizontal: 10,
-        fontSize: 16,
-        borderColor: "#3b8ad0",
-        borderWidth: 2,
-        borderRadius: 20,
-        width: "90%",
-        marginVertical: 10,
-        color: '#fff'
-    },
-    scrollview: {
-        backgroundColor: "#eee",
-        flex: 1
+        zIndex: 10000,
     },
     headersection: {
         height: Dimensions.get("window").height * 0.08,
@@ -1085,39 +681,6 @@ const styles = StyleSheet.create({
     },
     iconbtn: {
         marginLeft: 10
-    },
-    categoryview: {
-        flexDirection: "row",
-        justifyContent: "flex-start",
-        alignItems: "center",
-        overflow: "auto",
-        backgroundColor: "#000",
-        height: Dimensions.get("window").height * 0.08
-    },
-    active_categoryitem: {
-        paddingVertical: 20,
-        marginHorizontal: 10,
-        borderStyle: "solid",
-        borderWidth: 2,
-        borderColor: "transparent",
-        borderBottomColor: "#fff",
-    },
-    categoryitem: {
-        paddingVertical: 20,
-        marginHorizontal: 10,
-        borderStyle: "solid",
-        borderWidth: 2,
-        borderColor: "transparent",
-    },
-    active_categorytext: {
-        color: "#fff",
-        fontSize: 14,
-        fontWeight: "bold"
-    },
-    categorytext: {
-        fontSize: 14,
-        color: "rgb(197, 197, 197)",
-        fontWeight: "bold"
     },
     optionsView: {
         width: "100%",
@@ -1157,29 +720,8 @@ const styles = StyleSheet.create({
         color: "rgb(197, 197, 197)",
         fontWeight: "bold"
     },
-    nodataContainer: {
-        flexDirection: "column",
-        width: "100%",
-        alignItems: "center",
-        justifyContent: "center"
-    },
-    nodata_title: {
-        color: "#000",
-        fontSize: 20,
-        fontWeight: "bold",
-        marginVertical: 2
-    },
-    metadata_description: {
-        color: "#fff",
-        fontSize: 14,
-        fontWeight: "bold"
-    },
-    feedsContainer: {
-        backgroundColor: "#eee",
-        height: "100%",
-    },
     contentview: {
-        marginHorizontal: 20,
+        marginHorizontal: 40,
         flexDirection: "row",
         flexWrap: "wrap",
     },
@@ -1224,123 +766,23 @@ const styles = StyleSheet.create({
         fontSize: 14,
         fontWeight: "bold"
     },
-    channelDetail: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-        marginTop: 5,
-        position: "absolute",
-        top: "50%",
-        left: "50%",
-        transform: 'translate(-50%, -50%)',
-    },
-    channelTitle: {
-        fontSize: 24,
-        fontWeight: "bold",
-        color: "#fff"
-    },
-    // Add a channel
-    addChannel_container: {
-        flex: 1,
-        width: '100%',
-        alignItems: "center"
-    },
-    mainsection: {
-        width: "100%",
-        flex: 1,
-    },
-    uploadsection: {
-        width: "85%",
+    nodataContainer: {
         flexDirection: "column",
-        justifyContent: "space-between",
-        paddingBottom: 30,
-        paddingTop: 15,
-    },
-    imagesection: {
         width: "100%",
-        justifyContent: "center",
         alignItems: "center",
-        marginVertical: 10,
+        justifyContent: "center"
     },
-    inputView: {
-        borderRadius: 5,
-        backgroundColor: "transparent",
-        marginVertical: 10,
-        borderWidth: 2,
-        borderStyle: "solid",
-        borderRightColor: "transparent",
-        borderLeftColor: "transparent",
-        borderTopColor: "transparent",
-        borderBottomColor: "#000",
-        width: "100%",
-    },
-    errinputView: {
-        borderRadius: 5,
-        backgroundColor: "rgb(239, 239, 239)",
-        marginVertical: 10,
-        borderColor: "#30b98f",
-        borderWidth: 3,
-        borderStyle: "solid",
-        width: "100%",
-    },
-    TextView: {
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-        marginTop: 20,
-        width: "100%",
-        position: "relative"
-    },
-    TextArea: {
-        width: "100%",
+    nodata_title: {
+        color: "#000",
         fontSize: 20,
-        height: 100,
-        paddingVertical: 10,
-        paddingHorizontal: 10,
-        borderBottomColor: "#000",
-        borderBottomWidth: 1,
-        color: "#000"
-    },
-    TextInput: {
-        width: "100%",
-        fontSize: 20,
-        paddingVertical: 10,
-        paddingHorizontal: 10,
-        borderBottomColor: "#000",
-        borderBottomWidth: 1,
-        color: "#000"
-    },
-    subinputtext: {
-        marginHorizontal: 10,
-        color: "#fff",
-        fontSize: 16,
-    },
-    uploadbtn: {
-        width: "100%",
-        backgroundColor: "rgb(156, 38, 176)",
-        paddingVertical: 10,
-        borderRadius: 5,
-        marginTop: 30,
-    },
-    uploadbtntext: {
-        color: "#fff",
-        letterSpacing: 1,
         fontWeight: "bold",
-        fontSize: 20,
-        textAlign: "center",
+        marginVertical: 2
     },
-    loadingView: {
-        position: "absolute",
-        top: 0,
-        left: 0,
-        backgroundColor: "rgba(0, 0, 0, 0.6)",
-        width: "100%",
-        height: "100%",
-        justifyContent: "center",
-        alignItems: "center",
-        zIndex: 10000,
+    metadata_description: {
+        color: "#000",
+        fontSize: 14,
+        fontWeight: "bold"
     },
-    // Add a video
     contentsection: {
         marginTop: 60,
         flex: 1,
@@ -1497,11 +939,42 @@ const styles = StyleSheet.create({
         width: Platform.OS === 'android' || Platform.OS === 'ios' ? Dimensions.get("window").width : '100%',
         height: Dimensions.get("window").height * 0.35
     },
+    TextView: {
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        marginTop: 20,
+        width: "100%",
+        position: "relative"
+    },
+    TextArea: {
+        width: "100%",
+        fontSize: 20,
+        height: 100,
+        paddingVertical: 10,
+        paddingHorizontal: 10,
+        borderBottomColor: "#000",
+        borderBottomWidth: 1,
+        color: "#000"
+    },
+    TextInput: {
+        width: "100%",
+        fontSize: 20,
+        paddingVertical: 10,
+        paddingHorizontal: 10,
+        borderBottomColor: "#000",
+        borderBottomWidth: 1,
+        color: "#000"
+    },
+    subinputtext: {
+        marginHorizontal: 10,
+        color: "#fff",
+        fontSize: 16,
+    },
 });
-
 
 const mapStateToProps = (state) => ({
     auth: state.auth,
 });
 
-export default connect(mapStateToProps, {})(MyVideos);
+export default connect(mapStateToProps, {})(Details);

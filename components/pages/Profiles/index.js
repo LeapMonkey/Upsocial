@@ -10,14 +10,18 @@ const MainProfile = (props) => {
         setRouteflag(flag);
     }
 
+    const setToggle = () => {
+        props.navigation.toggleDrawer();
+    }
+
     const viewall = () => {
-        props.navigation.navigate("Your Videos");
+        props.navigation.navigate("RecentsUpload");
     }
 
     return (
         <>
-            {routeflag === "Profile" && <Profile setflag={setflag} viewall={viewall} />}
-            {routeflag === "EditProfile" && <EditProfile setflag={setflag} />}
+            {routeflag === "Profile" && <Profile setflag={setflag} setToggle={setToggle} viewall={viewall} />}
+            {routeflag === "EditProfile" && <EditProfile setToggle={setToggle} setflag={setflag} />}
         </>
     );
 };

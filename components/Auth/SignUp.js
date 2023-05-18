@@ -288,13 +288,13 @@ const SignUP = (props) => {
                                 <Text style={styles.routetext}>Sign In</Text>
                             </TouchableOpacity>
                         </View>
-                        <View style={styles.TextView}>
+                        {/* <View style={styles.TextView}>
                             <TouchableOpacity style={[styles.regbtn, { backgroundColor: "#433b45" }]}>
                                 <Text style={styles.regbtntext}>
                                     Anonymous account
                                 </Text>
                             </TouchableOpacity>
-                        </View>
+                        </View> */}
                         <View style={styles.RouteView}>
                             <View>
                                 <Text style={styles.routetext}>Already have your </Text>
@@ -342,13 +342,13 @@ const SignUP = (props) => {
                                 <Text style={styles.regbtntext}>SIGN IN</Text>
                             </TouchableOpacity>
                         </View>
-                        <View style={styles.TextView}>
+                        {/* <View style={styles.TextView}>
                             <TouchableOpacity style={[styles.regbtn, { backgroundColor: "#433b45" }]}>
                                 <Text style={styles.regbtntext}>
                                     Anonymous account
                                 </Text>
                             </TouchableOpacity>
-                        </View>
+                        </View> */}
                         <View style={styles.RouteView}>
                             <View>
                                 <Text style={styles.routetext}>Don't have account? </Text>

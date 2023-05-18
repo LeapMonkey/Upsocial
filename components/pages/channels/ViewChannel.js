@@ -13,14 +13,12 @@ import { apiURL } from "../../config/config";
 
 const Tab = createMaterialTopTabNavigator();
 const ViewChannel = (props) => {
-
-
     useEffect(() => {
-        setLocation(props.channelDetail.location);
-        setChannelName(props.channelDetail.channelName);
-        setHandleName(props.channelDetail.handleUrl);
-        setHandleURL(props.channelDetail.url);
-        setChannelAdmin(props.channelDetail.email);
+        // setLocation(props.channelDetail.location);
+        // setChannelName(props.channelDetail.channelName);
+        // setHandleName(props.channelDetail.handleUrl);
+        // setHandleURL(props.channelDetail.url);
+        // setChannelAdmin(props.channelDetail.email);
     }, []);
 
     const [location, setLocation] = useState("");

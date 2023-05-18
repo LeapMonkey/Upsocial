@@ -8,6 +8,7 @@ const Main = (props) => {
     return (
         <View style={styles.container}>
             <StatusBar />
+            {/* <ProfileManage /> */}
             {props.auth.isAuthenticated ? <ProfileManage /> : <Dashboard />}
             {props.loading.loading && (
                 <View style={styles.loadingView}>

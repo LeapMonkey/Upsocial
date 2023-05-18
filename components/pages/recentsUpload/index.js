@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, Dimensions, TouchableOpacity, Image } from "react-native";
+import { MaterialCommunityIcons, MaterialIcons, Feather } from 'react-native-vector-icons';
 import { apiURL } from "../../config/config";
 import { useMediaQuery } from "react-responsive";
 import { connect } from "react-redux";
 import axios from "axios";
 import isEmpty from "../../config/is-empty";
 
-const My_Videos = (props) => {
+const RecentsUploads = (props) => {
 
     const [result, setResult] = useState([]);
 
@@ -31,6 +32,19 @@ const My_Videos = (props) => {
         query: "(min-device-width: 1441px)"
     });
     // end
+    const [videoId, setVideoId] = useState("");
+    const [opened, setOpened] = useState(false);
+    const [videoProps, setVideoProps] = useState(null);
+    const [source, SetSource] = useState();
+    const [curIndex, setCurIndex] = useState(null);
+
+    const watchVideo = (videoData, key) => {
+        setVideoId(videoData.ID);
+        setOpened(true);
+        setVideoProps(videoData);
+        SetSource({ uri: videoData.ipfsUrl });
+        setCurIndex(key);
+    };
 
     useEffect(() => {
         axios.post(apiURL + "/api/Upsocial/users/get/UploadedContent", { userEmail: props.auth.user.curUser }, {
@@ -45,6 +59,30 @@ const My_Videos = (props) => {
 
     return (
         <View style={styles.container}>
+            <View style={styles.headersection}>
+                <View style={styles.subheadersection}>
+                    <TouchableOpacity style={styles.headerimage} onPress={() => changeCategoryItem("NEWEST")}>
+                        <Image
+                            source={require("../../../assets/logos/logo_wh.png")}
+                            style={{ height: 30, width: 158 }}
+                        />
+                    </TouchableOpacity>
+                    <View style={styles.iconsection}>
+                        <TouchableOpacity style={styles.iconbtn}>
+                            <MaterialCommunityIcons name="cast" color="#fff" size={35} />
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.iconbtn}>
+                            <MaterialCommunityIcons name="bell" color="#fff" size={35} />
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.iconbtn} onPress={() => setSearchflag(!searchflag)}>
+                            <MaterialIcons name="search" color="#fff" size={35} />
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.iconbtn} onPress={() => props.navigation.toggleDrawer()}>
+                            <Feather name="menu" color="#fff" size={35} />
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </View>
             <View style={styles.RecentContents}>
                 <View style={styles.ViewHeader}>
                     <Text style={styles.HeaderTitle}>Recent Uploads</Text>
@@ -159,6 +197,30 @@ const styles = StyleSheet.create({
         marginVertical: 2,
         fontSize: 14,
     },
+    headersection: {
+        flexDirection: "column",
+        height: Dimensions.get("window").height * 0.08,
+        width: "100%",
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "#2AB4FA"
+    },
+    subheadersection: {
+        width: "calc(100% - 30px)",
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center"
+    },
+    headerimage: {
+        flex: 1
+    },
+    iconsection: {
+        flexDirection: "row",
+        justifyContent: "space-evenly"
+    },
+    iconbtn: {
+        marginLeft: 10
+    },
 });
 
 
@@ -166,4 +228,4 @@ const mapStateToProps = (state) => ({
     auth: state.auth,
 });
 
-export default connect(mapStateToProps, {})(My_Videos);
+export default connect(mapStateToProps, {})(RecentsUploads);

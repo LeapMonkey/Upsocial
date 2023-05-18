@@ -9,11 +9,10 @@ import {
     Image,
     Dimensions
 } from "react-native";
-import Ionicons from "react-native-vector-icons/Ionicons";
+import { MaterialCommunityIcons, MaterialIcons, Feather, Ionicons, FontAwesome, AntDesign, Entypo } from 'react-native-vector-icons';
 import axios from "axios";
 import { connect } from "react-redux";
 import { apiURL } from "../../config/config";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { Video, ResizeMode } from "expo-av";
 import { useMediaQuery } from "react-responsive";
 
@@ -86,6 +85,30 @@ const Profile = (props) => {
 
     return (
         <View style={styles.container}>
+            <View style={styles.headersection}>
+                <View style={styles.subheadersection}>
+                    <View style={styles.headerimage}>
+                        <Image
+                            source={require("../../../assets/logos/logo_wh.png")}
+                            style={{ height: 30, width: 158 }}
+                        />
+                    </View>
+                    <View style={styles.iconsection}>
+                        <TouchableOpacity style={styles.iconbtn}>
+                            <MaterialCommunityIcons name="cast" color="#fff" size={35} />
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.iconbtn}>
+                            <MaterialCommunityIcons name="bell" color="#fff" size={35} />
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.iconbtn}>
+                            <MaterialIcons name="search" color="#fff" size={35} />
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.iconbtn} onPress={() => props.setToggle()}>
+                            <Feather name="menu" color="#fff" size={35} />
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </View>
             <ScrollView style={{ flex: 1, zIndex: 1 }}>
                 <View>
                     <ImageBackground
@@ -177,6 +200,29 @@ const Profile = (props) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+    },
+    headersection: {
+        height: Dimensions.get("window").height * 0.08,
+        width: "100%",
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "#2AB4FA"
+    },
+    subheadersection: {
+        width: "calc(100% - 30px)",
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center"
+    },
+    headerimage: {
+        flex: 1
+    },
+    iconsection: {
+        flexDirection: "row",
+        justifyContent: "space-evenly"
+    },
+    iconbtn: {
+        marginLeft: 10
     },
     profileImage: {
         height: 600,

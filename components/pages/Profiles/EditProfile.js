@@ -13,11 +13,11 @@ import {
     Dimensions,
 } from "react-native";
 import { connect } from "react-redux";
+import { MaterialCommunityIcons, MaterialIcons, Feather, Ionicons } from 'react-native-vector-icons';
 import axios from "axios";
 import { LinearGradient } from "expo-linear-gradient";
 import UploadLogo from "../upload/UploadLogo";
 import { apiURL } from "../../config/config";
-import Ionicons from "react-native-vector-icons/Ionicons";
 
 const EditProfile = (props) => {
     const [result, setResult] = useState([]);
@@ -93,14 +93,35 @@ const EditProfile = (props) => {
             colors={['#2ab4fad9', '#1D2145']}
             style={styles.container}
         >
-            <View style={{ height: 30, width: 30, position: "absolute", top: 5, left: 20 }}>
+            <View style={styles.headersection}>
+                <View style={styles.subheadersection}>
+                    <View style={styles.headerimage}>
+                        <Image
+                            source={require("../../../assets/logos/logo_wh.png")}
+                            style={{ height: 30, width: 158 }}
+                        />
+                    </View>
+                    <View style={styles.iconsection}>
+                        <TouchableOpacity style={styles.iconbtn}>
+                            <MaterialCommunityIcons name="cast" color="#fff" size={35} />
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.iconbtn}>
+                            <MaterialCommunityIcons name="bell" color="#fff" size={35} />
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.iconbtn}>
+                            <MaterialIcons name="search" color="#fff" size={35} />
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.iconbtn} onPress={() => props.setToggle()}>
+                            <Feather name="menu" color="#fff" size={35} />
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </View>
+            <View style={{ height: 30, width: 30, position: "absolute", zIndex: 100, top: 50, left: 20 }}>
                 <TouchableOpacity onPress={() => props.setflag("Profile")} style={{ flexDirection: "row", gap: 5, alignItems: "center", justifyContent: "center" }}>
                     <Ionicons name="arrow-back-sharp" color="#fff" size={15} />
                     <Text style={{ fontSize: 15, color: "#fff" }} >Back</Text>
                 </TouchableOpacity>
-            </View>
-            <View>
-                <Image source={require("../../../assets/logos/logo_wh.png")} style={{ height: 40, width: 230, marginTop: 10 }} />
             </View>
             <ScrollView
                 style={styles.mainsection}
@@ -167,14 +188,27 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     headersection: {
-        backgroundColor: "#1f1f1f",
+        height: Dimensions.get("window").height * 0.08,
         width: "100%",
-        borderBottomLeftRadius: 30,
-        borderBottomRightRadius: 30,
+        justifyContent: "center",
         alignItems: "center",
+        backgroundColor: "#2AB4FA"
     },
-    headersubsection: {
-        width: "85%",
+    subheadersection: {
+        width: "calc(100% - 30px)",
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center"
+    },
+    headerimage: {
+        flex: 1
+    },
+    iconsection: {
+        flexDirection: "row",
+        justifyContent: "space-evenly"
+    },
+    iconbtn: {
+        marginLeft: 10
     },
     headernamesection: {
         flexDirection: "row",

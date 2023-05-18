@@ -57,13 +57,6 @@ const Browse = (props) => {
     );
 
     useEffect(() => {
-        window.addEventListener('scroll', function (event) {
-            console.log(event.target);
-            console.log("hi");
-        });
-    })
-
-    useEffect(() => {
         axios.post(apiURL + "/api/Upsocial/users/getAll/UploadedContent", { limit: limit }, {
             "Access-Control-Allow-Origin": "*",
             'Access-Control-Allow-Headers': '*',
@@ -93,7 +86,6 @@ const Browse = (props) => {
     }, [limit]);
 
     const watchVideo = (videoData, key) => {
-        console.log(videoData.ID);
         setVideoId(videoData.ID);
         setOpened(true);
         setVideoProps(videoData);
