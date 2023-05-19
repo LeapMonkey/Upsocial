@@ -820,7 +820,7 @@ const styles = StyleSheet.create({
         position: "absolute"
     },
     dropdown4BtnStyle: {
-        width: "calc(100% - 40px)",
+        width: "100%",
         backgroundColor: "transparent",
         borderColor: "transparent",
         borderBottomColor: "#000",
@@ -832,7 +832,7 @@ const styles = StyleSheet.create({
     },
     dropdown4DropdownStyle: {
         backgroundColor: "transparent",
-        width: "60%",
+        width: "100%",
         height: "100%"
     },
     dropdown4RowStyle: {

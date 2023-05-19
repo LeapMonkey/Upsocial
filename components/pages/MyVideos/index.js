@@ -87,9 +87,46 @@ const MyVideos = (props) => {
     const [options, setOptions] = useState([
         { id: 1, name: 'My Channels', icon: "list-sharp" },
         { id: 2, name: 'Add a Channel', icon: "add-circle" },
-    ])
+    ]);
+
+    const [isSelectable, setIsSelectable] = useState(false);
+
+    const [scrollVal, setScrollVal] = useState(0);
+    const [viewVal, setViewVal] = useState(0);
 
     const [optionlists, setOptionLists] = useState(null);
+
+    // add a channel
+
+    const [channelName, setChannelName] = useState("");
+    const [handleUrl, setHandleUrl] = useState("");
+    const [aboutChannel, setAboutChannel] = useState("");
+    const [location, setLocation] = useState("");
+    const [url, setUrl] = useState("");
+    const [loading, setLoading] = useState(false);
+    const [uploadimagedata, setUploadimagedata] = useState(null);
+    const [keyword, setKeyword] = useState("");
+    const [keywords, setKeywords] = useState([]);
+
+    // Video Data
+    const [videoKeyword, setVideoKeyword] = useState("");
+    const [videoKeywords, setVideoKeywords] = useState([]);
+
+    const [v_title, setV_title] = useState("");
+    const [v_description, setV_description] = useState("");
+    const [v_channelName, setV_channelName] = useState("");
+    const [v_channelAdmin, setV_channelAdmin] = useState("");
+    // End
+
+    // Video Picker
+    const [cameraStatus, requestPermission] = ImagePicker.useCameraPermissions();
+    const [videoSrc, setVideoSrc] = useState(null);
+    const [file, setFile] = useState({ file: null });
+    const video = useRef(null);
+    const [status, setStatus] = useState({});
+    const [thumbnails, setThumbnails] = useState([]);
+
+    const [opened, setOpened] = useState(false);
 
     const changeCategoryItem = (itemname) => {
         setCategoryName(itemname);
@@ -136,15 +173,15 @@ const MyVideos = (props) => {
 
     const changeOptionItem = (itemname) => {
         setOptionName(itemname);
-        console.log(itemname);
         if (itemname === "My Channels") {
             axios.post(apiURL + "/api/Upsocial/getAll/channels", {
                 "Access-Control-Allow-Origin": "*",
                 'Access-Control-Allow-Headers': '*',
             }).then((res) => {
-                const result = res.data.channelData.filter((item) => item.email == props.auth.user.curUser);
-                setResult(result);
-                setChannelAllData(result);
+                let result = res.data.channelData.filter((item) => item.email == props.auth.user.curUser);
+                let feeds = result.reverse();
+                setResult(feeds);
+                setChannelAllData(feeds);
             }).catch((err) => {
                 console.warn(err);
             });
@@ -164,36 +201,6 @@ const MyVideos = (props) => {
             { id: 2, name: 'Add a Channel', icon: "add-circle" },
         ]);
     };
-
-    // add a channel
-
-    const [channelName, setChannelName] = useState("");
-    const [handleUrl, setHandleUrl] = useState("");
-    const [aboutChannel, setAboutChannel] = useState("");
-    const [location, setLocation] = useState("");
-    const [url, setUrl] = useState("");
-    const [loading, setLoading] = useState(false);
-    const [uploadimagedata, setUploadimagedata] = useState(null);
-    const [keyword, setKeyword] = useState("");
-    const [keywords, setKeywords] = useState([]);
-
-    // Video Data
-    const [videoKeyword, setVideoKeyword] = useState("");
-    const [videoKeywords, setVideoKeywords] = useState([]);
-
-    const [v_title, setV_title] = useState("");
-    const [v_description, setV_description] = useState("");
-    const [v_channelName, setV_channelName] = useState("");
-    const [v_channelAdmin, setV_channelAdmin] = useState("");
-    // End
-
-    // Video Picker
-    const [cameraStatus, requestPermission] = ImagePicker.useCameraPermissions();
-    const [videoSrc, setVideoSrc] = useState(null);
-    const [file, setFile] = useState({ file: null });
-    const video = useRef(null);
-    const [status, setStatus] = useState({});
-    const [thumbnails, setThumbnails] = useState([]);
 
     const setimagefunc = (imagedata) => {
         setUploadimagedata(imagedata);
@@ -234,20 +241,6 @@ const MyVideos = (props) => {
             }
         }
     };
-
-    useEffect(() => {
-        fetch("http://api.geonames.org/searchJSON?q=" + location + "&maxRows=10&username=secretsuperdev")
-            .then(response => response.json())
-            .then(data => {
-                var fakeoptionlists = [];
-                // iterate through the data and add each location to the datalist
-                data.geonames.forEach(location => {
-                    fakeoptionlists.push(location.name);
-                });
-                setOptionLists(fakeoptionlists);
-            })
-            .catch(err => console.log(err));
-    }, [location]);
 
     const uploadData = async () => {
         if (uploadimagedata === null) {
@@ -327,6 +320,7 @@ const MyVideos = (props) => {
                 if (res.data.status) {
                     setLoading(false);
                     alert("Creating Channel success !");
+                    setOptionName("My Channels");
                 } else {
                     setLoading(false);
                     alert(res.data.msg);
@@ -349,6 +343,9 @@ const MyVideos = (props) => {
         setVideoSrc(null);
         setV_channelName("");
         setV_channelAdmin("");
+        setLocation("");
+        setKeyword("");
+        setKeywords([]);
 
         if (Platform.OS === "android") {
             ToastAndroid.show("All values are cleared! Try again!", ToastAndroid.SHORT);
@@ -549,8 +546,6 @@ const MyVideos = (props) => {
         );
     };
 
-    const [opened, setOpened] = useState(false);
-
     const cameraOption = () => {
         setOpened(true);
     };
@@ -593,11 +588,6 @@ const MyVideos = (props) => {
         }
     };
 
-    const [isSelectable, setIsSelectable] = useState(false);
-
-    const [scrollVal, setScrollVal] = useState(0);
-    const [viewVal, setViewVal] = useState(0);
-
     const find_dimesions = (layout) => {
         const { height } = layout;
         setViewVal(height);
@@ -614,15 +604,29 @@ const MyVideos = (props) => {
         }
     };
 
+    useEffect(() => {
+        fetch("http://api.geonames.org/searchJSON?q=" + location + "&maxRows=10&username=secretsuperdev")
+            .then(response => response.json())
+            .then(data => {
+                var fakeoptionlists = [];
+                // iterate through the data and add each location to the datalist
+                data.geonames.forEach(location => {
+                    fakeoptionlists.push(location.name);
+                });
+                setOptionLists(fakeoptionlists);
+            })
+            .catch(err => console.log(err));
+    }, [location]);
 
     useEffect(() => {
         axios.post(apiURL + "/api/Upsocial/getAll/channels", {
             "Access-Control-Allow-Origin": "*",
             'Access-Control-Allow-Headers': '*',
         }).then((res) => {
-            const result = res.data.channelData.filter((item) => item.email == props.auth.user.curUser);
-            setResult(result);
-            setChannelAllData(result);
+            let result = res.data.channelData.filter((item) => item.email == props.auth.user.curUser);
+            let feeds = result.reverse();
+            setResult(feeds);
+            setChannelAllData(feeds);
             setChannels([...channels, ...res.data.channelData]);
         }).catch((err) => {
             console.warn(err);

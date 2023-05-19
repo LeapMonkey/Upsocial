@@ -68,8 +68,8 @@ const Home = (props) => {
     const [status, setStatus] = useState({});
     const [videoSource, SetVideoSource] = useState({ uri: "" });
     const [thumbnail, setThumbnail] = useState({ uri: "" });
-    const [title, setTitle] = useState("Upsocial");
-    const [description, setDescription] = useState("Upsocial");
+    const [title, setTitle] = useState("");
+    const [description, setDescription] = useState("");
 
     // Video Data
     const [videoId, setVideoId] = useState("");
@@ -246,7 +246,7 @@ const Home = (props) => {
     );
 
     const handleReaction = async (e) => {
-        if (e.value > 300 && confirm("You DisLike this video") == true) {
+        if (e.value < -300 && confirm("You DisLike this video") == true) {
             if (curIndex == result.length - 1) {
                 SetSource({ uri: result[0].ipfsUrl });
                 setVideoId(0);
@@ -290,7 +290,7 @@ const Home = (props) => {
                 });
                 return;
             }
-        } else if (e.value < -300 && confirm("You Like this video") == true) {
+        } else if (e.value > 300 && confirm("You Like this video") == true) {
             if (curIndex == result.length - 1) {
                 SetSource({ uri: result[0].ipfsUrl });
                 setVideoId(0);
@@ -431,7 +431,7 @@ const Home = (props) => {
                             </TouchableOpacity>
                             <View style={{ flex: 1, flexDirection: "column", gap: 10 }}>
                                 <Text style={{ color: "#fff", fontWeight: "bold" }}>{description}</Text>
-                                <Text style={{ color: "#5a5a5a", fontWeight: "bold" }}>333k views | 3,784 UPs | 11 hours ago</Text>
+                                {description && <Text style={{ color: "#5a5a5a", fontWeight: "bold" }}>0 views | 0 UPs | just now</Text>}
                             </View>
                         </View>
                     </View>

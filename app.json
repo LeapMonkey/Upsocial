@@ -4,7 +4,7 @@
     "slug": "Upsocial",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/logo_icon.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash.png",
@@ -19,7 +19,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/logo_icon.png",
         "backgroundColor": "#ffffff"
       },
       "permissions": [
@@ -29,7 +29,7 @@
       ]
     },
     "web": {
-      "favicon": "./assets/favicon.png",
+      "favicon": "./assets/logo_icon.png",
       "build": {
         "offline": true
       },
@@ -42,7 +42,7 @@
       [
         "expo-av",
         {
-          "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone."
+          "microphonePermission": "Allow Upsocial to access your microphone."
         }
       ],
       [

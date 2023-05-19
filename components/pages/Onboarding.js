@@ -5,13 +5,11 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import { Video, ResizeMode } from "expo-av";
 import GestureRecognizer, { swipeDirections } from 'react-native-swipe-gestures';
 import { useMediaQuery } from "react-responsive";
-// import * as ScreenOrientation from 'expo-screen-orientation';
 
 const Onboarding = (props) => {
     const video = useRef(null);
     const [status, setStatus] = useState({});
     const [touched, settouched] = useState(false);
-    const [videoFinished, setvideoFinished] = useState(true);
     const [gestureName, setgestureName] = useState("none");
     const [count, setCount] = useState(0);
 
@@ -21,14 +19,6 @@ const Onboarding = (props) => {
 
     const onSearch = (e) => {
         setSearchtext(e);
-        // var searchresult = alldata.filter((item) => {
-        //     return item.title.toLowerCase().indexOf(e.toLowerCase()) > -1 || item.keyword.toLowerCase().includes(e.toLowerCase());
-        // });
-        // if (e === "") {
-        //     setResult(alldata);
-        // } else {
-        //     setResult(searchresult);
-        // }
     }
 
     const isDesktopOrLaptop = useMediaQuery({
@@ -57,7 +47,7 @@ const Onboarding = (props) => {
             case SWIPE_UP:
                 settouched(true);
                 setCount(count + 1);
-                if (count == 8) setCount(0);
+                if (count == 7) setCount(0);
                 break;
             case SWIPE_DOWN:
                 settouched(false);
@@ -69,7 +59,19 @@ const Onboarding = (props) => {
                 settouched(false);
                 break;
         }
-    }
+    };
+
+    const handleVideoReadyForDisplay = async () => {
+        if (video.current) {
+            await video.current.playAsync();
+        }
+    };
+
+    const handleVideoLoad = async () => {
+        if (video.current) {
+            await video.current.playAsync();
+        }
+    };
 
     return (
         <LinearGradient
@@ -97,18 +99,18 @@ const Onboarding = (props) => {
                     <View style={{ position: "relative" }}>
                         <Video
                             ref={video}
-                            videoStyle={{ position: 'relative', width: "100%", height: Dimensions.get("window").height, aspectRatio: 9 / 16 }}
+                            videoStyle={{ position: 'relative', width: "100%", height: Dimensions.get("window").height, aspectRatio: 9 / 16, }}
                             style={styles.VideoWidget}
                             source={VideoDatas[count]}
                             rate={1.0}
                             isLooping
                             volume={1.0}
-                            shouldPlay
-                            useNativeControls
+                            onLoad={handleVideoLoad}
+                            shouldPlay={false}
+                            isMuted
                             resizeMode={ResizeMode.STRETCH}
                             onPlaybackStatusUpdate={status => setStatus(() => status)}
-                            onLoad={() => { video.current.playAsync() }}
-                        // onFullscreenUpdate={setOrientation}
+                            onReadyForDisplay={handleVideoReadyForDisplay}
                         />
                         <View style={styles.gifview}>
                             <GestureRecognizer
