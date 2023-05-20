@@ -264,7 +264,7 @@ const Details = (props) => {
                             Thumbnail_formData.append('description', v_description);
                             Thumbnail_formData.append('keywords', videoKeywords);
                             Thumbnail_formData.append('category', selected);
-                            Thumbnail_formData.append('userEmail', props.auth.user.curUser);
+                            Thumbnail_formData.append('userEmail', props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser);
                             Thumbnail_formData.append('video_src', cid);
 
                             console.log('thumbnail', img_file);
@@ -272,7 +272,7 @@ const Details = (props) => {
                             console.log('description', v_description);
                             console.log('keywords', videoKeywords);
                             console.log('category', selected);
-                            console.log('userEmail', props.auth.user.curUser);
+                            console.log('userEmail', props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser);
                             console.log('video_src', cid);
 
                             await axios.post(apiURL + "/api/Upsocial/users/content/web/uploadContent", Thumbnail_formData, headers).then((res) => {
@@ -335,7 +335,7 @@ const Details = (props) => {
                             Thumbnail_formData.append('title', v_title);
                             Thumbnail_formData.append('description', v_description);
                             Thumbnail_formData.append('keywords', videoKeywords);
-                            Thumbnail_formData.append('userEmail', props.auth.user.curUser);
+                            Thumbnail_formData.append('userEmail', props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser);
                             Thumbnail_formData.append('video_src', cid);
                             Thumbnail_formData.append('channelAdmin', v_channelAdmin);
                             Thumbnail_formData.append('channelName', v_channelName);
@@ -371,7 +371,7 @@ const Details = (props) => {
             "Access-Control-Allow-Origin": "*",
             'Access-Control-Allow-Headers': '*',
         }).then((res) => {
-            const result = res.data.channelData.filter((item) => item.email == props.auth.user.curUser);
+            const result = res.data.channelData.filter((item) => item.email == props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser);
             setChannels([...channels, ...result]);
         }).catch((err) => {
             console.warn(err);

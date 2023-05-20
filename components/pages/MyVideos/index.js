@@ -178,7 +178,7 @@ const MyVideos = (props) => {
                 "Access-Control-Allow-Origin": "*",
                 'Access-Control-Allow-Headers': '*',
             }).then((res) => {
-                let result = res.data.channelData.filter((item) => item.email == props.auth.user.curUser);
+                let result = res.data.channelData.filter((item) => item.email == props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser);
                 let feeds = result.reverse();
                 setResult(feeds);
                 setChannelAllData(feeds);
@@ -302,7 +302,7 @@ const MyVideos = (props) => {
         } else {
             setLoading(true);
             let formdata = new FormData();
-            formdata.append("userEmail", props.auth.user.curUser);
+            formdata.append("userEmail", props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser);
             formdata.append("photo", uploadimagedata);
             formdata.append("channelName", channelName);
             formdata.append("handleUrl", handleUrl);
@@ -435,7 +435,7 @@ const MyVideos = (props) => {
                             Thumbnail_formData.append('description', v_description);
                             Thumbnail_formData.append('keywords', videoKeywords);
                             Thumbnail_formData.append('category', selected);
-                            Thumbnail_formData.append('userEmail', props.auth.user.curUser);
+                            Thumbnail_formData.append('userEmail', props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser);
                             Thumbnail_formData.append('video_src', cid);
 
                             console.log('thumbnail', img_file);
@@ -443,7 +443,7 @@ const MyVideos = (props) => {
                             console.log('description', v_description);
                             console.log('keywords', videoKeywords);
                             console.log('category', selected);
-                            console.log('userEmail', props.auth.user.curUser);
+                            console.log('userEmail', props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser);
                             console.log('video_src', cid);
 
                             await axios.post(apiURL + "/api/Upsocial/users/content/web/uploadContent", Thumbnail_formData, headers).then((res) => {
@@ -506,7 +506,7 @@ const MyVideos = (props) => {
                             Thumbnail_formData.append('title', v_title);
                             Thumbnail_formData.append('description', v_description);
                             Thumbnail_formData.append('keywords', videoKeywords);
-                            Thumbnail_formData.append('userEmail', props.auth.user.curUser);
+                            Thumbnail_formData.append('userEmail', props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser);
                             Thumbnail_formData.append('video_src', cid);
                             Thumbnail_formData.append('channelAdmin', v_channelAdmin);
                             Thumbnail_formData.append('channelName', v_channelName);
@@ -623,7 +623,7 @@ const MyVideos = (props) => {
             "Access-Control-Allow-Origin": "*",
             'Access-Control-Allow-Headers': '*',
         }).then((res) => {
-            let result = res.data.channelData.filter((item) => item.email == props.auth.user.curUser);
+            let result = res.data.channelData.filter((item) => item.email == props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser);
             let feeds = result.reverse();
             setResult(feeds);
             setChannelAllData(feeds);

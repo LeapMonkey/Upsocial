@@ -47,7 +47,7 @@ const RecentsUploads = (props) => {
     };
 
     useEffect(() => {
-        axios.post(apiURL + "/api/Upsocial/users/get/UploadedContent", { userEmail: props.auth.user.curUser }, {
+        axios.post(apiURL + "/api/Upsocial/users/get/UploadedContent", { userEmail: props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser }, {
             "Access-Control-Allow-Origin": "*",
             'Access-Control-Allow-Headers': '*',
         }).then((res) => {

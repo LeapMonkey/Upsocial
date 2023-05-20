@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from "react-redux";
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 // Icon
 import { FontAwesome5, FontAwesome, Ionicons, Entypo, Feather } from '@expo/vector-icons';
@@ -17,8 +17,14 @@ const Drawer = createDrawerNavigator();
 
 const ProfileManage = (props) => {
     const [userName, setUserName] = useState("");
+    const [lastRouteName, setLastRouteName] = useState("");
+
     useEffect(() => {
-        setUserName(props.auth.user.Data.username);
+        if (localStorage.getItem("username")) {
+            setUserName(localStorage.getItem("username"));
+        } else {
+            setUserName("User")
+        }
     }, []);
 
     return (
@@ -27,7 +33,6 @@ const ProfileManage = (props) => {
                 drawerContent={(props) => <CustomSidebarMenu {...props} userName={userName} />}
                 screenOptions={({ route }) => ({
                     drawerIcon: ({ focused, color, size }) => {
-
                         if (route.name === 'Home') {
                             return <FontAwesome5 name="home" size={size} color={color} />;
                         } else if (route.name === "My Videos") {
@@ -42,8 +47,8 @@ const ProfileManage = (props) => {
                             return <Feather name="settings" size={size} color={color} />;
                         }
                     },
-                })
-                }
+                })}
+                firstRouteName={lastRouteName}
             >
                 <Drawer.Screen name='Home' component={Home} options={{ headerShown: false, headerTintColor: "#fff", headerStyle: { backgroundColor: "#5E1DA6" }, headerTitleStyle: { color: "#fff", fontSize: 24 } }} />
                 <Drawer.Screen name='My Videos' component={MainVideos} options={{ headerShown: false, headerTintColor: "#fff", headerStyle: { backgroundColor: "#5E1DA6" }, headerTitleStyle: { color: "#fff", fontSize: 24 } }} />

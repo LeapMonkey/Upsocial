@@ -7,10 +7,28 @@ import {
     Text,
     TouchableOpacity
 } from 'react-native';
-import Ionicons from "react-native-vector-icons/Ionicons";
+import { Ionicons, MaterialCommunityIcons } from "react-native-vector-icons";
 import { DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
+import { useEffect } from 'react';
+import { NavigationContainer, useNavigation } from '@react-navigation/native';
 
 const CustomSidebarMenu = (props) => {
+    const navigation = useNavigation();
+    const logout = () => {
+        console.log("hello")
+        localStorage.removeItem("isUser");
+        localStorage.removeItem("username");
+        window.location.reload();
+    };
+
+    // useEffect(() => {
+    //     console.log("------1------", localStorage.routeName)
+    //     navigation(localStorage.routeName);
+    //     console.log("------2------", props.state.routes[props.state.index].name)
+    //     localStorage.setItem('routeName', props.state.routes[props.state.index].name);
+    // }, [props]);
+
+
     return (
         <SafeAreaView style={{ flex: 1 }}>
             <View style={styles.header}>
@@ -39,6 +57,10 @@ const CustomSidebarMenu = (props) => {
             <DrawerContentScrollView {...props} >
                 <DrawerItemList {...props} />
             </DrawerContentScrollView>
+            <TouchableOpacity style={{ marginBottom: 100, flexDirection: "row", alignItems: "center", gap: 20, marginLeft: 20 }} onPress={logout}>
+                <MaterialCommunityIcons name="logout" size={30} color="#000" />
+                <Text style={{ color: "#000", borderRadius: 5, paddingHorizontal: 10, fontSize: 20, }}>Logout</Text>
+            </TouchableOpacity>
             <TouchableOpacity style={styles.footer} onPress={() => props.navigation.toggleDrawer()}>
                 <Text style={{ color: "#fff", backgroundColor: "#fe2472", borderRadius: 5, paddingHorizontal: 10, fontSize: 20, }}>Close</Text>
             </TouchableOpacity>

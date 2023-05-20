@@ -18,7 +18,7 @@ const MainVideos = (props) => {
 
     const toggle = () => {
         props.navigation.toggleDrawer()
-    }
+    };
 
     return (
         <>

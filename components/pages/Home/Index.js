@@ -104,7 +104,7 @@ const Home = (props) => {
                 console.warn(err);
             });
         } else if (itemname == "FOR ME") {
-            axios.post(apiURL + "/api/Upsocial/users/personalize", { userEmail: props.auth.user.curUser }, {
+            axios.post(apiURL + "/api/Upsocial/users/personalize", { userEmail: props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser }, {
                 "Access-Control-Allow-Origin": "*",
                 'Access-Control-Allow-Headers': '*',
             }).then((res) => {
@@ -118,7 +118,7 @@ const Home = (props) => {
                 "Access-Control-Allow-Origin": "*",
                 'Access-Control-Allow-Headers': '*',
             }).then((res) => {
-                const result = res.data.channelData.filter((item) => item.followers.includes(props.auth.user.curUser));
+                const result = res.data.channelData.filter((item) => item.followers.includes(props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser));
                 var arrayP = result.map(o => o.contents);
                 var videofeeds = Object.values(arrayP.reduce(((r, c) => Object.assign(r, c)), {}));
                 setResult(videofeeds);
@@ -181,9 +181,6 @@ const Home = (props) => {
             setResult(searchresult);
         }
     }
-
-    useEffect(() => {
-    }, []);
 
     useEffect(() => {
         if (categoryName == "NEWEST") {
@@ -251,7 +248,7 @@ const Home = (props) => {
                 SetSource({ uri: result[0].ipfsUrl });
                 setVideoId(0);
                 setCurIndex(0);
-                await axios.post(apiURL + "/api/Upsocial/users/content/dislike", { videoId: videoId, userEmail: props.auth.user.curUser }, {
+                await axios.post(apiURL + "/api/Upsocial/users/content/dislike", { videoId: videoId, userEmail: props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser }, {
                     "Access-Control-Allow-Origin": "*",
                     'Access-Control-Allow-Headers': '*',
                 }).then((res) => {
@@ -259,7 +256,7 @@ const Home = (props) => {
                 }).catch((err) => {
                     console.warn(err);
                 });
-                await axios.post(apiURL + "/api/Upsocial/content/dislike", { videoId: videoId, userEmail: props.auth.user.curUser }, {
+                await axios.post(apiURL + "/api/Upsocial/content/dislike", { videoId: videoId, userEmail: props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser }, {
                     "Access-Control-Allow-Origin": "*",
                     'Access-Control-Allow-Headers': '*',
                 }).then((res) => {
@@ -272,7 +269,7 @@ const Home = (props) => {
                 SetSource({ uri: result[curIndex + 1].ipfsUrl });
                 setVideoId(curIndex + 1);
                 setCurIndex(curIndex + 1);
-                await axios.post(apiURL + "/api/Upsocial/users/content/dislike", { videoId: videoId, userEmail: props.auth.user.curUser }, {
+                await axios.post(apiURL + "/api/Upsocial/users/content/dislike", { videoId: videoId, userEmail: props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser }, {
                     "Access-Control-Allow-Origin": "*",
                     'Access-Control-Allow-Headers': '*',
                 }).then((res) => {
@@ -280,7 +277,7 @@ const Home = (props) => {
                 }).catch((err) => {
                     console.warn(err);
                 });
-                await axios.post(apiURL + "/api/Upsocial/content/dislike", { videoId: videoId, userEmail: props.auth.user.curUser }, {
+                await axios.post(apiURL + "/api/Upsocial/content/dislike", { videoId: videoId, userEmail: props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser }, {
                     "Access-Control-Allow-Origin": "*",
                     'Access-Control-Allow-Headers': '*',
                 }).then((res) => {
@@ -295,7 +292,7 @@ const Home = (props) => {
                 SetSource({ uri: result[0].ipfsUrl });
                 setVideoId(0);
                 setCurIndex(0);
-                await axios.post(apiURL + "/api/Upsocial/users/content/like", { videoId: videoId, userEmail: props.auth.user.curUser }, {
+                await axios.post(apiURL + "/api/Upsocial/users/content/like", { videoId: videoId, userEmail: props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser }, {
                     "Access-Control-Allow-Origin": "*",
                     'Access-Control-Allow-Headers': '*',
                 }).then((res) => {
@@ -303,7 +300,7 @@ const Home = (props) => {
                 }).catch((err) => {
                     console.warn(err);
                 });
-                await axios.post(apiURL + "/api/Upsocial/content/like", { videoId: videoId, userEmail: props.auth.user.curUser }, {
+                await axios.post(apiURL + "/api/Upsocial/content/like", { videoId: videoId, userEmail: props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser }, {
                     "Access-Control-Allow-Origin": "*",
                     'Access-Control-Allow-Headers': '*',
                 }).then((res) => {
@@ -316,7 +313,7 @@ const Home = (props) => {
                 SetSource({ uri: result[curIndex + 1].ipfsUrl });
                 setVideoId(curIndex + 1);
                 setCurIndex(curIndex + 1);
-                await axios.post(apiURL + "/api/Upsocial/users/content/like", { videoId: videoId, userEmail: props.auth.user.curUser }, {
+                await axios.post(apiURL + "/api/Upsocial/users/content/like", { videoId: videoId, userEmail: props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser }, {
                     "Access-Control-Allow-Origin": "*",
                     'Access-Control-Allow-Headers': '*',
                 }).then((res) => {
@@ -324,7 +321,7 @@ const Home = (props) => {
                 }).catch((err) => {
                     console.warn(err);
                 });
-                await axios.post(apiURL + "/api/Upsocial/content/like", { videoId: videoId, userEmail: props.auth.user.curUser }, {
+                await axios.post(apiURL + "/api/Upsocial/content/like", { videoId: videoId, userEmail: props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser }, {
                     "Access-Control-Allow-Origin": "*",
                     'Access-Control-Allow-Headers': '*',
                 }).then((res) => {
@@ -336,8 +333,6 @@ const Home = (props) => {
             }
         }
     };
-
-
     return (
         <View style={styles.main}>
             <Modal
@@ -431,7 +426,7 @@ const Home = (props) => {
                             </TouchableOpacity>
                             <View style={{ flex: 1, flexDirection: "column", gap: 10 }}>
                                 <Text style={{ color: "#fff", fontWeight: "bold" }}>{description}</Text>
-                                {description && <Text style={{ color: "#5a5a5a", fontWeight: "bold" }}>0 views | 0 UPs | just now</Text>}
+                                <Text style={{ color: "#5a5a5a", fontWeight: "bold" }}>0 views | 0 UPs | just now</Text>
                             </View>
                         </View>
                     </View>

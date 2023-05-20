@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import { StyleSheet, View, Text, Image, TouchableOpacity, ScrollView, Dimensions, TextInput } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import { Video, ResizeMode } from "expo-av";
+import { Video, ResizeMode, Audio, InterruptionModeAndroid, InterruptionModeIOS } from "expo-av";
 import GestureRecognizer, { swipeDirections } from 'react-native-swipe-gestures';
 import { useMediaQuery } from "react-responsive";
 
@@ -73,6 +73,17 @@ const Onboarding = (props) => {
         }
     };
 
+    useEffect(() => {
+        Audio.setAudioModeAsync({
+            playsInSilentModeIOS: true,
+            allowsRecordingIOS: false,
+            interruptionModeIOS: InterruptionModeIOS.MixWithOthers,
+            interruptionModeAndroid: InterruptionModeAndroid.DuckOthers,
+            shouldDuckAndroid: true,
+            staysActiveInBackground: false,
+        });
+    }, []);
+
     return (
         <LinearGradient
             colors={['#2ab4fad9', '#1D2145']}
@@ -104,10 +115,11 @@ const Onboarding = (props) => {
                             source={VideoDatas[count]}
                             rate={1.0}
                             isLooping
+                            isMuted
+                            shouldPlay
+                            useNativeControls
                             volume={1.0}
                             onLoad={handleVideoLoad}
-                            shouldPlay={false}
-                            isMuted
                             resizeMode={ResizeMode.STRETCH}
                             onPlaybackStatusUpdate={status => setStatus(() => status)}
                             onReadyForDisplay={handleVideoReadyForDisplay}

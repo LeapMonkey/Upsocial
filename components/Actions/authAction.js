@@ -22,6 +22,8 @@ export const loginUser = (userData) => (dispatch) => {
                     type: SET_USERS,
                     payload: res.data,
                 });
+                localStorage.setItem("isUser", res.data.curUser);
+                localStorage.setItem("username", res.data.Data.username);
                 dispatch(setLoadingdata(false));
             } else {
                 if (Platform.OS === "android") {

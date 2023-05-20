@@ -15,6 +15,7 @@ import { connect } from "react-redux";
 import { apiURL } from "../../config/config";
 import { Video, ResizeMode } from "expo-av";
 import { useMediaQuery } from "react-responsive";
+import { LinearGradient } from "expo-linear-gradient";
 
 const Profile = (props) => {
     const video = useRef(null);
@@ -50,7 +51,7 @@ const Profile = (props) => {
     // end
 
     useEffect(() => {
-        axios.post(apiURL + "/api/Upsocial/users/get/UploadedContent", { userEmail: props.auth.user.curUser }, {
+        axios.post(apiURL + "/api/Upsocial/users/get/UploadedContent", { userEmail: props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser }, {
             "Access-Control-Allow-Origin": "*",
             'Access-Control-Allow-Headers': '*',
         }).then((res) => {
@@ -62,9 +63,8 @@ const Profile = (props) => {
 
 
     useEffect(() => {
-
         axios.post(apiURL + "/api/Upsocial/admin/getUsers",
-            { userEmail: props.auth.user.curUser },
+            { userEmail: props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser },
             {
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*'
@@ -112,7 +112,7 @@ const Profile = (props) => {
             <ScrollView style={{ flex: 1, zIndex: 1 }}>
                 <View>
                     <ImageBackground
-                        source={avatar == null ? require("../../../assets/profile.png") : avatar}
+                        source={avatar == null ? require("../../../assets/background.jpg") : avatar}
                         style={styles.profileImage}
                     >
                         <View style={styles.subContainer}>
@@ -122,6 +122,15 @@ const Profile = (props) => {
                                     <Text style={{ fontSize: 15, color: "#fff" }} >Edit</Text>
                                 </TouchableOpacity>
                             </View>
+                            <TouchableOpacity style={{ position: "absolute", top: "30%", left: "50%", transform: "translate(-50%, -50%)", width: "60%" }} onPress={() => props.setflag("EditProfile")} >
+
+                                <LinearGradient
+                                    colors={['#4a39c9', '#A32988']}
+                                    style={styles.container}
+                                >
+                                    <Text style={{ borderRadius: 5, paddingVertical: 10, fontSize: 15, color: "#fff", fontWeight: "bold", textAlign: "center" }} >Add your Profile</Text>
+                                </LinearGradient>
+                            </TouchableOpacity>
                             <View style={styles.SubTitleView}>
                                 <View style={styles.titleContainer}>
                                     <Text style={styles.Username}>{username}</Text>
@@ -141,7 +150,7 @@ const Profile = (props) => {
                                         <Text style={styles.proBadge}>Pro</Text>
                                         <Text style={styles.userRole}>Creator</Text>
                                         <View style={styles.review}>
-                                            <Text style={styles.reviewMark}>4.8</Text>
+                                            <Text style={styles.reviewMark}>1.0</Text>
                                             <Ionicons name="add-circle-outline" color="#F58422" size={24} />
                                         </View>
                                     </View>

@@ -1,15 +1,22 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, View, StatusBar, Image, Text, Dimensions, TouchableOpacity } from "react-native";
 import { connect } from "react-redux";
 import ProfileManage from "./pages/ProfileManage";
 import Dashboard from "./pages/Dashboard";
 
 const Main = (props) => {
+    const [isAuth, setIsAuth] = useState(false);
+    useEffect(() => {
+        if (localStorage.getItem("isUser")) {
+            setIsAuth(true);
+        } else {
+            setIsAuth(false);
+        }
+    }, [props]);
     return (
         <View style={styles.container}>
             <StatusBar />
-            {/* <ProfileManage /> */}
-            {props.auth.isAuthenticated ? <ProfileManage /> : <Dashboard />}
+            {isAuth ? <ProfileManage /> : <Dashboard />}
             {props.loading.loading && (
                 <View style={styles.loadingView}>
                     <Image

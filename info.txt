@@ -46,7 +46,7 @@ https://g.upsocial.com/ipfs/QmRtZYj2LMES7udUJYHoDhh89xumxnPpZrPK2BvMTGUL7L
 
 -- Kubo Node
 
-pass: tHadraki-r@RuthazAs4
+pass: tHadraki-r@RuthazAs4 || baqopH3dUtO+ociC!r&jEnevLfr74--ha*Tu=rUW
 login: devopts
 192.3.103.54
 

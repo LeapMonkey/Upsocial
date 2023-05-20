@@ -68,7 +68,7 @@ const EditProfile = (props) => {
             formdata.append("handle", handle);
             formdata.append("description", description);
             formdata.append("location", location);
-            formdata.append("userEmail", props.auth.user.curUser);
+            formdata.append("userEmail", props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser);
 
             const headers = {
                 'Content-Type': 'application/json',
