@@ -214,7 +214,7 @@ const UploadingVideo = (props) => {
                 await axios.post(apiURL + "/api/Upsocial/upload/generate-ipfs", formData, headers)
                     .then(async (response) => {
                         if (response.data.data) {
-                            console.log(cid);
+                            cid = response.data.data.ipfsUrl;
                             var arr = thumbnails[0].split(','), mime = arr[0].match(/:(.*?);/)[1],
                                 bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
                             while (n--) {
