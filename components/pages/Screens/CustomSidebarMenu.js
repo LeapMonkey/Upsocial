@@ -9,11 +9,9 @@ import {
 } from 'react-native';
 import { Ionicons, MaterialCommunityIcons } from "react-native-vector-icons";
 import { DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
-import { useEffect } from 'react';
-import { NavigationContainer, useNavigation } from '@react-navigation/native';
+import { useEffect, useState } from 'react';
 
 const CustomSidebarMenu = (props) => {
-    const navigation = useNavigation();
     const logout = () => {
         console.log("hello")
         localStorage.removeItem("isUser");
@@ -21,12 +19,22 @@ const CustomSidebarMenu = (props) => {
         window.location.reload();
     };
 
-    // useEffect(() => {
-    //     console.log("------1------", localStorage.routeName)
-    //     navigation(localStorage.routeName);
-    //     console.log("------2------", props.state.routes[props.state.index].name)
-    //     localStorage.setItem('routeName', props.state.routes[props.state.index].name);
-    // }, [props]);
+    const [routerName, setRouterName] = useState("Home");
+
+    useEffect(() => {
+        if (props.state.routes[props.state.index].name != "Home") {
+            localStorage.setItem('routeName', props.state.routes[props.state.index].name);
+            setRouterName(props.state.routes[props.state.index].name);
+        }
+    }, [props]);
+
+    useEffect(() => {
+        if (localStorage.routeName) {
+            if (localStorage.routeName != "Home") {
+                props.navigation.navigate(localStorage.routeName);
+            }
+        }
+    }, [routerName]);
 
 
     return (

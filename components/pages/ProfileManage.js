@@ -27,10 +27,14 @@ const ProfileManage = (props) => {
         }
     }, []);
 
+    const setLastRouteNames = (name) => {
+        setLastRouteName(name);
+    }
+
     return (
         <NavigationContainer >
             <Drawer.Navigator
-                drawerContent={(props) => <CustomSidebarMenu {...props} userName={userName} />}
+                drawerContent={(props) => <CustomSidebarMenu {...props} userName={userName} routeName={setLastRouteNames} />}
                 screenOptions={({ route }) => ({
                     drawerIcon: ({ focused, color, size }) => {
                         if (route.name === 'Home') {

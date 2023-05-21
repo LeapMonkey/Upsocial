@@ -15,7 +15,6 @@ import { connect } from "react-redux";
 import { apiURL } from "../../config/config";
 import { Video, ResizeMode } from "expo-av";
 import { useMediaQuery } from "react-responsive";
-import { LinearGradient } from "expo-linear-gradient";
 
 const Profile = (props) => {
     const video = useRef(null);
@@ -69,7 +68,6 @@ const Profile = (props) => {
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*'
             }).then((res) => {
-                console.log(res.data.data);
                 if (res.data.data.photo) {
                     setAvatar({ uri: res.data.data.photo })
                 }
@@ -123,13 +121,7 @@ const Profile = (props) => {
                                 </TouchableOpacity>
                             </View>
                             <TouchableOpacity style={{ position: "absolute", top: "30%", left: "50%", transform: "translate(-50%, -50%)", width: "60%" }} onPress={() => props.setflag("EditProfile")} >
-
-                                <LinearGradient
-                                    colors={['#4a39c9', '#A32988']}
-                                    style={styles.container}
-                                >
-                                    <Text style={{ borderRadius: 5, paddingVertical: 10, fontSize: 15, color: "#fff", fontWeight: "bold", textAlign: "center" }} >Add your Profile</Text>
-                                </LinearGradient>
+                                <Text style={{ backgroundColor: "#c081ff", borderRadius: 5, paddingVertical: 10, fontSize: 15, color: "#fff", fontWeight: "bold", textAlign: "center" }} >Add your Profile</Text>
                             </TouchableOpacity>
                             <View style={styles.SubTitleView}>
                                 <View style={styles.titleContainer}>
