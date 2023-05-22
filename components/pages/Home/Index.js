@@ -396,15 +396,20 @@ const Home = (props) => {
                     style={styles.TextInput} value={searchtext} onChangeText={(e) => onSearch(e)} />
             </View>}
             <View style={styles.categoryview}>
-                {items.map((item, key) => {
-                    return (
-                        <TouchableOpacity key={key} style={categoryName === item.name ? styles.active_categoryitem : styles.categoryitem} onPress={() => changeCategoryItem(item.name)}>
-                            <Text style={categoryName === item.name ? styles.active_categorytext : styles.categorytext}>{item.name}</Text>
-                        </TouchableOpacity>
-                    )
-                })}
+                <ScrollView horizontal={true}
+                    showsHorizontalScrollIndicator={false}
+                    showsVerticalScrollIndicator={false}>
+                    {items.map((item, key) => {
+                        return (
+                            <TouchableOpacity key={key} style={categoryName === item.name ? styles.active_categoryitem : styles.categoryitem} onPress={() => changeCategoryItem(item.name)}>
+                                <Text style={categoryName === item.name ? styles.active_categorytext : styles.categorytext}>{item.name}</Text>
+                            </TouchableOpacity>
+                        )
+                    })}
+                </ScrollView>
             </View>
-            <ScrollView style={styles.scrollview}>
+            <ScrollView style={styles.scrollview} showsHorizontalScrollIndicator={false}
+                showsVerticalScrollIndicator={false}>
                 <View style={styles.videoFeed}>
                     <View style={styles.playground}>
                         <Video
@@ -542,7 +547,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         overflow: "auto",
         backgroundColor: "#000",
-        height: Dimensions.get("window").height * 0.08
+        height: Dimensions.get("window").height * 0.1,
     },
     active_categoryitem: {
         paddingVertical: 20,

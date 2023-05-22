@@ -3,8 +3,9 @@ import { connect } from "react-redux";
 import { MaterialCommunityIcons, MaterialIcons, Feather, Ionicons, FontAwesome, AntDesign, Entypo } from 'react-native-vector-icons';
 import {
     Text, StyleSheet, Image, View, ScrollView, TouchableOpacity, Dimensions,
-    Platform, TextInput
+    Platform, TextInput, Button
 } from 'react-native';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
 import SelectDropdown from "react-native-select-dropdown";
 import Modal from "react-native-modal";
 import { MultiSelect } from 'react-native-element-dropdown';
@@ -125,6 +126,13 @@ const MyVideos = (props) => {
     const video = useRef(null);
     const [status, setStatus] = useState({});
     const [thumbnails, setThumbnails] = useState([]);
+
+    // Confirm Modal
+    const [hashCode, setHashCode] = useState("");
+    const [videoResult, setVideoResult] = useState("");
+    const [embedCode, setEmbedCode] = useState("");
+    const [confirmModal, setConfirmModal] = useState(false);
+    const [email, setEmail] = useState('');
 
     const [opened, setOpened] = useState(false);
 
@@ -421,6 +429,13 @@ const MyVideos = (props) => {
                     .then(async (response) => {
                         if (response.data.data) {
                             cid = response.data.data.ipfsUrl;
+
+                            setHashCode(cid);
+                            let URL = `${cid}`;
+                            setVideoResult(URL);
+                            let emb = `<iframe src="${cid}" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" style="border:none; width:100%; height:100%; min-height:500px;" frameborder="0" scrolling="no"></iframe>`
+                            setEmbedCode(emb);
+
                             var arr = thumbnails[0].split(','), mime = arr[0].match(/:(.*?);/)[1],
                                 bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
                             while (n--) {
@@ -438,18 +453,11 @@ const MyVideos = (props) => {
                             Thumbnail_formData.append('userEmail', props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser);
                             Thumbnail_formData.append('video_src', cid);
 
-                            console.log('thumbnail', img_file);
-                            console.log('title', v_title);
-                            console.log('description', v_description);
-                            console.log('keywords', videoKeywords);
-                            console.log('category', selected);
-                            console.log('userEmail', props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser);
-                            console.log('video_src', cid);
-
                             await axios.post(apiURL + "/api/Upsocial/users/content/web/uploadContent", Thumbnail_formData, headers).then((res) => {
                                 if (res.data.status) {
                                     setLoading(false);
                                     resetValues();
+                                    setConfirmModal(true);
                                     alert("Success");
                                 } else {
                                     setLoading(false);
@@ -493,6 +501,12 @@ const MyVideos = (props) => {
                         if (response.data.data) {
                             cid = response.data.data.ipfsUrl;
 
+                            setHashCode(cid);
+                            let URL = `${cid}`;
+                            setVideoResult(URL);
+                            let emb = `<iframe src="${cid}" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" style="border:none; width:100%; height:100%; min-height:500px;" frameborder="0" scrolling="no"></iframe>`
+                            setEmbedCode(emb);
+
                             var arr = thumbnails[0].split(','), mime = arr[0].match(/:(.*?);/)[1],
                                 bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
                             while (n--) {
@@ -518,6 +532,7 @@ const MyVideos = (props) => {
                                     setLoading(false);
                                     resetValues();
                                     alert("Success");
+                                    setConfirmModal(true);
                                 } else {
                                     setLoading(false);
                                 }
@@ -604,6 +619,25 @@ const MyVideos = (props) => {
         }
     };
 
+    const onNotify = () => {
+
+    };
+
+    const onShareSocial = (type) => {
+        let shareUrl = ''
+        if (type === 'whatsapp') {
+            shareUrl = `https://api.whatsapp.com/send?text=${videoResult}`;
+        } else if (type === 'facebook') {
+            shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${videoResult}`;
+        } else if (type === 'twitter') {
+            shareUrl = `https://twitter.com/share?url=${videoResult}`;
+        } else if (type === 'wordpress') {
+            shareUrl = `https://upsocial.com/wp/v2/posts?url=${videoResult}`;
+        }
+        window.open(shareUrl, '_blank');
+    }
+
+
     useEffect(() => {
         fetch("http://api.geonames.org/searchJSON?q=" + location + "&maxRows=10&username=secretsuperdev")
             .then(response => response.json())
@@ -664,6 +698,82 @@ const MyVideos = (props) => {
 
     return (
         <View style={styles.main}>
+            <Modal
+                isVisible={confirmModal}
+                animationIn={'slideInRight'}
+                animationOut={'slideOutRight'}
+                style={{ margin: 0, padding: 0 }}
+            >
+                <TouchableOpacity onPress={() => setConfirmModal(false)}>
+                    <Ionicons name="arrow-back-sharp" color="#000" size={30} />
+                </TouchableOpacity>
+
+                <View style={styles.videopage}>
+                    <View style={{ flexDirection: "row", justifyContent: "space-between", width: "100%", alignItems: "center", position: 'absolute', top: 0, left: 0, zIndex: 1000000 }}>
+                        <TouchableOpacity onPress={() => setConfirmModal(false)}>
+                            <Ionicons name="arrow-back-sharp" color="#000" size={30} />
+                        </TouchableOpacity>
+                    </View>
+                    <View style={styles.inputWrapper}>
+                        <Text style={styles.labelText}>Your shareable URL:</Text>
+                        <View style={styles.rowCenter}>
+                            <TextInput
+                                style={styles.urlInput}
+                                type={'text'}
+                                value={videoResult}
+                                editable={false}
+                            />
+                            <CopyToClipboard text={videoResult}
+                                onCopy={() => console.log('copied')}>
+                                <Image style={styles.actionImage} source={require("../../../assets/modal/icon_copy_link.png")} />
+                            </CopyToClipboard>
+                        </View>
+                        <View style={styles.codeWrapper}>
+                            <Text style={styles.labelText}>Your Embed Code</Text>
+                            <View style={[styles.rowCenter, { width: "100% !important" }]}>
+                                <TextInput
+                                    style={styles.urlInput}
+                                    multiline={true}
+                                    numberOfLines={5}
+                                    type={'textarea'}
+                                    value={embedCode}
+                                    editable={false}
+                                />
+                                <View style={styles.actionsWrapper}>
+                                    <CopyToClipboard text={embedCode}
+                                        onCopy={() => console.log('copied')}>
+                                        <Image style={styles.actionImage} source={require("../../../assets/modal/icon_copy_link.png")} />
+                                    </CopyToClipboard>
+                                    <Image style={styles.actionImage} source={require("../../../assets/modal/icon_wordpress.png")} onClick={() => onShareSocial('wordpress')} />
+                                    <Image style={styles.actionImage} source={require("../../../assets/modal/icon_facebook.png")} onClick={() => onShareSocial('facebook')} />
+                                    <Image style={styles.actionImage} source={require("../../../assets/modal/icon_twitter.png")} onClick={() => onShareSocial('twitter')} />
+                                    <Image style={styles.actionImage} source={require("../../../assets/modal/icon_whatsapp.png")} onClick={() => onShareSocial('whatsapp')} />
+                                    <Image style={styles.actionImage} source={require("../../../assets/modal/icon_chat.png")} />
+                                    {/* <Image style={styles.actionImage} source={require("../../../assets/modal/icon_qr_code.png")} onClick={onGenerateQRCode} /> */}
+                                </View>
+                            </View>
+                        </View>
+                        <View style={styles.soonWrapper}>
+                            <Text style={styles.labelText}>Coming Soon!</Text>
+                            <Text style={styles.descriptionText}>Want to automatically backup all new videos posted to your youtube channel forever?</Text>
+                            <TextInput
+                                style={styles.urlInput}
+                                type={'text'}
+                                value={email}
+                                onChange={(text) => setEmail(email)}
+                            />
+                        </View>
+                        <View style={styles.rowCenter}>
+                            <Button
+                                style={styles.button}
+                                title={'Notify Me'}
+                                disabled={true}
+                                onClick={onNotify}
+                            />
+                        </View>
+                    </View>
+                </View>
+            </Modal>
             {loading && <View style={styles.loadingView}>
                 <Image
                     source={require("../../../assets/loading.gif")}
@@ -1500,6 +1610,56 @@ const styles = StyleSheet.create({
     videoPreviewer: {
         width: Platform.OS === 'android' || Platform.OS === 'ios' ? Dimensions.get("window").width : '100%',
         height: Dimensions.get("window").height * 0.35
+    },
+    videopage: {
+        width: "100%",
+        height: Dimensions.get('window').height,
+        justifyContent: "center",
+        backgroundColor: "#fff",
+        alignItems: "center",
+    },
+    inputWrapper: {
+        marginTop: 20,
+        width: "100%",
+        justifyContent: "center",
+        alignItems: "center"
+    },
+    labelText: {
+        fontSize: 16,
+        fontWeight: 600,
+        color: 'rgb(51, 51, 51)',
+        textAlign: 'center',
+        marginBottom: 10
+    },
+    rowCenter: {
+        flex: 1,
+        width: "50%",
+        flexDirection: "row",
+        justifyContent: "center",
+        alignItems: "center"
+    },
+    urlInput: {
+        flexGrow: 1,
+        marginRight: 10,
+        width: '100%'
+    },
+    actionsWrapper: {
+        flexDirection: 'column',
+        justifyContent: 'center'
+    },
+    actionImage: {
+        width: 24,
+        height: 24,
+        marginBottom: 10
+    },
+    soonWrapper: {
+        marginTop: 20,
+        marginBottom: 20
+    },
+    descriptionText: {
+        fontSize: 15,
+        textAlign: 'center',
+        marginBottom: 10
     },
 });
 

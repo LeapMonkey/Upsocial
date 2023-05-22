@@ -389,7 +389,7 @@ const Upload = (props) => {
             >
                 <TouchableOpacity onPress={() => setOpened(false)}>
                     <Ionicons name="arrow-back-sharp" color="#000" size={30} />
-                </TouchableOpacity>fffffffffffff
+                </TouchableOpacity>
                 {showQRCode ? (
                     <View style={styles.qrCodeDialogWrapper}>
                         <div style={styles.qrCodeDialog}>
