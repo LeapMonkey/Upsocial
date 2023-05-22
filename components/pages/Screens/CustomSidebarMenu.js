@@ -13,25 +13,43 @@ import { useEffect, useState } from 'react';
 
 const CustomSidebarMenu = (props) => {
     const logout = () => {
-        console.log("hello")
         localStorage.removeItem("isUser");
         localStorage.removeItem("username");
         window.location.reload();
     };
 
     const [routerName, setRouterName] = useState("Home");
+    const [number, setNumber] = useState(0);
 
     useEffect(() => {
-        if (props.state.routes[props.state.index].name != "Home") {
-            localStorage.setItem('routeName', props.state.routes[props.state.index].name);
-            setRouterName(props.state.routes[props.state.index].name);
+        if (props.state.routes[props.state.index].name == "Home") {
+            if (number > 1) {
+                localStorage.setItem('routeName', "Home");
+                localStorage.setItem('homeFlag', "true");
+            } else {
+                if (localStorage.routeName == "Home") {
+                    localStorage.setItem('homeFlag', "true");
+                } else {
+                    localStorage.setItem('homeFlag', "false");
+                }
+            }
+        } else {
+            localStorage.setItem("homeFlag", "false");
+            localStorage.setItem("routeName", props.state.routes[props.state.index].name);
         }
+        var temnum = number + 1;
+        setNumber(temnum);
     }, [props]);
 
     useEffect(() => {
-        if (localStorage.routeName) {
-            if (localStorage.routeName != "Home") {
-                props.navigation.navigate(localStorage.routeName);
+        if (localStorage.homeFlag) {
+            if (localStorage.routeName) {
+                if (localStorage.routeName != "Home" && localStorage.homeFlag == "false") {
+                    props.navigation.navigate(localStorage.routeName);
+                }
+                if (localStorage.routeName != "Home" && localStorage.homeFlag == "true") {
+                    props.navigation.navigate("Home");
+                }
             }
         }
     }, [routerName]);
