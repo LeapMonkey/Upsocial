@@ -1,7 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { connect } from "react-redux";
 import { MaterialCommunityIcons, MaterialIcons, Feather, Ionicons } from 'react-native-vector-icons';
-import { Text, StyleSheet, Image, View, ScrollView, TouchableOpacity, Dimensions, Share, TextInput } from 'react-native';
+import {
+    Text, StyleSheet, Image, View, ScrollView, TouchableOpacity, Dimensions, Share, TextInput, PanResponder,
+    Animated,
+} from 'react-native';
+import * as Sharing from 'expo-sharing';
 import Modal from "react-native-modal";
 import { useMediaQuery } from "react-responsive";
 import { Video, ResizeMode } from "expo-av";
@@ -40,6 +44,7 @@ const items = [
     { id: 27, name: 'Blogs' },
 ];
 
+const { width, height } = Dimensions.get('window');
 
 const Home = (props) => {
     // mobile and desktop variable for responsive
@@ -94,6 +99,7 @@ const Home = (props) => {
                 res.data.data.sort((a, b) => {
                     return new Date(b.postDate) - new Date(a.postDate);
                 });
+                console.log(res.data.data)
                 setResult(res.data.data);
                 setAllData(res.data.data);
                 SetVideoSource({ uri: res.data.data[0].ipfsUrl });
@@ -163,11 +169,25 @@ const Home = (props) => {
     };
 
     const ShareFile = async (url) => {
-        Share.share({
-            message: url.toString()
-        }).then((res) => {
-            console.log(res);
-        }).catch((err) => console.log(err));
+        // console.log(url)
+        // Share.share({
+        //     message: url.toString()
+        // }).then((res) => {
+        //     console.log(res);
+        // }).catch((err) => console.log(err));
+        // if (!(await Sharing.isAvailableAsync())) {
+        //     alert(`Uh oh, sharing isn't available on your platform`);
+        //     return;
+        // }
+
+        // Sharing.shareAsync(url);
+
+        Sharing.shareAsync({
+            url: url,
+            mimeType: 'Video/.mp4',
+            dialogTitle: 'Share your file',
+            UTI: 'public.jpeg',
+        });
     }
 
     const onSearch = (e) => {
@@ -238,6 +258,7 @@ const Home = (props) => {
             />
         </View>
     );
+
     const renderHiddenItem = (data, rowMap) => (
         <View style={styles.rowBack}></View>
     );
@@ -333,12 +354,19 @@ const Home = (props) => {
             }
         }
     };
+
+    const [profileIndex, setProfileIndex] = useState(0);
+
+    const nextCard = () => {
+        setProfileIndex(profileIndex + 1);
+    }
+
     return (
         <View style={styles.main}>
             <Modal
                 isVisible={opened}
-                animationIn={'slideInRight'}
-                animationOut={'slideOutRight'}
+                animationIn={'zoomInDown'}
+                animationOut={'zoomOutUp'}
                 style={{ margin: 0, padding: 0 }}
             >
                 <View style={styles.videopage}>
@@ -352,18 +380,12 @@ const Home = (props) => {
                             </TouchableOpacity>
                         </View>
                     </View>
-                    <View style={{ height: Dimensions.get("window").height }}>
-                        <SwipeListView
-                            data={listData}
-                            renderItem={renderItem}
-                            renderHiddenItem={renderHiddenItem}
-                            leftOpenValue={0}
-                            rightOpenValue={0}
-                            previewRowKey={'0'}
-                            previewOpenValue={-40}
-                            previewOpenDelay={3000}
-                            onSwipeValueChange={(e) => handleReaction(e)}
-                        />
+                    <View style={{ height: Dimensions.get("window").height, width: width }}>
+                        {result.slice(profileIndex, result.length - 1).reverse().map((profile) => {
+                            return (
+                                <Card key={profile.ID} profile={profile} onSwipeOff={nextCard} />
+                            )
+                        })}
                     </View>
                 </View>
             </Modal>
@@ -506,7 +528,136 @@ const Home = (props) => {
     );
 };
 
+export const Card = (props) => {
+    var pan = new Animated.ValueXY();
+    const TopVideos = useRef(null);
+    var cardPanResponder = PanResponder.create({
+        onStartShouldSetPanResponder: () => true,
+        onPanResponderMove: Animated.event([
+            null,
+            { dx: pan.x, dy: pan.y },
+        ]),
+        onPanResponderRelease: (e, { dx }) => {
+            const absDx = Math.abs(dx)
+            const direction = absDx / dx
+
+            if (absDx > 120) {
+                Animated.decay(pan, {
+                    velocity: { x: 3 * direction, y: 0 },
+                    deceleration: 0.995,
+                }).start(props.onSwipeOff)
+            } else {
+                Animated.spring(pan, {
+                    toValue: { x: 0, y: 0 },
+                    friction: 4.5,
+                }).start()
+            }
+        },
+    });
+
+    const rotateCard = pan.x.interpolate({
+        inputRange: [-200, 0, 200],
+        outputRange: ['10deg', '0deg', '-10deg'],
+    });
+
+    const animatedStyle = {
+        transform: [
+            { translateX: pan.x },
+            { translateY: pan.y },
+            { rotate: rotateCard },
+        ],
+    }
+
+    const likeOpacity = pan.x.interpolate({
+        inputRange: [-width / 2, 0, width / 2],
+        outputRange: [0, 0, 1],
+        extrapolate: 'clamp'
+    });
+
+    const nopeOpacity = pan.x.interpolate({
+        inputRange: [-width / 2, 0, width / 2],
+        outputRange: [1, 0, 0],
+        extrapolate: 'clamp'
+    });
+
+    return (
+        <Animated.View
+            {...cardPanResponder.panHandlers}
+            style={[styles.card, animatedStyle]}>
+            <Animated.View
+                style={{
+                    opacity: likeOpacity,
+                    transform: [{ rotate: "-30deg" }],
+                    position: "absolute",
+                    top: 50,
+                    left: 40,
+                    zIndex: 1000
+                }}
+            >
+                <Text
+                    style={{
+                        borderWidth: 1,
+                        borderColor: "green",
+                        color: "green",
+                        fontSize: 32,
+                        fontWeight: "800",
+                        padding: 10
+                    }}
+                >
+                    LIKE
+                </Text>
+            </Animated.View>
+            <Animated.View
+                style={{
+                    opacity: nopeOpacity,
+                    transform: [{ rotate: "30deg" }],
+                    position: "absolute",
+                    top: 50,
+                    right: 40,
+                    zIndex: 1000
+                }}
+            >
+                <Text
+                    style={{
+                        borderWidth: 1,
+                        borderColor: "red",
+                        color: "red",
+                        fontSize: 32,
+                        fontWeight: "800",
+                        padding: 10
+                    }}
+                >
+                    NOPE
+                </Text>
+            </Animated.View>
+            <Video
+                videoStyle={{ position: 'relative', width: Dimensions.get("window").width, height: Dimensions.get("window").height }}
+                ref={TopVideos}
+                style={{ width: "100%", height: Dimensions.get("window").height }}
+                source={{ uri: props.profile.ipfsUrl }}
+                rate={1.0}
+                isLooping
+                volume={1.0}
+                shouldPlay
+                useNativeControls
+                resizeMode={ResizeMode.CONTAIN}
+            />
+        </Animated.View>
+    )
+}
+
 const styles = StyleSheet.create({
+    card: {
+        position: 'absolute',
+        width: width,
+        height: height,
+        overflow: 'hidden',
+        backgroundColor: '#000',
+        margin: 10,
+        borderWidth: 0,
+        borderColor: 'lightgrey',
+        borderRadius: 8,
+    },
     main: {
         flex: 1,
         width: "100%",
@@ -725,6 +876,64 @@ const styles = StyleSheet.create({
         paddingLeft: 15,
     },
 });
+
+
+const profiles = [
+    {
+        id: '259389830744794',
+        name: 'Candice',
+        birthday: '10/18/1986',
+        bio: 'Supermodel',
+    },
+    {
+        id: '720115413',
+        name: 'Alessandra',
+        birthday: '1/10/1989',
+        bio: 'Dancer',
+    },
+    {
+        id: '169571172540',
+        name: 'Miranda',
+        birthday: '12/12/1983',
+        bio: 'Doctor',
+    },
+    {
+        id: '1476279359358140',
+        name: 'Alissa',
+        birthday: '2/11/1990',
+        bio: 'Comedian',
+    },
+    {
+        id: '912478262117011',
+        name: 'Rosie',
+        birthday: '9/4/1989',
+        bio: 'Artist',
+    },
+    {
+        id: '173567062703796',
+        name: 'Kendall',
+        birthday: '8/17/1992',
+        bio: 'Truck Driver',
+    },
+    {
+        id: '662254353934918',
+        name: 'Anna',
+        birthday: '3/23/1989',
+        bio: 'Personal Trainer',
+    },
+    {
+        id: '424154277777372',
+        name: 'Gabriella',
+        birthday: '3/23/1988',
+        bio: 'Surfer',
+    },
+    {
+        id: '662720103796952',
+        name: 'Mara',
+        birthday: '3/23/1987',
+        bio: 'Lifeguard',
+    },
+]
 
 
 const mapStateToProps = (state) => ({

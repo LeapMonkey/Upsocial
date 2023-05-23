@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { connect } from "react-redux";
 import { LinearGradient } from "expo-linear-gradient";
-import { View, Text, ScrollView, StyleSheet, Image, TouchableOpacity, TextInput, Dimensions, Platform } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, Image, TouchableOpacity, TextInput, Button, Dimensions, Platform } from 'react-native';
 import SelectDropdown from "react-native-select-dropdown";
 import { MultiSelect } from 'react-native-element-dropdown';
 import { MaterialCommunityIcons, MaterialIcons, Feather, Ionicons, FontAwesome, AntDesign } from 'react-native-vector-icons';
@@ -11,6 +11,8 @@ import { Video, ResizeMode } from "expo-av";
 import { generateVideoThumbnails } from "@rajesh896/video-thumbnails-generator";
 import { apiURL } from '../../config/config';
 import axios from 'axios';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
+import { Country } from "country-state-city";
 
 const DATA = [
     { value: '1', label: 'Animation' },
@@ -26,7 +28,7 @@ const DATA = [
     { value: '11', label: 'Gaming' },
     { value: '12', label: 'Health & Fitness' },
     { value: '13', label: 'How-to & Style' },
-    { value: '14', label: 'Kvalues ' & ' Family' },
+    { value: '14', label: 'Kids & Family' },
     { value: '15', label: 'Music' },
     { value: '16', label: 'News & Politics' },
     { value: '17', label: 'Nonprofits & Activism' },
@@ -59,6 +61,7 @@ const UploadingVideo = (props) => {
     const [v_channelAdmin, setV_channelAdmin] = useState("");
     const [location, setLocation] = useState("");
     const [optionlists, setOptionLists] = useState(null);
+    const [allData, setAllData] = useState(null);
 
     const [channels, setChannels] = useState([{ channelName: "Personal Profile" }]);
     const [selected, setSelected] = useState([]);
@@ -66,6 +69,21 @@ const UploadingVideo = (props) => {
     const [opened, setOpened] = useState(false);
 
     const [isSelectable, setIsSelectable] = useState(false);
+
+    // Camera recorded video file
+    const [camera_VideoUri, set_camera_VideoUri] = useState("");
+    const [camera_Name, set_camera_Name] = useState("");
+    const [camera_Type, set_camera_Type] = useState("");
+    const [uploadVideoType, setUploadVideoType] = useState(false);
+
+    // Confirm Modal
+    const [hashCode, setHashCode] = useState("");
+    const [videoResult, setVideoResult] = useState("");
+    const [embedCode, setEmbedCode] = useState("");
+    const [confirmModal, setConfirmModal] = useState(false);
+    const [email, setEmail] = useState('');
+
+    const [searchtext, setSearchtext] = useState("");
 
     const cameraOption = () => {
         setOpened(true);
@@ -94,18 +112,29 @@ const UploadingVideo = (props) => {
         let match = /\.(\w+)$/.exec(filename);
         let type = match ? `video/${match[1]}` : `video`;
 
+        setVideoSrc({ uri: localUri });
+        set_camera_VideoUri(localUri);
+        set_camera_Name(filename);
+        set_camera_Type(type);
+        setUploadVideoType(true);
     };
 
     const onFileChange = (event) => {
         const file = event.target.files[0];
         setFile({ file });
+        setUploadVideoType(false);
         const url = URL.createObjectURL(file);
         setVideoSrc({ uri: url });
         if (file) {
-            generateVideoThumbnails(file, 0).then((res) => {
-                setThumbnails(res);
-                setOpened(false);
-            }).catch((err) => console.log(err));
+            try {
+                generateVideoThumbnails(file, 3).then((res) => {
+                    setThumbnails(res);
+                    setOpened(false);
+                }).catch((err) => console.log("**************err**********", err));
+            } catch (error) {
+                console.log("**************error**********", error)
+            }
+
         }
     };
 
@@ -150,7 +179,7 @@ const UploadingVideo = (props) => {
     };
 
     const uploadVideo = async () => {
-        if (!file.file) {
+        if (!file.file && camera_VideoUri == "") {
             if (Platform.OS === "android") {
                 ToastAndroid.show("Please upload your video!", ToastAndroid.SHORT);
             } else if (Platform.OS === "web") {
@@ -209,13 +238,19 @@ const UploadingVideo = (props) => {
                 let formData = new FormData();
 
                 formData.append('video', data.file);
-                console.log('video', data.file);
 
                 await axios.post(apiURL + "/api/Upsocial/upload/generate-ipfs", formData, headers)
                     .then(async (response) => {
                         if (response.data.data) {
                             cid = response.data.data.ipfsUrl;
-                            var arr = thumbnails[0].split(','), mime = arr[0].match(/:(.*?);/)[1],
+
+                            setHashCode(cid);
+                            let URL = `${cid}`;
+                            setVideoResult(URL);
+                            let emb = `<iframe src="${cid}" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" style="border:none; width:100%; height:100%; min-height:500px;" frameborder="0" scrolling="no"></iframe>`
+                            setEmbedCode(emb);
+
+                            var arr = thumbnails[2].split(','), mime = arr[0].match(/:(.*?);/)[1],
                                 bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
                             while (n--) {
                                 u8arr[n] = bstr.charCodeAt(n);
@@ -231,20 +266,12 @@ const UploadingVideo = (props) => {
                             Thumbnail_formData.append('category', selected);
                             Thumbnail_formData.append('userEmail', props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser);
                             Thumbnail_formData.append('video_src', cid);
-
-                            console.log('thumbnail', img_file);
-                            console.log('title', v_title);
-                            console.log('description', v_description);
-                            console.log('keywords', videoKeywords);
-                            console.log('category', selected);
-                            console.log('userEmail', props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser);
-                            console.log('video_src', cid);
-
                             await axios.post(apiURL + "/api/Upsocial/users/content/web/uploadContent", Thumbnail_formData, headers).then((res) => {
                                 if (res.data.status) {
                                     setLoading(false);
                                     resetValues();
                                     alert("Success");
+                                    setConfirmModal(true);
                                 } else {
                                     setLoading(false);
                                 }
@@ -287,7 +314,13 @@ const UploadingVideo = (props) => {
                         if (response.data.data) {
                             cid = response.data.data.ipfsUrl;
 
-                            var arr = thumbnails[0].split(','), mime = arr[0].match(/:(.*?);/)[1],
+                            setHashCode(cid);
+                            let URL = `${cid}`;
+                            setVideoResult(URL);
+                            let emb = `<iframe src="${cid}" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" style="border:none; width:100%; height:100%; min-height:500px;" frameborder="0" scrolling="no"></iframe>`
+                            setEmbedCode(emb);
+
+                            var arr = thumbnails[2].split(','), mime = arr[0].match(/:(.*?);/)[1],
                                 bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
                             while (n--) {
                                 u8arr[n] = bstr.charCodeAt(n);
@@ -312,6 +345,7 @@ const UploadingVideo = (props) => {
                                     setLoading(false);
                                     resetValues();
                                     alert("Success");
+                                    setConfirmModal(true);
                                 } else {
                                     setLoading(false);
                                 }
@@ -340,6 +374,24 @@ const UploadingVideo = (props) => {
         );
     };
 
+    const onNotify = () => {
+
+    };
+
+    const onShareSocial = (type) => {
+        let shareUrl = ''
+        if (type === 'whatsapp') {
+            shareUrl = `https://api.whatsapp.com/send?text=${videoResult}`;
+        } else if (type === 'facebook') {
+            shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${videoResult}`;
+        } else if (type === 'twitter') {
+            shareUrl = `https://twitter.com/share?url=${videoResult}`;
+        } else if (type === 'wordpress') {
+            shareUrl = `https://upsocial.com/wp/v2/posts?url=${videoResult}`;
+        }
+        window.open(shareUrl, '_blank');
+    }
+
     useEffect(() => {
         axios.post(apiURL + "/api/Upsocial/getAll/channels", {
             "Access-Control-Allow-Origin": "*",
@@ -352,18 +404,30 @@ const UploadingVideo = (props) => {
     }, []);
 
     useEffect(() => {
-        fetch("http://api.geonames.org/searchJSON?q=" + location + "&maxRows=10&username=secretsuperdev")
-            .then(response => response.json())
-            .then(data => {
-                var fakeoptionlists = [];
-                // iterate through the data and add each location to the datalist
-                data.geonames.forEach(location => {
-                    fakeoptionlists.push(location.name);
-                });
-                setOptionLists(fakeoptionlists);
-            })
-            .catch(err => console.log(err));
-    }, [location]);
+        const getAllCountries = async () => {
+            try {
+                let countries = await Country.getAllCountries();
+                setOptionLists(countries);
+                setAllData(countries);
+            } catch (err) {
+                console.log(err);
+            }
+        };
+        getAllCountries();
+    }, []);
+
+
+    const onSearch = (e) => {
+        setSearchtext(e);
+        var searchresult = optionlists.filter((item) => {
+            return item.name.toLowerCase().indexOf(e.toLowerCase()) > -1 || item.flag.toLowerCase().includes(e.toLowerCase());
+        });
+        if (e === "") {
+            setOptionLists(allData);
+        } else {
+            setOptionLists(searchresult);
+        }
+    }
 
     return (
         <LinearGradient
@@ -392,12 +456,19 @@ const UploadingVideo = (props) => {
                     borderRadius: 4,
                 }}
                 >
-                    <TouchableOpacity style={{ flexDirection: "row", gap: 20, justifyContent: "center", alignItems: "center" }} onPress={addImageCamera}>
+                    {/* <TouchableOpacity style={{ flexDirection: "row", gap: 50, justifyContent: "center", alignItems: "center" }} onPress={addImageCamera}>
                         <Text style={{ color: "#FFF" }}>Record A Video</Text>
                         <Ionicons name="camera-sharp" color="#fff" size={30} />
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
                     <label htmlFor="fileuploadinput">
-                        <TouchableOpacity style={{ flexDirection: "row", gap: 20, justifyContent: "center", alignItems: "center" }}>
+                        <TouchableOpacity style={{ flexDirection: "row", gap: 50, justifyContent: "center", alignItems: "center" }}>
+                            <Text style={{ color: "#FFF" }}>Record A Video</Text>
+                            <Ionicons name="camera-sharp" color="#fff" size={30} />
+                        </TouchableOpacity>
+                    </label>
+                    <input style={{ display: "none" }} type='file' id='fileuploadinput' accept='video/mp4,video/x-m4v,video/*' onChange={onFileChange} />
+                    <label htmlFor="fileuploadinput">
+                        <TouchableOpacity style={{ flexDirection: "row", gap: 50, justifyContent: "center", alignItems: "center" }}>
                             <Text style={{ color: "#FFF" }}>Upload A Video</Text>
                             <Ionicons name="md-folder-outline" color="#fff" size={30} />
                         </TouchableOpacity>
@@ -534,8 +605,8 @@ const UploadingVideo = (props) => {
                                 style={styles.TextInput}
                                 placeholder="Location (City, State)"
                                 placeholderTextColor="#adb2b6"
-                                value={location}
-                                onChangeText={(e) => setLocation(e)}
+                                value={searchtext}
+                                onChangeText={(e) => onSearch(e)}
                                 onFocus={() => setIsSelectable(true)}
                             />
                             {isSelectable && (
@@ -543,11 +614,12 @@ const UploadingVideo = (props) => {
                                     {optionlists && optionlists.map((item, key) => {
                                         return (
                                             <TouchableOpacity style={{ paddingVertical: 2 }} onPress={() => {
-                                                setLocation(item);
+                                                setLocation(item.name);
+                                                setSearchtext(item.name);
                                                 setIsSelectable(false)
                                             }} key={key}>
                                                 <Text style={{ color: "#FFF" }}>
-                                                    {item}
+                                                    {item.name}
                                                 </Text>
                                             </TouchableOpacity>
                                         )
@@ -566,6 +638,82 @@ const UploadingVideo = (props) => {
                     </View>
                 </View>
             </ScrollView>
+            <Modal
+                isVisible={confirmModal}
+                animationIn={'slideInRight'}
+                animationOut={'slideOutRight'}
+                style={{ margin: 0, padding: 0 }}
+            >
+                <TouchableOpacity onPress={() => setConfirmModal(false)}>
+                    <Ionicons name="arrow-back-sharp" color="#000" size={30} />
+                </TouchableOpacity>
+
+                <View style={styles.videopage}>
+                    <View style={{ flexDirection: "row", justifyContent: "space-between", width: "100%", alignItems: "center", position: 'absolute', top: 0, left: 0, zIndex: 1000000 }}>
+                        <TouchableOpacity onPress={() => setConfirmModal(false)}>
+                            <Ionicons name="arrow-back-sharp" color="#000" size={30} />
+                        </TouchableOpacity>
+                    </View>
+                    <View style={styles.inputWrapper}>
+                        <Text style={styles.labelText}>Your shareable URL:</Text>
+                        <View style={styles.rowCenter}>
+                            <TextInput
+                                style={styles.urlInput}
+                                type={'text'}
+                                value={videoResult}
+                                editable={false}
+                            />
+                            <CopyToClipboard text={videoResult}
+                                onCopy={() => console.log('copied')}>
+                                <Image style={styles.actionImage} source={require("../../../assets/modal/icon_copy_link.png")} />
+                            </CopyToClipboard>
+                        </View>
+                        <View style={styles.codeWrapper}>
+                            <Text style={styles.labelText}>Your Embed Code</Text>
+                            <View style={[styles.rowCenter, { width: "100% !important" }]}>
+                                <TextInput
+                                    style={styles.urlInput}
+                                    multiline={true}
+                                    numberOfLines={5}
+                                    type={'textarea'}
+                                    value={embedCode}
+                                    editable={false}
+                                />
+                                <View style={styles.actionsWrapper}>
+                                    <CopyToClipboard text={embedCode}
+                                        onCopy={() => console.log('copied')}>
+                                        <Image style={styles.actionImage} source={require("../../../assets/modal/icon_copy_link.png")} />
+                                    </CopyToClipboard>
+                                    <Image style={styles.actionImage} source={require("../../../assets/modal/icon_wordpress.png")} onClick={() => onShareSocial('wordpress')} />
+                                    <Image style={styles.actionImage} source={require("../../../assets/modal/icon_facebook.png")} onClick={() => onShareSocial('facebook')} />
+                                    <Image style={styles.actionImage} source={require("../../../assets/modal/icon_twitter.png")} onClick={() => onShareSocial('twitter')} />
+                                    <Image style={styles.actionImage} source={require("../../../assets/modal/icon_whatsapp.png")} onClick={() => onShareSocial('whatsapp')} />
+                                    <Image style={styles.actionImage} source={require("../../../assets/modal/icon_chat.png")} />
+                                    {/* <Image style={styles.actionImage} source={require("../../../assets/modal/icon_qr_code.png")} onClick={onGenerateQRCode} /> */}
+                                </View>
+                            </View>
+                        </View>
+                        <View style={styles.soonWrapper}>
+                            <Text style={styles.labelText}>Coming Soon!</Text>
+                            <Text style={styles.descriptionText}>Want to automatically backup all new videos posted to your youtube channel forever?</Text>
+                            <TextInput
+                                style={styles.urlInput}
+                                type={'text'}
+                                value={email}
+                                onChange={(text) => setEmail(email)}
+                            />
+                        </View>
+                        <View style={styles.rowCenter}>
+                            <Button
+                                style={styles.button}
+                                title={'Notify Me'}
+                                disabled={true}
+                                onClick={onNotify}
+                            />
+                        </View>
+                    </View>
+                </View>
+            </Modal>
         </LinearGradient>
     );
 }
@@ -796,6 +944,56 @@ const styles = StyleSheet.create({
         marginHorizontal: 10,
         color: "#fff",
         fontSize: 16,
+    },
+    videopage: {
+        width: "100%",
+        height: Dimensions.get('window').height,
+        justifyContent: "center",
+        backgroundColor: "#fff",
+        alignItems: "center",
+    },
+    inputWrapper: {
+        marginTop: 20,
+        width: "100%",
+        justifyContent: "center",
+        alignItems: "center"
+    },
+    labelText: {
+        fontSize: 16,
+        fontWeight: 600,
+        color: 'rgb(51, 51, 51)',
+        textAlign: 'center',
+        marginBottom: 10
+    },
+    rowCenter: {
+        flex: 1,
+        width: "50%",
+        flexDirection: "row",
+        justifyContent: "center",
+        alignItems: "center"
+    },
+    urlInput: {
+        flexGrow: 1,
+        marginRight: 10,
+        width: '100%'
+    },
+    actionsWrapper: {
+        flexDirection: 'column',
+        justifyContent: 'center'
+    },
+    actionImage: {
+        width: 24,
+        height: 24,
+        marginBottom: 10
+    },
+    soonWrapper: {
+        marginTop: 20,
+        marginBottom: 20
+    },
+    descriptionText: {
+        fontSize: 15,
+        textAlign: 'center',
+        marginBottom: 10
     },
 });
 

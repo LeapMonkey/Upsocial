@@ -9,7 +9,7 @@ import CustomSidebarMenu from './Screens/CustomSidebarMenu';
 import Home from './Home/Index'; // New One
 import MainVideos from './MyVideos/main';
 import MainProfile from './Profiles';
-import uploadingViddeo from './upload/uploadingViddeo';
+import UploadingVideo from './upload/uploadingVideo';
 import recentsUpload from './recentsUpload';
 import Settings from './settings';
 
@@ -57,7 +57,7 @@ const ProfileManage = (props) => {
                 <Drawer.Screen name='Home' component={Home} options={{ headerShown: false, headerTintColor: "#fff", headerStyle: { backgroundColor: "#5E1DA6" }, headerTitleStyle: { color: "#fff", fontSize: 24 } }} />
                 <Drawer.Screen name='My Videos' component={MainVideos} options={{ headerShown: false, headerTintColor: "#fff", headerStyle: { backgroundColor: "#5E1DA6" }, headerTitleStyle: { color: "#fff", fontSize: 24 } }} />
                 <Drawer.Screen name='Profile' component={MainProfile} options={{ headerShown: false, headerTintColor: "#fff", headerStyle: { backgroundColor: "#5E1DA6" }, headerTitleStyle: { color: "#fff", fontSize: 24 } }} />
-                <Drawer.Screen name='Add a Video' component={uploadingViddeo} options={{ headerShown: false, headerTintColor: "#fff", headerStyle: { backgroundColor: "#5E1DA6" }, headerTitleStyle: { color: "#fff", fontSize: 24 } }} />
+                <Drawer.Screen name='Add a Video' component={UploadingVideo} options={{ headerShown: false, headerTintColor: "#fff", headerStyle: { backgroundColor: "#5E1DA6" }, headerTitleStyle: { color: "#fff", fontSize: 24 } }} />
                 <Drawer.Screen name='Settings' component={Settings} options={{ headerShown: false, headerTintColor: "#fff", headerStyle: { backgroundColor: "#5E1DA6" }, headerTitleStyle: { color: "#fff", fontSize: 24 } }} />
                 <Drawer.Screen name='RecentsUpload' component={recentsUpload} options={{ drawerItemStyle: { display: "none" }, headerShown: false, headerTintColor: "#fff", headerStyle: { backgroundColor: "#5E1DA6" }, headerTitleStyle: { color: "#fff", fontSize: 24 } }} />
             </Drawer.Navigator>

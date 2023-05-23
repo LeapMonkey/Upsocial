@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, View, StatusBar, Image, Text, Dimensions, TouchableOpacity } from "react-native";
+import { StyleSheet, View, StatusBar, Image, Dimensions } from "react-native";
 import { connect } from "react-redux";
 import ProfileManage from "./pages/ProfileManage";
 import Dashboard from "./pages/Dashboard";

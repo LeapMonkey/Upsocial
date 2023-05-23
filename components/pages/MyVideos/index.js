@@ -38,7 +38,7 @@ const DATA = [
     { value: '11', label: 'Gaming' },
     { value: '12', label: 'Health & Fitness' },
     { value: '13', label: 'How-to & Style' },
-    { value: '14', label: 'Kvalues ' & ' Family' },
+    { value: '14', label: 'Kids & Family' },
     { value: '15', label: 'Music' },
     { value: '16', label: 'News & Politics' },
     { value: '17', label: 'Nonprofits & Activism' },
@@ -207,6 +207,15 @@ const MyVideos = (props) => {
         setOptions([
             { id: 1, name: 'My Channels', icon: "list-sharp" },
             { id: 2, name: 'Add a Channel', icon: "add-circle" },
+        ]);
+    };
+
+    const goToAddVideo = () => {
+        setCategoryName("RECENT UPLOADS");
+        setOptionName("Add a Video");
+        setOptions([
+            { id: 1, name: 'Recent Uploads', icon: "list-sharp" },
+            { id: 2, name: 'Add a Video', icon: "add-circle" },
         ]);
     };
 
@@ -404,7 +413,6 @@ const MyVideos = (props) => {
                 AlertIOS.alert("Please input at least 1 category!");
             }
         } else {
-
             if (v_channelName == "Personal Profile") {
                 setLoading(true);
 
@@ -423,8 +431,6 @@ const MyVideos = (props) => {
                 let formData = new FormData();
 
                 formData.append('video', data.file);
-                console.log('video', data.file);
-
                 await axios.post(apiURL + "/api/Upsocial/upload/generate-ipfs", formData, headers)
                     .then(async (response) => {
                         if (response.data.data) {
@@ -436,12 +442,13 @@ const MyVideos = (props) => {
                             let emb = `<iframe src="${cid}" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" style="border:none; width:100%; height:100%; min-height:500px;" frameborder="0" scrolling="no"></iframe>`
                             setEmbedCode(emb);
 
-                            var arr = thumbnails[0].split(','), mime = arr[0].match(/:(.*?);/)[1],
+                            var arr = thumbnails[2].split(','), mime = arr[0].match(/:(.*?);/)[1],
                                 bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
                             while (n--) {
                                 u8arr[n] = bstr.charCodeAt(n);
                             }
                             let img_file = new File([u8arr], `${v_title}.jpg`, { type: mime });
+                            console.log(img_file);
 
                             let Thumbnail_formData = new FormData();
 
@@ -507,7 +514,7 @@ const MyVideos = (props) => {
                             let emb = `<iframe src="${cid}" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" style="border:none; width:100%; height:100%; min-height:500px;" frameborder="0" scrolling="no"></iframe>`
                             setEmbedCode(emb);
 
-                            var arr = thumbnails[0].split(','), mime = arr[0].match(/:(.*?);/)[1],
+                            var arr = thumbnails[2].split(','), mime = arr[0].match(/:(.*?);/)[1],
                                 bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
                             while (n--) {
                                 u8arr[n] = bstr.charCodeAt(n);
@@ -597,9 +604,13 @@ const MyVideos = (props) => {
         const url = URL.createObjectURL(file);
         setVideoSrc({ uri: url });
         if (file) {
-            generateVideoThumbnails(file, 0).then((res) => {
-                setThumbnails(res);
-            }).catch((err) => console.log(err));
+            try {
+                generateVideoThumbnails(file, 3).then((res) => {
+                    setThumbnails(res);
+                }).catch((err) => console.log(err));
+            } catch (error) {
+                console.log("*******error*********", error);
+            }
         }
     };
 
@@ -848,9 +859,9 @@ const MyVideos = (props) => {
                             )
                         })}
                         {isEmpty(result) && (
-                            <View style={styles.nodataContainer}>
-                                <Text style={styles.nodata_title}>No Datas!</Text>
-                            </View>
+                            <TouchableOpacity style={styles.nodataContainer} onPress={addChannel}>
+                                <Text style={styles.nodata_title}>Add your first channel!</Text>
+                            </TouchableOpacity>
                         )}
                     </View>
                 </ScrollView>
@@ -970,10 +981,10 @@ const MyVideos = (props) => {
                             )
                         })}
                         {isEmpty(recentUploads) && (
-                            <View style={styles.nodataContainer}>
+                            <TouchableOpacity style={styles.nodataContainer} onPress={goToAddVideo}>
                                 <Text style={styles.nodata_title}>No Videos yet!</Text>
                                 <Text style={styles.nodata_content}>Upload your first video!</Text>
-                            </View>
+                            </TouchableOpacity>
                         )}
                     </View>
                 </ScrollView>
@@ -1132,10 +1143,16 @@ const MyVideos = (props) => {
                     borderRadius: 4,
                 }}
                 >
-                    <TouchableOpacity style={{ flexDirection: "row", gap: 20, justifyContent: "center", alignItems: "center" }} onPress={addImageCamera}>
+                    {/* <TouchableOpacity style={{ flexDirection: "row", gap: 20, justifyContent: "center", alignItems: "center" }} onPress={addImageCamera}>
                         <Text style={{ color: "#FFF" }}>Record A Video</Text>
                         <Ionicons name="camera-sharp" color="#fff" size={30} />
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
+                    <label htmlFor="fileuploadinput">
+                        <TouchableOpacity style={{ flexDirection: "row", gap: 20, justifyContent: "center", alignItems: "center" }}>
+                            <Text style={{ color: "#FFF" }}>Record A Video</Text>
+                            <Ionicons name="camera-sharp" color="#fff" size={30} />
+                        </TouchableOpacity>
+                    </label>
                     <label htmlFor="fileuploadinput">
                         <TouchableOpacity style={{ flexDirection: "row", gap: 20, justifyContent: "center", alignItems: "center" }}>
                             <Text style={{ color: "#FFF" }}>Upload A Video</Text>
@@ -1145,7 +1162,7 @@ const MyVideos = (props) => {
                     <input style={{ display: "none" }} type='file' id='fileuploadinput' accept='video/mp4,video/x-m4v,video/*' onChange={onFileChange} />
                 </View>
             </Modal>
-        </View >
+        </View>
     );
 };
 
@@ -1275,13 +1292,19 @@ const styles = StyleSheet.create({
         flexDirection: "column",
         width: "100%",
         alignItems: "center",
-        justifyContent: "center"
+        justifyContent: "center",
+        paddingTop: 50
     },
     nodata_title: {
-        color: "#000",
-        fontSize: 20,
+        marginVertical: 2,
+        backgroundColor: "#c081ff",
+        borderRadius: 5,
+        paddingVertical: 10,
+        paddingHorizontal: 10,
+        fontSize: 15,
+        color: "#fff",
         fontWeight: "bold",
-        marginVertical: 2
+        textAlign: "center"
     },
     metadata_description: {
         color: "#fff",

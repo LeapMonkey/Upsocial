@@ -27,7 +27,7 @@ const DATA = [
     { value: '11', label: 'Gaming' },
     { value: '12', label: 'Health & Fitness' },
     { value: '13', label: 'How-to & Style' },
-    { value: '14', label: 'Kvalues ' & ' Family' },
+    { value: '14', label: 'Kids & Family' },
     { value: '15', label: 'Music' },
     { value: '16', label: 'News & Politics' },
     { value: '17', label: 'Nonprofits & Activism' },
