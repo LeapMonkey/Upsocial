@@ -878,64 +878,6 @@ const styles = StyleSheet.create({
 });
 
 
-const profiles = [
-    {
-        id: '259389830744794',
-        name: 'Candice',
-        birthday: '10/18/1986',
-        bio: 'Supermodel',
-    },
-    {
-        id: '720115413',
-        name: 'Alessandra',
-        birthday: '1/10/1989',
-        bio: 'Dancer',
-    },
-    {
-        id: '169571172540',
-        name: 'Miranda',
-        birthday: '12/12/1983',
-        bio: 'Doctor',
-    },
-    {
-        id: '1476279359358140',
-        name: 'Alissa',
-        birthday: '2/11/1990',
-        bio: 'Comedian',
-    },
-    {
-        id: '912478262117011',
-        name: 'Rosie',
-        birthday: '9/4/1989',
-        bio: 'Artist',
-    },
-    {
-        id: '173567062703796',
-        name: 'Kendall',
-        birthday: '8/17/1992',
-        bio: 'Truck Driver',
-    },
-    {
-        id: '662254353934918',
-        name: 'Anna',
-        birthday: '3/23/1989',
-        bio: 'Personal Trainer',
-    },
-    {
-        id: '424154277777372',
-        name: 'Gabriella',
-        birthday: '3/23/1988',
-        bio: 'Surfer',
-    },
-    {
-        id: '662720103796952',
-        name: 'Mara',
-        birthday: '3/23/1987',
-        bio: 'Lifeguard',
-    },
-]
-
-
 const mapStateToProps = (state) => ({
     auth: state.auth,
 });
