@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { connect } from "react-redux";
-import { MaterialCommunityIcons, MaterialIcons, Feather, Ionicons, FontAwesome, AntDesign, Entypo } from 'react-native-vector-icons';
+import { MaterialCommunityIcons, MaterialIcons, Feather, Ionicons, FontAwesome, AntDesign } from 'react-native-vector-icons';
 import {
     Text, StyleSheet, Image, View, ScrollView, TouchableOpacity, Dimensions,
     Platform, TextInput, Button
@@ -21,7 +21,8 @@ import * as ImagePicker from "expo-image-picker";
 const items = [
     { id: 1, name: 'CHANNELS' },
     { id: 2, name: 'RECENT UPLOADS' },
-    { id: 3, name: 'HISTORY' },
+    { id: 3, name: 'PLAYLISTS' },
+    { id: 4, name: 'HISTORY' },
 ];
 
 const DATA = [
@@ -50,7 +51,6 @@ const DATA = [
     { value: '23', label: 'Unboxing & Reviews' },
     { value: '24', label: 'Blogs' },
 ];
-
 
 const MyVideos = (props) => {
     // mobile and desktop variable for responsive
@@ -150,6 +150,12 @@ const MyVideos = (props) => {
                 { id: 2, name: 'Add a Video', icon: "add-circle" },
             ]);
             setOptionName('Recent Uploads');
+        } else if (itemname == "PLAYLISTS") {
+            setOptions([
+                { id: 1, name: 'Playlists', icon: "list-sharp" },
+                { id: 2, name: 'Add a playlist', icon: "add-circle" },
+            ]);
+            setOptionName('Playlists');
         } else {
             setOptions([]);
         }

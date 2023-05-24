@@ -49,7 +49,7 @@ export default function UploadChannel(props) {
     return (
         <>
             {platformstate === "android" ? (
-                <View style={imageUploaderStyles.container}>
+                <TouchableOpacity style={imageUploaderStyles.container} onPress={addImage}>
                     {image ? (
                         <Image source={{ uri: image }} style={{ width: 300, height: 150 }} />
                     ) : (
@@ -63,24 +63,27 @@ export default function UploadChannel(props) {
                             <MaterialCommunityIcons name="pencil-plus-outline" size={24} color="#fff" />
                         </TouchableOpacity>
                     </View>
-                </View>
+                </TouchableOpacity>
             ) : (
-                <View style={imageUploaderStyles.container} >
-                    {
-                        webimage !== "" ? (
-                            <Image source={{ uri: webimage }} style={{ width: 300, height: 150 }
-                            } />
-                        ) : (
-                            <Image source={require("../../../assets/logos/previewImage.png")} style={{ width: 300, height: 150 }} />
-                        )
-                    }
-                    <View style={imageUploaderStyles.uploadBtnContainer}>
-                        <label htmlFor="fileuploadinput">
-                            <AntDesign name="camera" size={24} color="#fff" />
-                        </label>
-                        <input onChange={propicURL} type="file" style={{ display: "none" }} id="fileuploadinput" />
-                    </View >
-                </View>
+                <>
+                    <label style={imageUploaderStyles.container} htmlFor="fileuploadinput">
+                        {
+                            webimage !== "" ? (
+                                <Image source={{ uri: webimage }} style={{ width: 300, height: 150 }
+                                } />
+                            ) : (
+                                <Image source={require("../../../assets/logos/previewImage.png")} style={{ width: 300, height: 150 }} />
+                            )
+                        }
+                        <View style={imageUploaderStyles.uploadBtnContainer}>
+                            <label htmlFor="fileuploadinput">
+                                <AntDesign name="camera" size={24} color="#fff" />
+                            </label>
+                            <input onChange={propicURL} type="file" style={{ display: "none" }} id="fileuploadinput" />
+                        </View >
+                    </label>
+                    <input onChange={propicURL} type="file" style={{ display: "none" }} id="fileuploadinput" />
+                </>
             )}
         </>
     );
