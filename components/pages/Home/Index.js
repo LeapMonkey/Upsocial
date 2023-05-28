@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { connect } from "react-redux";
-import { MaterialCommunityIcons, MaterialIcons, Feather, Ionicons } from 'react-native-vector-icons';
+import { MaterialCommunityIcons, MaterialIcons, Feather, Ionicons, Entypo } from 'react-native-vector-icons';
 import {
     Text, StyleSheet, Image, View, ScrollView, TouchableOpacity, Dimensions, Share, TextInput, PanResponder,
     Animated,
@@ -62,8 +62,12 @@ const Home = (props) => {
     });
     // end
 
+
+    const [loading, setLoading] = useState(false);
+
     const [categoryName, setCategoryName] = useState("NEWEST");
     const [result, setResult] = useState([]);
+    const [modalResult, setModalResult] = useState([]);
     const [allData, setAllData] = useState([]);
     const [limit, setLimit] = useState(10);
     const [searchflag, setSearchflag] = useState(false);
@@ -89,6 +93,86 @@ const Home = (props) => {
     );
     const TopVideo = useRef(null);
 
+    const [isOpen, setIsOpen] = useState(-1);
+    const [dumpVar, setDumpVar] = useState(-1);
+
+    // Playlist
+    const [playlist, setPlaylist] = useState([]);
+
+    useEffect(() => {
+        axios.post(apiURL + "/api/Upsocial/getAll/playlist", {
+            "Access-Control-Allow-Origin": "*",
+            'Access-Control-Allow-Headers': '*',
+        }).then((res) => {
+            // const WatchLater = {
+            //     createdDate: new Date(),
+            //     description: "Watch Later",
+            //     title: "Watch Later",
+            //     userEmail: props.auth.user.curUser ? props.auth.user.curUser : localStorage.getItem("isUser"),
+            //     feeds: [],
+            //     image: "https://g.upsocial.com/ipfs/QmTdpgTimmqySennryQsfp2b56H4QwqF6JZULHYgxK7txp"
+            // };
+            res.data.PlaylistData.sort((a, b) => {
+                return new Date(b.createdDate) - new Date(a.createdDate);
+            });
+            let result = res.data.PlaylistData.filter((item) => item.userEmail == props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser);
+            setPlaylist(result);
+        }).catch((err) => {
+            console.warn(err);
+        });
+    }, []);
+
+    const addVideoToPlaylist = (playlistdata, videodata) => {
+        setLoading(true);
+
+        const data = {
+            userEmail: props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser,
+            playlistTitle: playlistdata.title,
+            creatorEmail: playlistdata.userEmail,
+            ID: videodata.ID,
+            title: videodata.title,
+            description: videodata.description,
+            keywords: videodata.keyword,
+            category: videodata.category,
+            video_src: videodata.ipfsUrl,
+            thumbnail: videodata.thumbnail,
+            status: videodata.status,
+            postDate: videodata.postDate,
+            liked: videodata.liked,
+            shared: videodata.shared,
+            disliked: videodata.disliked,
+            watched: videodata.watched,
+            comments: videodata.comments,
+            followers: videodata.followers
+        }
+
+        axios.post(apiURL + "/api/Upsocial/playlist/addVideo", data, {
+            "Access-Control-Allow-Origin": "*",
+            'Access-Control-Allow-Headers': '*',
+        }).then((res) => {
+            if (res.data.status) {
+                alert(res.data.msg);
+                setLoading(false);
+            } else {
+                alert(res.data.msg);
+                setLoading(false);
+            }
+        }).catch((err) => {
+            console.warn(err);
+            setLoading(false);
+        });
+    }
+
+    const toggleModal = (keys) => {
+        if (dumpVar === keys) {
+            setDumpVar(-1);
+            setIsOpen(-1);
+        } else {
+            setDumpVar(keys);
+            setIsOpen(keys);
+        }
+    }
+
     const changeCategoryItem = (itemname) => {
         setCategoryName(itemname);
         if (itemname == "NEWEST") {
@@ -96,16 +180,18 @@ const Home = (props) => {
                 "Access-Control-Allow-Origin": "*",
                 'Access-Control-Allow-Headers': '*',
             }).then((res) => {
-                res.data.data.sort((a, b) => {
-                    return new Date(b.postDate) - new Date(a.postDate);
-                });
-                console.log(res.data.data)
-                setResult(res.data.data);
-                setAllData(res.data.data);
-                SetVideoSource({ uri: res.data.data[0].ipfsUrl });
-                setThumbnail({ uri: res.data.data[0].thumbnail });
-                setTitle(res.data.data[0].title);
-                setDescription(res.data.data[0].description);
+                if (!isEmpty(res.data.data)) {
+                    res.data.data.sort((a, b) => {
+                        return new Date(b.postDate) - new Date(a.postDate);
+                    });
+                    setResult(res.data.data);
+                    setModalResult(res.data.data);
+                    setAllData(res.data.data);
+                    SetVideoSource({ uri: res.data.data[0].ipfsUrl });
+                    setThumbnail({ uri: res.data.data[0].thumbnail });
+                    setTitle(res.data.data[0].title);
+                    setDescription(res.data.data[0].description);
+                }
             }).catch((err) => {
                 console.warn(err);
             });
@@ -115,7 +201,8 @@ const Home = (props) => {
                 'Access-Control-Allow-Headers': '*',
             }).then((res) => {
                 setResult(res.data.feeds);
-                setAllData(res.data.data);
+                setModalResult(res.data.feeds);
+                setAllData(res.data.feeds);
             }).catch((err) => {
                 console.warn(err);
             });
@@ -128,7 +215,8 @@ const Home = (props) => {
                 var arrayP = result.map(o => o.contents);
                 var videofeeds = Object.values(arrayP.reduce(((r, c) => Object.assign(r, c)), {}));
                 setResult(videofeeds);
-                setAllData(res.data.data);
+                setModalResult(videofeeds);
+                setAllData(videofeeds);
             }).catch((err) => {
                 console.warn(err);
             });
@@ -137,15 +225,18 @@ const Home = (props) => {
                 "Access-Control-Allow-Origin": "*",
                 'Access-Control-Allow-Headers': '*',
             }).then((res) => {
-                res.data.data.sort((a, b) => {
-                    return new Date(b.postDate) - new Date(a.postDate);
-                });
-                setResult(res.data.data);
-                setAllData(res.data.data);
-                SetVideoSource({ uri: res.data.data[0].ipfsUrl });
-                setThumbnail({ uri: res.data.data[0].thumbnail });
-                setTitle(res.data.data[0].title);
-                setDescription(res.data.data[0].description);
+                if (!isEmpty(res.data.data)) {
+                    res.data.data.sort((a, b) => {
+                        return new Date(b.postDate) - new Date(a.postDate);
+                    });
+                    setResult(res.data.data);
+                    setModalResult(res.data.data);
+                    setAllData(res.data.data);
+                    SetVideoSource({ uri: res.data.data[0].ipfsUrl });
+                    setThumbnail({ uri: res.data.data[0].thumbnail });
+                    setTitle(res.data.data[0].title);
+                    setDescription(res.data.data[0].description);
+                }
             }).catch((err) => {
                 console.warn(err);
             })
@@ -160,12 +251,17 @@ const Home = (props) => {
         setThumbnail({ uri: item.thumbnail });
     };
 
-    const watchVideo = (videoData, key) => {
+    const watchVideo = (videoData, keys) => {
         setVideoId(videoData.ID);
+        const indexNum = modalResult.indexOf(videoData);
+        var arraytems = modalResult;
+        arraytems.splice(indexNum, 1);
+        arraytems.push(videoData);
+        setModalResult(arraytems);
         setOpened(true);
         setVideoProps(videoData);
         SetSource({ uri: videoData.ipfsUrl });
-        setCurIndex(key);
+        setCurIndex(keys);
     };
 
     const ShareFile = async (url) => {
@@ -197,8 +293,10 @@ const Home = (props) => {
         });
         if (e === "") {
             setResult(allData);
+            setModalResult(allData);
         } else {
             setResult(searchresult);
+            setModalResult(searchresult);
         }
     }
 
@@ -208,25 +306,28 @@ const Home = (props) => {
                 "Access-Control-Allow-Origin": "*",
                 'Access-Control-Allow-Headers': '*',
             }).then((resp) => {
-
                 axios.post(apiURL + "/api/Upsocial/getAll/channels", {
                     "Access-Control-Allow-Origin": "*",
                     'Access-Control-Allow-Headers': '*',
                 }).then((res) => {
-                    var videofeeds1 = resp.data.data;
-                    const results = res.data.channelData.filter((item) => !isEmpty(item.contents) && item.contents);
-                    var arrayP = results.map(o => o.contents);
-                    var videofeeds2 = arrayP.flat();
-                    var resultVideo = [...videofeeds1, ...videofeeds2];
-                    resultVideo.sort((a, b) => {
-                        return new Date(b.postDate) - new Date(a.postDate);
-                    });
-                    setResult(resultVideo);
-                    setAllData(resultVideo);
-                    SetVideoSource({ uri: resultVideo[0].ipfsUrl });
-                    setThumbnail({ uri: resultVideo[0].thumbnail });
-                    setTitle(resultVideo[0].title);
-                    setDescription(resultVideo[0].description);
+                    console.log(!isEmpty(resp.data.data) && !isEmpty(res.data.channelData))
+                    if (!isEmpty(resp.data.data) && !isEmpty(res.data.channelData)) {
+                        var videofeeds1 = resp.data.data;
+                        const results = res.data.channelData.filter((item) => !isEmpty(item.contents) && item.contents);
+                        var arrayP = results.map(o => o.contents);
+                        var videofeeds2 = arrayP.flat();
+                        var resultVideo = [...videofeeds1, ...videofeeds2];
+                        resultVideo.sort((a, b) => {
+                            return new Date(b.postDate) - new Date(a.postDate);
+                        });
+                        setResult(resultVideo);
+                        setModalResult(resultVideo);
+                        setAllData(resultVideo);
+                        SetVideoSource({ uri: resultVideo[0].ipfsUrl });
+                        setThumbnail({ uri: resultVideo[0].thumbnail });
+                        setTitle(resultVideo[0].title);
+                        setDescription(resultVideo[0].description);
+                    }
                 }).catch((err) => {
                     console.warn(err);
                 });
@@ -355,10 +456,25 @@ const Home = (props) => {
         }
     };
 
-    const [profileIndex, setProfileIndex] = useState(0);
-
     const nextCard = () => {
-        setProfileIndex(profileIndex + 1);
+        console.log("Hello" + 1)
+        setVideoId(videoId);
+    }
+
+    const closestByClass = (el, clazz) => {
+        // Traverse the DOM up with a while loop
+        while (el.className != clazz) {
+            // Increment the loop to the parent node
+            el = el.parentNode;
+            if (!el) {
+                return null;
+            }
+        }
+
+        // At this point, the while loop has stopped and `el` represents the element
+        // that has the class you specified in the second parameter of the function
+        // `clazz`
+        return el;
     }
 
     return (
@@ -381,14 +497,21 @@ const Home = (props) => {
                         </View>
                     </View>
                     <View style={{ height: Dimensions.get("window").height, width: width }}>
-                        {result.slice(profileIndex, result.length - 1).reverse().map((profile) => {
+                        <Text>{videoId}</Text>
+                        {!isEmpty(modalResult) && modalResult.map((profile, key) => {
                             return (
-                                <Card key={profile.ID} profile={profile} onSwipeOff={nextCard} />
+                                <Card key={profile.ID} profile={profile} keys={key} onSwipeOff={nextCard} />
                             )
                         })}
                     </View>
                 </View>
             </Modal>
+            {loading && <View style={styles.loadingView}>
+                <Image
+                    source={require("../../../assets/loading.gif")}
+                    style={{ width: 140, height: 140 }}
+                />
+            </View>}
             <View style={styles.headersection}>
                 <View style={styles.subheadersection}>
                     <TouchableOpacity style={styles.headerimage} onPress={() => changeCategoryItem("NEWEST")}>
@@ -475,15 +598,35 @@ const Home = (props) => {
                             {!isEmpty(result) && result.map((index, key) => {
                                 if (Number(key + 1) <= Number(Math.ceil(result.length / 2))) {
                                     return (
-                                        <TouchableOpacity style={isWide ? styles.wideitemview : isDesktop ? styles.desktopitemview : isTablet ? styles.tabletitemview : isTabletOrMobile ? styles.tabletormobileitemview : styles.mobileitemview} key={key} onPress={() => videosHandle(index, key)}
+                                        <View style={isWide ? styles.wideitemview : isDesktop ? styles.desktopitemview : isTablet ? styles.tabletitemview : isTabletOrMobile ? styles.tabletormobileitemview : styles.mobileitemview} key={key}
                                         >
-                                            <View style={{ alignItems: 'center', width: "100%", borderRadius: 10 }}>
+                                            <TouchableOpacity style={{ alignItems: 'center', width: "100%", borderRadius: 10 }} onPress={() => videosHandle(index, key)}>
                                                 <img src={index.thumbnail} style={{ width: "100%", borderRadius: 10 }} />
                                                 <Image source={require("../../../assets/logos/playvideo.png")} style={{ width: 50, height: 50, position: "absolute", top: "40%" }} />
+                                            </TouchableOpacity>
+                                            <View style={styles.maincontentview}>
+                                                <View>
+                                                    <Text style={styles.metadata_title}>{index.title}</Text>
+                                                    <Text style={styles.metadata_description}>{index.description}</Text>
+                                                </View>
+                                                {isOpen == key && (
+                                                    <View style={styles.videoplaylistview}>
+                                                        {!isEmpty(playlist) && playlist.map((item, key) => {
+                                                            return (
+                                                                <TouchableOpacity style={styles.videoplayitem} key={key} >
+                                                                    <TouchableOpacity onPress={() => addVideoToPlaylist(item, index)}>
+                                                                        <Text>{item.title}</Text>
+                                                                    </TouchableOpacity>
+                                                                </TouchableOpacity>
+                                                            )
+                                                        })}
+                                                    </View>
+                                                )}
+                                                <TouchableOpacity onPress={(e) => toggleModal(key)}>
+                                                    <Entypo name="dots-three-vertical" color="#fff" size={20} />
+                                                </TouchableOpacity>
                                             </View>
-                                            <Text style={styles.metadata_title}>{index.title}</Text>
-                                            <Text style={styles.metadata_description}>{index.description}</Text>
-                                        </TouchableOpacity>
+                                        </View>
                                     )
                                 }
                             })}
@@ -492,14 +635,34 @@ const Home = (props) => {
                             {!isEmpty(result) && result.map((index, key) => {
                                 if (Number(key + 1) > Number(Math.ceil(result.length / 2))) {
                                     return (
-                                        <TouchableOpacity style={isWide ? styles.wideitemview : isDesktop ? styles.desktopitemview : isTablet ? styles.tabletitemview : isTabletOrMobile ? styles.tabletormobileitemview : styles.mobileitemview} key={key} onPress={() => videosHandle(index, key)}>
-                                            <View style={{ alignItems: 'center', width: "100%", borderRadius: 10 }}>
+                                        <View style={isWide ? styles.wideitemview : isDesktop ? styles.desktopitemview : isTablet ? styles.tabletitemview : isTabletOrMobile ? styles.tabletormobileitemview : styles.mobileitemview} key={key}>
+                                            <TouchableOpacity onPress={() => videosHandle(index, key)} style={{ alignItems: 'center', width: "100%", borderRadius: 10 }}>
                                                 <img src={index.thumbnail} style={{ width: "100%", borderRadius: 10 }} />
                                                 <Image source={require("../../../assets/logos/playvideo.png")} style={{ width: 50, height: 50, position: "absolute", top: "40%" }} />
+                                            </TouchableOpacity>
+                                            <View style={styles.maincontentview}>
+                                                <View>
+                                                    <Text style={styles.metadata_title}>{index.title}</Text>
+                                                    <Text style={styles.metadata_description}>{index.description}</Text>
+                                                </View>
+                                                {isOpen === key && (
+                                                    <View style={styles.videoplaylistview}>
+                                                        {!isEmpty(playlist) && playlist.map((item, key) => {
+                                                            return (
+                                                                <TouchableOpacity style={styles.videoplayitem} key={key} >
+                                                                    <TouchableOpacity onPress={() => addVideoToPlaylist(item, index)}>
+                                                                        <Text>{item.title}</Text>
+                                                                    </TouchableOpacity>
+                                                                </TouchableOpacity>
+                                                            )
+                                                        })}
+                                                    </View>
+                                                )}
+                                                <TouchableOpacity onPress={(e) => toggleModal(key)}>
+                                                    <Entypo name="dots-three-vertical" color="#fff" size={20} />
+                                                </TouchableOpacity>
                                             </View>
-                                            <Text style={styles.metadata_title}>{index.title}</Text>
-                                            <Text style={styles.metadata_description}>{index.description}</Text>
-                                        </TouchableOpacity>
+                                        </View>
                                     )
                                 }
                             })}
@@ -657,6 +820,17 @@ const styles = StyleSheet.create({
         borderWidth: 0,
         borderColor: 'lightgrey',
         borderRadius: 8,
+    },
+    loadingView: {
+        position: "absolute",
+        top: 0,
+        left: 0,
+        backgroundColor: "rgba(0, 0, 0, 0.6)",
+        width: "100%",
+        height: "100%",
+        justifyContent: "center",
+        alignItems: "center",
+        zIndex: 10000,
     },
     main: {
         flex: 1,
@@ -821,12 +995,14 @@ const styles = StyleSheet.create({
     metadata_title: {
         color: "#fff",
         fontSize: 14,
-        fontWeight: "bold"
+        fontWeight: "bold",
+        textAlign: "left"
     },
     metadata_description: {
         color: "#fff",
         fontSize: 14,
-        fontWeight: "bold"
+        fontWeight: "bold",
+        textAlign: "left"
     },
     controller: {
         position: "absolute",
@@ -875,6 +1051,26 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         paddingLeft: 15,
     },
+    maincontentview: {
+        width: "100%",
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        padding: 20,
+        position: "relative"
+    },
+    videoplaylistview: {
+        position: "absolute",
+        bottom: 30,
+        right: 40,
+        flexDirection: "column",
+        backgroundColor: "#fff",
+        borderRadius: 5
+    },
+    videoplayitem: {
+        paddingVertical: 8,
+        paddingHorizontal: 15
+    }
 });
 
 

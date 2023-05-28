@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { MaterialCommunityIcons, MaterialIcons, Feather, Ionicons, FontAwesome, AntDesign } from 'react-native-vector-icons';
 import {
     Text, StyleSheet, Image, View, ScrollView, TouchableOpacity, Dimensions,
-    Platform, TextInput, Button
+    Platform, TextInput, Button, ToastAndroid
 } from 'react-native';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import SelectDropdown from "react-native-select-dropdown";
@@ -17,6 +17,8 @@ import { apiURL } from '../../config/config';
 import axios from 'axios';
 import UploadChannel from '../upload/UploadChannel';
 import * as ImagePicker from "expo-image-picker";
+import { Country } from "country-state-city";
+
 
 const items = [
     { id: 1, name: 'CHANNELS' },
@@ -80,6 +82,7 @@ const MyVideos = (props) => {
     const [limit, setLimit] = useState(5);
     const [searchflag, setSearchflag] = useState(false);
     const [searchtext, setSearchtext] = useState("");
+    const [searchLocation, setSearchLocation] = useState("");
 
     const [channels, setChannels] = useState([{ channelName: "Personal Profile" }]);
 
@@ -96,6 +99,7 @@ const MyVideos = (props) => {
     const [viewVal, setViewVal] = useState(0);
 
     const [optionlists, setOptionLists] = useState(null);
+    const [allData, setAllData] = useState(null);
 
     // add a channel
 
@@ -135,6 +139,13 @@ const MyVideos = (props) => {
     const [email, setEmail] = useState('');
 
     const [opened, setOpened] = useState(false);
+
+    // Playlist
+    const [playlist_title, setPlaylist_title] = useState("");
+    const [playlist_description, setPlaylist_description] = useState("");
+    const [playlistImagedata, setPlaylistImagedata] = useState(null);
+
+    const [playlistData, setPlaylistData] = useState([]);
 
     const changeCategoryItem = (itemname) => {
         setCategoryName(itemname);
@@ -185,6 +196,19 @@ const MyVideos = (props) => {
         }
     };
 
+
+    const onSearchLocation = (e) => {
+        setSearchLocation(e);
+        var searchresult = optionlists.filter((item) => {
+            return item.name.toLowerCase().indexOf(e.toLowerCase()) > -1 || item.flag.toLowerCase().includes(e.toLowerCase());
+        });
+        if (e === "") {
+            setOptionLists(allData);
+        } else {
+            setOptionLists(searchresult);
+        }
+    }
+
     const changeOptionItem = (itemname) => {
         setOptionName(itemname);
         if (itemname === "My Channels") {
@@ -207,12 +231,17 @@ const MyVideos = (props) => {
         props.setChannelData(index);
     };
 
+    const playlistDetail = async (data) => {
+        props.setflag("playlistView");
+        props.setPlaylistDetail(data);
+    };
+
     const addChannel = () => {
-        setCategoryName("CHANNELS");
-        setOptionName("Add a Channel");
+        setCategoryName("PLAYLISTS");
+        setOptionName("Add a playlist");
         setOptions([
-            { id: 1, name: 'My Channels', icon: "list-sharp" },
-            { id: 2, name: 'Add a Channel', icon: "add-circle" },
+            { id: 1, name: 'Playlists', icon: "list-sharp" },
+            { id: 2, name: 'Add a playlist', icon: "add-circle" },
         ]);
     };
 
@@ -228,6 +257,10 @@ const MyVideos = (props) => {
     const setimagefunc = (imagedata) => {
         setUploadimagedata(imagedata);
     };
+
+    const setPlaylistImagefunc = (imageData) => {
+        setPlaylistImagedata(imageData);
+    }
 
     const addKeyword = (e) => {
         if (e.nativeEvent.key == "Enter") {
@@ -344,6 +377,61 @@ const MyVideos = (props) => {
                     setLoading(false);
                     alert("Creating Channel success !");
                     setOptionName("My Channels");
+                } else {
+                    setLoading(false);
+                    alert(res.data.msg);
+                }
+            }).catch((error) => {
+                console.log(error);
+                setLoading(false);
+            });
+        }
+    };
+
+    const uploadPlaylistData = async () => {
+        if (playlistImagedata === null) {
+            if (Platform.OS === "android") {
+                ToastAndroid.show("Please Select Image !", ToastAndroid.SHORT);
+            } else if (Platform.OS === "web") {
+                alert("Please Select Image !");
+            } else {
+                AlertIOS.alert("Please Select Image !")
+            }
+        } else if (playlist_title.trim() === "") {
+            if (Platform.OS === "android") {
+                ToastAndroid.show("Please Input Playlist Name !", ToastAndroid.SHORT);
+            } else if (Platform.OS === "web") {
+                alert("Please Input Playlist Name !");
+            } else {
+                AlertIOS.alert("Please Input Playlist Name !")
+            }
+        } else if (playlist_description.trim() === "") {
+            if (Platform.OS === "android") {
+                ToastAndroid.show("Please Input Playlist Description!", ToastAndroid.SHORT);
+            } else if (Platform.OS === "web") {
+                alert("Please Input Playlist Description!");
+            } else {
+                AlertIOS.alert("Please Input Playlist Description!")
+            }
+        } else {
+            setLoading(true);
+
+            let formdata = new FormData();
+            formdata.append("userEmail", props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser);
+            formdata.append("photo", playlistImagedata);
+            formdata.append("playlistTitle", playlist_title);
+            formdata.append("playlistDescription", playlist_description);
+
+            const headers = {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            };
+
+            await axios.post(apiURL + "/api/Upsocial/create/playlist", formdata, headers).then((res) => {
+                if (res.data.status) {
+                    setLoading(false);
+                    alert("Creating Playlist success !");
+                    setOptionName("Playlists");
                 } else {
                     setLoading(false);
                     alert(res.data.msg);
@@ -624,10 +712,12 @@ const MyVideos = (props) => {
         const { height } = layout;
         setViewVal(height);
     }
+
     const find_scroll = (layout) => {
         const { height } = layout;
         setScrollVal(height);
     }
+
     const handleScroll = (event) => {
         if (event.nativeEvent.contentOffset.y + scrollVal == viewVal) {
             console.log("load more....");
@@ -656,32 +746,54 @@ const MyVideos = (props) => {
 
 
     useEffect(() => {
-        fetch("http://api.geonames.org/searchJSON?q=" + location + "&maxRows=10&username=secretsuperdev")
-            .then(response => response.json())
-            .then(data => {
-                var fakeoptionlists = [];
-                // iterate through the data and add each location to the datalist
-                data.geonames.forEach(location => {
-                    fakeoptionlists.push(location.name);
-                });
-                setOptionLists(fakeoptionlists);
-            })
-            .catch(err => console.log(err));
-    }, [location]);
+        const getAllCountries = async () => {
+            try {
+                let countries = await Country.getAllCountries();
+                setOptionLists(countries);
+                setAllData(countries);
+            } catch (err) {
+                console.log(err);
+            }
+        };
+        getAllCountries();
+    }, []);
 
     useEffect(() => {
-        axios.post(apiURL + "/api/Upsocial/getAll/channels", {
-            "Access-Control-Allow-Origin": "*",
-            'Access-Control-Allow-Headers': '*',
-        }).then((res) => {
-            let result = res.data.channelData.filter((item) => item.email == props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser);
-            let feeds = result.reverse();
-            setResult(feeds);
-            setChannelAllData(feeds);
-            setChannels([...channels, ...res.data.channelData]);
-        }).catch((err) => {
-            console.warn(err);
-        });
+        if (optionName == "Playlists") {
+            axios.post(apiURL + "/api/Upsocial/getAll/playlist", {
+                "Access-Control-Allow-Origin": "*",
+                'Access-Control-Allow-Headers': '*',
+            }).then((res) => {
+                // const WatchLater = {
+                //     createdDate: new Date(),
+                //     description: "Watch Later",
+                //     title: "Watch Later",
+                //     userEmail: props.auth.user.curUser ? props.auth.user.curUser : localStorage.getItem("isUser"),
+                //     feeds: [],
+                //     image: "https://g.upsocial.com/ipfs/QmTdpgTimmqySennryQsfp2b56H4QwqF6JZULHYgxK7txp"
+                // };
+                res.data.PlaylistData.sort((a, b) => {
+                    return new Date(b.createdDate) - new Date(a.createdDate);
+                });
+                let result = res.data.PlaylistData.filter((item) => item.userEmail == props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser);
+                setPlaylistData(result);
+            }).catch((err) => {
+                console.warn(err);
+            });
+        } else {
+            axios.post(apiURL + "/api/Upsocial/getAll/channels", {
+                "Access-Control-Allow-Origin": "*",
+                'Access-Control-Allow-Headers': '*',
+            }).then((res) => {
+                let result = res.data.channelData.filter((item) => item.email == props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser);
+                let feeds = result.reverse();
+                setResult(feeds);
+                setChannelAllData(feeds);
+                setChannels([...channels, ...res.data.channelData]);
+            }).catch((err) => {
+                console.warn(err);
+            });
+        }
     }, [optionName]);
 
     useEffect(() => {
@@ -693,17 +805,19 @@ const MyVideos = (props) => {
                 "Access-Control-Allow-Origin": "*",
                 'Access-Control-Allow-Headers': '*',
             }).then((res) => {
-                var videofeeds1 = resp.data.data;
-                const results = res.data.channelData.filter((item) => !isEmpty(item.contents) && item.contents);
-                var arrayP = results.map(o => o.contents);
-                var videofeeds2 = arrayP.flat();
-                var resultVideo = [...videofeeds1, ...videofeeds2];
-                resultVideo.sort((a, b) => {
-                    return new Date(b.postDate) - new Date(a.postDate);
-                });
-                setRecentUploads(resultVideo);
-                setRecentAllUploads(resultVideo);
-                setLoading(false);
+                if (!isEmpty(resp.data.data) && !isEmpty(res.data.channelData)) {
+                    var videofeeds1 = resp.data.data;
+                    const results = res.data.channelData.filter((item) => !isEmpty(item.contents) && item.contents);
+                    var arrayP = results.map(o => o.contents);
+                    var videofeeds2 = arrayP.flat();
+                    var resultVideo = [...videofeeds1, ...videofeeds2];
+                    resultVideo.sort((a, b) => {
+                        return new Date(b.postDate) - new Date(a.postDate);
+                    });
+                    setRecentUploads(resultVideo);
+                    setRecentAllUploads(resultVideo);
+                    setLoading(false);
+                }
             }).catch((err) => {
                 console.warn(err);
             });
@@ -915,7 +1029,7 @@ const MyVideos = (props) => {
                                 placeholder="Location (City, State)"
                                 placeholderTextColor="#adb2b6"
                                 value={location}
-                                onChangeText={(e) => setLocation(e)}
+                                onChangeText={(e) => onSearchLocation(e)}
                                 onFocus={() => setIsSelectable(true)}
                             />
                             {isSelectable && (
@@ -923,11 +1037,12 @@ const MyVideos = (props) => {
                                     {optionlists && optionlists.map((item, key) => {
                                         return (
                                             <TouchableOpacity style={{ paddingVertical: 2 }} onPress={() => {
-                                                setLocation(item);
+                                                setLocation(item.name);
+                                                setSearchLocation(item.name);
                                                 setIsSelectable(false)
                                             }} key={key}>
-                                                <Text>
-                                                    {item}
+                                                <Text style={{ color: "#FFF" }}>
+                                                    {item.name}
                                                 </Text>
                                             </TouchableOpacity>
                                         )
@@ -1133,6 +1248,69 @@ const MyVideos = (props) => {
                     </View>
                 </ScrollView>
             </View>)}
+            {categoryName == "PLAYLISTS" && optionName == "Playlists" && (<View style={styles.feedsContainer}>
+                <ScrollView style={styles.scrollview}>
+                    <View style={styles.contentview}>
+                        {playlistData && playlistData.map((index, key) => {
+                            return (
+                                <TouchableOpacity key={key} style={isWide ? styles.wideitemview : isDesktop ? styles.desktopitemview : isTablet ? styles.tabletitemview : isTabletOrMobile ? styles.tabletormobileitemview : styles.mobileitemview} >
+                                    <TouchableOpacity style={{ position: "relative", alignItems: 'center', width: "100%" }} onPress={() => playlistDetail(index)}>
+                                        <Image source={{ uri: index.image }} style={{ width: "100%", height: Dimensions.get("window").height * 0.3, borderRadius: 8 }} />
+                                    </TouchableOpacity>
+                                    <View style={styles.channelDetail}>
+                                        <Text style={styles.channelTitle} >{index.title}</Text>
+                                    </View>
+                                </TouchableOpacity>
+                            )
+                        })}
+                        {isEmpty(playlistData) && (
+                            <TouchableOpacity style={styles.nodataContainer} onPress={addChannel}>
+                                <Text style={styles.nodata_title}>Add your first Playlists!</Text>
+                            </TouchableOpacity>
+                        )}
+                    </View>
+                </ScrollView>
+            </View>)}
+            {categoryName == "PLAYLISTS" && optionName == "Add a playlist" && (<View style={styles.addChannel_container}>
+                <ScrollView
+                    style={styles.mainsection}
+                    contentContainerStyle={{
+                        alignItems: "center",
+                    }}
+                >
+                    <View style={styles.uploadsection}>
+                        <View style={styles.imagesection}>
+                            <UploadChannel setimagefunc={setPlaylistImagefunc} />
+                        </View>
+                        <View style={styles.inputView}>
+                            <TextInput
+                                style={styles.TextInput}
+                                placeholder="Playlists Name"
+                                placeholderTextColor="#adb2b6"
+                                onChangeText={(e) => setPlaylist_title(e)}
+                            />
+                        </View>
+                        <View style={styles.inputView}>
+                            <TextInput
+                                style={styles.TextInput}
+                                placeholder="Description"
+                                placeholderTextColor="#adb2b6"
+                                multiline={true}
+                                numberOfLines={4}
+                                onChangeText={(e) => setPlaylist_description(e)}
+                            />
+                        </View>
+                        <View style={styles.TextInput}>
+                            <TouchableOpacity
+                                style={styles.uploadbtn}
+                                onPress={() => uploadPlaylistData()}
+                            >
+                                <Text style={styles.uploadbtntext}>Save</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </ScrollView>
+            </View >)}
             <Modal
                 isVisible={opened}
                 animationIn={'zoomInDown'}
