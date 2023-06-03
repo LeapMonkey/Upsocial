@@ -15,6 +15,7 @@ import {
 import { connect } from "react-redux";
 import { MaterialCommunityIcons, MaterialIcons, Feather, Ionicons } from 'react-native-vector-icons';
 import axios from "axios";
+import { Country } from "country-state-city";
 import { LinearGradient } from "expo-linear-gradient";
 import UploadLogo from "../upload/UploadLogo";
 import { apiURL } from "../../config/config";
@@ -27,6 +28,10 @@ const EditProfile = (props) => {
     const [description, setDescription] = useState("");
     const [location, setLocation] = useState("");
     const [uploadimagedata, setUploadimagedata] = useState(null);
+    const [optionlists, setOptionLists] = useState(null);
+    const [allData, setAllData] = useState(null);
+    const [isSelectable, setIsSelectable] = useState(false);
+    const [searchtext, setSearchtext] = useState("");
 
     const toggleSwitch = () => {
         setIsEnabled((previousState) => !previousState);
@@ -87,6 +92,31 @@ const EditProfile = (props) => {
 
         }
     };
+
+    useEffect(() => {
+        const getAllCountries = async () => {
+            try {
+                let countries = await Country.getAllCountries();
+                setOptionLists(countries);
+                setAllData(countries);
+            } catch (err) {
+                console.log(err);
+            }
+        };
+        getAllCountries();
+    }, []);
+
+    const onSearch = (e) => {
+        setSearchtext(e);
+        var searchresult = optionlists.filter((item) => {
+            return item.name.toLowerCase().indexOf(e.toLowerCase()) > -1 || item.flag.toLowerCase().includes(e.toLowerCase());
+        });
+        if (e === "") {
+            setOptionLists(allData);
+        } else {
+            setOptionLists(searchresult);
+        }
+    }
 
     return (
         <LinearGradient
@@ -163,9 +193,28 @@ const EditProfile = (props) => {
                         <TextInput
                             style={styles.TextInput}
                             placeholder="Location (City, State)"
-                            placeholderTextColor="#fff"
-                            onChangeText={(e) => setLocation(e)}
+                            placeholderTextColor="#adb2b6"
+                            value={searchtext}
+                            onChangeText={(e) => onSearch(e)}
+                            onFocus={() => setIsSelectable(true)}
                         />
+                        {isSelectable && (
+                            <View style={{ marginVertical: 5 }}>
+                                {optionlists && optionlists.map((item, key) => {
+                                    return (
+                                        <TouchableOpacity style={{ paddingVertical: 2 }} onPress={() => {
+                                            setLocation(item.name);
+                                            setSearchtext(item.name);
+                                            setIsSelectable(false)
+                                        }} key={key}>
+                                            <Text style={{ color: "#FFF" }}>
+                                                {item.name}
+                                            </Text>
+                                        </TouchableOpacity>
+                                    )
+                                })}
+                            </View>
+                        )}
                     </View>
                     <View style={styles.TextInput}>
                         <TouchableOpacity

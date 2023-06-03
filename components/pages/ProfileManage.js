@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from "react-redux";
-import { NavigationContainer, useNavigation } from '@react-navigation/native';
+import { NavigationContainer } from '@react-navigation/native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 // Icon
 import { FontAwesome5, FontAwesome, Ionicons, Entypo, Feather } from '@expo/vector-icons';
@@ -12,6 +12,8 @@ import MainProfile from './Profiles';
 import UploadingVideo from './upload/uploadingVideo';
 import recentsUpload from './recentsUpload';
 import Settings from './settings';
+
+import Test from './Test';
 
 const Drawer = createDrawerNavigator();
 
@@ -34,6 +36,7 @@ const ProfileManage = (props) => {
     return (
         <NavigationContainer >
             <Drawer.Navigator
+                useLegacyImplementation
                 drawerContent={(props) => <CustomSidebarMenu {...props} userName={userName} routeName={setLastRouteNames} />}
                 screenOptions={({ route }) => ({
                     drawerIcon: ({ focused, color, size }) => {

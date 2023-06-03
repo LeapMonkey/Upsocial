@@ -60,7 +60,7 @@ const CustomSidebarMenu = (props) => {
             <View style={styles.header}>
                 <View style={styles.topSection}>
                     <Image
-                        source={require("../../../assets/girl.png")}
+                        source={require("../../../assets/logos/preview.png")}
                         style={styles.sideMenuUserIcon}
                     />
                     <Image
@@ -71,10 +71,10 @@ const CustomSidebarMenu = (props) => {
                 <View style={styles.headerBody}>
                     <Text style={styles.username}>{props.userName}</Text>
                     <View style={styles.userDetail}>
-                        <Text style={styles.proBadge}>Pro</Text>
+                        {/* <Text style={styles.proBadge}>Pro</Text> */}
                         <Text style={styles.userRole}>Creator</Text>
                         <View style={styles.review}>
-                            <Text style={styles.reviewMark}>4.8</Text>
+                            <Text style={styles.reviewMark}>0.0</Text>
                             <TouchableOpacity onPress={() => props.navigation.navigate("Add a Video")}><Ionicons name="add-circle-outline" color="#F58422" size={24} /></TouchableOpacity>
                         </View>
                     </View>
@@ -152,7 +152,6 @@ const styles = StyleSheet.create({
     },
     sideMenuProfileIcon: {
         resizeMode: 'contain',
-        width: '55%',
         height: 40,
     }
 });

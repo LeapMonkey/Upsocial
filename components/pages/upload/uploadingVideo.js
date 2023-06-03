@@ -125,11 +125,11 @@ const UploadingVideo = (props) => {
         setUploadVideoType(false);
         const url = URL.createObjectURL(file);
         setVideoSrc({ uri: url });
+        setOpened(false);
         if (file) {
             try {
                 generateVideoThumbnails(file, 3).then((res) => {
                     setThumbnails(res);
-                    setOpened(false);
                 }).catch((err) => console.log("**************err**********", err));
             } catch (error) {
                 console.log("**************error**********", error)
@@ -238,11 +238,13 @@ const UploadingVideo = (props) => {
                 let formData = new FormData();
 
                 formData.append('video', data.file);
+                console.log("*********video**********", data.file);
 
                 await axios.post(apiURL + "/api/Upsocial/upload/generate-ipfs", formData, headers)
                     .then(async (response) => {
                         if (response.data.data) {
                             cid = response.data.data.ipfsUrl;
+                            console.log("**************cid*****************", cid);
 
                             setHashCode(cid);
                             let URL = `${cid}`;
@@ -256,6 +258,8 @@ const UploadingVideo = (props) => {
                                 u8arr[n] = bstr.charCodeAt(n);
                             }
                             let img_file = new File([u8arr], `${v_title}.jpg`, { type: mime });
+
+                            console.log("**************thumbnail*****************", img_file);
 
                             let Thumbnail_formData = new FormData();
 
@@ -533,10 +537,10 @@ const UploadingVideo = (props) => {
                         </View>
                         <View style={styles.TextView}>
                             <TextInput placeholder='Tags' placeholderTextColor="#adb2b6" style={styles.TextInput} value={videoKeyword} onKeyPress={(e) => addVideoKeyword(e)} onChangeText={(e) => setVideoKeyword(e)} />
-                            <View style={{ flexDirection: "row", gap: 10, width: '100%', flexWrap: "wrap", marginTop: 5 }}>
+                            <View style={{ flexDirection: "row", gap: 15, width: '100%', flexWrap: "wrap", marginTop: 5 }}>
                                 {videoKeywords.map((index, key) => {
                                     return (
-                                        <Text key={key} style={{ color: "#fff" }}>{index}</Text>
+                                        <Text key={key} style={{ color: "#fff", paddingHorizontal: 10 }}>{index}</Text>
                                     )
                                 })}
                             </View>
@@ -610,7 +614,7 @@ const UploadingVideo = (props) => {
                                 onFocus={() => setIsSelectable(true)}
                             />
                             {isSelectable && (
-                                <View style={{ marginVertical: 5 }}>
+                                <ScrollView style={{ marginVertical: 5, maxHeight: 300, minHeight: 300 }}>
                                     {optionlists && optionlists.map((item, key) => {
                                         return (
                                             <TouchableOpacity style={{ paddingVertical: 2 }} onPress={() => {
@@ -624,7 +628,7 @@ const UploadingVideo = (props) => {
                                             </TouchableOpacity>
                                         )
                                     })}
-                                </View>
+                                </ScrollView>
                             )}
                         </View>
                         <View style={styles.uploadview}>

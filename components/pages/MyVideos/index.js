@@ -377,6 +377,7 @@ const MyVideos = (props) => {
                     setLoading(false);
                     alert("Creating Channel success !");
                     setOptionName("My Channels");
+                    window.location.reload();
                 } else {
                     setLoading(false);
                     alert(res.data.msg);
@@ -432,6 +433,7 @@ const MyVideos = (props) => {
                     setLoading(false);
                     alert("Creating Playlist success !");
                     setOptionName("Playlists");
+                    window.location.reload();
                 } else {
                     setLoading(false);
                     alert(res.data.msg);
@@ -462,6 +464,7 @@ const MyVideos = (props) => {
             ToastAndroid.show("All values are cleared! Try again!", ToastAndroid.SHORT);
         } else {
             alert("All values are cleared! Try again!");
+            window.location.reload();
         }
     };
 
@@ -509,146 +512,165 @@ const MyVideos = (props) => {
         } else {
             if (v_channelName == "Personal Profile") {
                 setLoading(true);
+                if (thumbnails[2]) {
+                    let cid = "";
 
-                let cid = "";
+                    const data = {
+                        file: file.file,
+                    };
 
-                const data = {
-                    file: file.file,
-                };
+                    let headers = {
+                        "Access-Control-Allow-Origin": "*",
+                        'Access-Control-Allow-Headers': '*',
+                        Accept: 'application/json',
+                        'Content-Type': 'multipart/form-data'
+                    };
+                    let formData = new FormData();
 
-                let headers = {
-                    "Access-Control-Allow-Origin": "*",
-                    'Access-Control-Allow-Headers': '*',
-                    Accept: 'application/json',
-                    'Content-Type': 'multipart/form-data'
-                };
-                let formData = new FormData();
+                    formData.append('video', data.file);
 
-                formData.append('video', data.file);
-                await axios.post(apiURL + "/api/Upsocial/upload/generate-ipfs", formData, headers)
-                    .then(async (response) => {
-                        if (response.data.data) {
-                            cid = response.data.data.ipfsUrl;
+                    await axios.post(apiURL + "/api/Upsocial/upload/generate-ipfs", formData, headers)
+                        .then(async (response) => {
+                            if (response.data.data) {
+                                cid = response.data.data.ipfsUrl;
+                                setHashCode(cid);
+                                let URL = `${cid}`;
+                                setVideoResult(URL);
+                                let emb = `<iframe src="${cid}" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" style="border:none; width:100%; height:100%; min-height:500px;" frameborder="0" scrolling="no"></iframe>`
+                                setEmbedCode(emb);
 
-                            setHashCode(cid);
-                            let URL = `${cid}`;
-                            setVideoResult(URL);
-                            let emb = `<iframe src="${cid}" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" style="border:none; width:100%; height:100%; min-height:500px;" frameborder="0" scrolling="no"></iframe>`
-                            setEmbedCode(emb);
-
-                            var arr = thumbnails[2].split(','), mime = arr[0].match(/:(.*?);/)[1],
-                                bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
-                            while (n--) {
-                                u8arr[n] = bstr.charCodeAt(n);
-                            }
-                            let img_file = new File([u8arr], `${v_title}.jpg`, { type: mime });
-                            console.log(img_file);
-
-                            let Thumbnail_formData = new FormData();
-
-                            Thumbnail_formData.append('thumbnail', img_file);
-                            Thumbnail_formData.append('title', v_title);
-                            Thumbnail_formData.append('description', v_description);
-                            Thumbnail_formData.append('keywords', videoKeywords);
-                            Thumbnail_formData.append('category', selected);
-                            Thumbnail_formData.append('userEmail', props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser);
-                            Thumbnail_formData.append('video_src', cid);
-
-                            await axios.post(apiURL + "/api/Upsocial/users/content/web/uploadContent", Thumbnail_formData, headers).then((res) => {
-                                if (res.data.status) {
-                                    setLoading(false);
-                                    resetValues();
-                                    setConfirmModal(true);
-                                    alert("Success");
-                                } else {
-                                    setLoading(false);
+                                var arr = thumbnails[2].split(','), mime = arr[0].match(/:(.*?);/)[1],
+                                    bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
+                                while (n--) {
+                                    u8arr[n] = bstr.charCodeAt(n);
                                 }
+                                let img_file = new File([u8arr], `${v_title}.jpg`, { type: mime });
 
-                            }).catch((err) => {
-                                console.log(err);
+                                console.log("********thumbnail*********", img_file);
+
+                                let Thumbnail_formData = new FormData();
+
+                                Thumbnail_formData.append('thumbnail', img_file);
+                                Thumbnail_formData.append('title', v_title);
+                                Thumbnail_formData.append('description', v_description);
+                                Thumbnail_formData.append('keywords', videoKeywords);
+                                Thumbnail_formData.append('category', selected);
+                                Thumbnail_formData.append('userEmail', props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser);
+                                Thumbnail_formData.append('video_src', cid);
+
+                                await axios.post(apiURL + "/api/Upsocial/users/content/web/uploadContent", Thumbnail_formData, headers).then((res) => {
+                                    if (res.data.status) {
+                                        setLoading(false);
+                                        resetValues();
+                                        setConfirmModal(true);
+                                        alert("Success");
+                                        window.location.reload();
+                                    } else {
+                                        setLoading(false);
+                                    }
+
+                                }).catch((err) => {
+                                    console.log(err);
+                                    setLoading(false);
+                                });
+
+                            } else {
+                                console.log(response.data.error);
                                 setLoading(false);
-                            });
-                        } else {
-                            console.log(response.data.error);
+                            }
+                        })
+                        .catch((error) => {
+                            console.log(error);
                             setLoading(false);
-                        }
-                    })
-                    .catch((error) => {
-                        console.log(error);
-                        setLoading(false);
-                    });
-
+                        });
+                } else {
+                    alert("Your network is slow, Try again!");
+                    resetValues();
+                    setLoading(false);
+                    window.location.reload();
+                    return;
+                }
             } else {
                 setLoading(true);
 
-                let cid = "";
+                if (thumbnails[2]) {
+                    let cid = "";
 
-                const data = {
-                    file: file.file,
-                };
+                    const data = {
+                        file: file.file,
+                    };
 
-                let headers = {
-                    "Access-Control-Allow-Origin": "*",
-                    'Access-Control-Allow-Headers': '*',
-                    Accept: 'application/json',
-                    'Content-Type': 'multipart/form-data'
-                };
-                let formData = new FormData();
+                    let headers = {
+                        "Access-Control-Allow-Origin": "*",
+                        'Access-Control-Allow-Headers': '*',
+                        Accept: 'application/json',
+                        'Content-Type': 'multipart/form-data'
+                    };
+                    let formData = new FormData();
 
-                formData.append('video', data.file);
+                    formData.append('video', data.file);
 
-                axios.post(apiURL + "/api/Upsocial/upload/generate-ipfs", formData, headers)
-                    .then(async (response) => {
-                        if (response.data.data) {
-                            cid = response.data.data.ipfsUrl;
+                    axios.post(apiURL + "/api/Upsocial/upload/generate-ipfs", formData, headers)
+                        .then(async (response) => {
+                            if (response.data.data) {
+                                cid = response.data.data.ipfsUrl;
 
-                            setHashCode(cid);
-                            let URL = `${cid}`;
-                            setVideoResult(URL);
-                            let emb = `<iframe src="${cid}" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" style="border:none; width:100%; height:100%; min-height:500px;" frameborder="0" scrolling="no"></iframe>`
-                            setEmbedCode(emb);
+                                setHashCode(cid);
+                                let URL = `${cid}`;
+                                setVideoResult(URL);
+                                let emb = `<iframe src="${cid}" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" style="border:none; width:100%; height:100%; min-height:500px;" frameborder="0" scrolling="no"></iframe>`
+                                setEmbedCode(emb);
 
-                            var arr = thumbnails[2].split(','), mime = arr[0].match(/:(.*?);/)[1],
-                                bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
-                            while (n--) {
-                                u8arr[n] = bstr.charCodeAt(n);
-                            }
-                            let img_file = new File([u8arr], `${v_title}.jpg`, { type: mime });
-
-                            let Thumbnail_formData = new FormData();
-
-                            Thumbnail_formData.append('thumbnail', img_file);
-                            Thumbnail_formData.append('title', v_title);
-                            Thumbnail_formData.append('description', v_description);
-                            Thumbnail_formData.append('keywords', videoKeywords);
-                            Thumbnail_formData.append('userEmail', props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser);
-                            Thumbnail_formData.append('video_src', cid);
-                            Thumbnail_formData.append('channelAdmin', v_channelAdmin);
-                            Thumbnail_formData.append('channelName', v_channelName);
-                            Thumbnail_formData.append('category', selected);
-                            Thumbnail_formData.append('status', true);
-
-                            await axios.post(apiURL + "/api/Upsocial/uploadContents/channel", Thumbnail_formData, headers).then((res) => {
-                                if (res.data.status) {
-                                    setLoading(false);
-                                    resetValues();
-                                    alert("Success");
-                                    setConfirmModal(true);
-                                } else {
-                                    setLoading(false);
+                                var arr = thumbnails[2].split(','), mime = arr[0].match(/:(.*?);/)[1],
+                                    bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
+                                while (n--) {
+                                    u8arr[n] = bstr.charCodeAt(n);
                                 }
-                            }).catch((err) => {
+                                let img_file = new File([u8arr], `${v_title}.jpg`, { type: mime });
+
+                                let Thumbnail_formData = new FormData();
+
+                                Thumbnail_formData.append('thumbnail', img_file);
+                                Thumbnail_formData.append('title', v_title);
+                                Thumbnail_formData.append('description', v_description);
+                                Thumbnail_formData.append('keywords', videoKeywords);
+                                Thumbnail_formData.append('userEmail', props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser);
+                                Thumbnail_formData.append('video_src', cid);
+                                Thumbnail_formData.append('channelAdmin', v_channelAdmin);
+                                Thumbnail_formData.append('channelName', v_channelName);
+                                Thumbnail_formData.append('category', selected);
+                                Thumbnail_formData.append('status', true);
+
+                                await axios.post(apiURL + "/api/Upsocial/uploadContents/channel", Thumbnail_formData, headers).then((res) => {
+                                    if (res.data.status) {
+                                        setLoading(false);
+                                        resetValues();
+                                        alert("Success");
+                                        setConfirmModal(true);
+                                        window.location.reload();
+                                    } else {
+                                        setLoading(false);
+                                    }
+                                }).catch((err) => {
+                                    setLoading(false);
+                                });
+
+                            } else {
+                                console.log(response.data.error);
                                 setLoading(false);
-                            });
-                        } else {
-                            console.log(response.data.error);
+                            }
+                        })
+                        .catch((error) => {
+                            console.log(error);
                             setLoading(false);
-                        }
-                    })
-                    .catch((error) => {
-                        console.log(error);
-                        setLoading(false);
-                    });
+                        });
+                } else {
+                    alert("Your network is slow, Try again!")
+                    resetValues();
+                    setLoading(false);
+                    window.location.reload();
+                    return;
+                }
             }
         }
     };
@@ -697,6 +719,7 @@ const MyVideos = (props) => {
         setFile({ file });
         const url = URL.createObjectURL(file);
         setVideoSrc({ uri: url });
+        setOpened(false);
         if (file) {
             try {
                 generateVideoThumbnails(file, 3).then((res) => {
@@ -780,21 +803,23 @@ const MyVideos = (props) => {
             }).catch((err) => {
                 console.warn(err);
             });
-        } else {
-            axios.post(apiURL + "/api/Upsocial/getAll/channels", {
-                "Access-Control-Allow-Origin": "*",
-                'Access-Control-Allow-Headers': '*',
-            }).then((res) => {
-                let result = res.data.channelData.filter((item) => item.email == props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser);
-                let feeds = result.reverse();
-                setResult(feeds);
-                setChannelAllData(feeds);
-                setChannels([...channels, ...res.data.channelData]);
-            }).catch((err) => {
-                console.warn(err);
-            });
         }
     }, [optionName]);
+
+    useEffect(() => {
+        axios.post(apiURL + "/api/Upsocial/getAll/channels", {
+            "Access-Control-Allow-Origin": "*",
+            'Access-Control-Allow-Headers': '*',
+        }).then((res) => {
+            let result = res.data.channelData.filter((item) => item.email == props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser);
+            let feeds = result.reverse();
+            setResult(feeds);
+            setChannelAllData(feeds);
+            setChannels([...channels, ...res.data.channelData]);
+        }).catch((err) => {
+            console.warn(err);
+        });
+    }, [])
 
     useEffect(() => {
         axios.post(apiURL + "/api/Upsocial/users/getAll/UploadedContent", { limit: limit }, {
@@ -1028,12 +1053,12 @@ const MyVideos = (props) => {
                                 style={styles.TextInput}
                                 placeholder="Location (City, State)"
                                 placeholderTextColor="#adb2b6"
-                                value={location}
+                                value={searchLocation}
                                 onChangeText={(e) => onSearchLocation(e)}
                                 onFocus={() => setIsSelectable(true)}
                             />
                             {isSelectable && (
-                                <View style={{ marginVertical: 5 }}>
+                                <ScrollView style={{ marginVertical: 5, maxHeight: 300, minHeight: 300 }}>
                                     {optionlists && optionlists.map((item, key) => {
                                         return (
                                             <TouchableOpacity style={{ paddingVertical: 2 }} onPress={() => {
@@ -1041,13 +1066,13 @@ const MyVideos = (props) => {
                                                 setSearchLocation(item.name);
                                                 setIsSelectable(false)
                                             }} key={key}>
-                                                <Text style={{ color: "#FFF" }}>
+                                                <Text style={{ color: "#000" }}>
                                                     {item.name}
                                                 </Text>
                                             </TouchableOpacity>
                                         )
                                     })}
-                                </View>
+                                </ScrollView>
                             )}
                         </View>
                         <View style={styles.inputView}>
@@ -1215,25 +1240,26 @@ const MyVideos = (props) => {
                                     style={styles.TextInput}
                                     placeholder="Location (City, State)"
                                     placeholderTextColor="#adb2b6"
-                                    value={location}
-                                    onChangeText={(e) => setLocation(e)}
+                                    value={searchLocation}
+                                    onChangeText={(e) => onSearchLocation(e)}
                                     onFocus={() => setIsSelectable(true)}
                                 />
                                 {isSelectable && (
-                                    <View style={{ marginVertical: 5 }}>
+                                    <ScrollView style={{ marginVertical: 5, maxHeight: 300, minHeight: 300 }}>
                                         {optionlists && optionlists.map((item, key) => {
                                             return (
                                                 <TouchableOpacity style={{ paddingVertical: 2 }} onPress={() => {
-                                                    setLocation(item);
+                                                    setLocation(item.name);
+                                                    setSearchLocation(item.name);
                                                     setIsSelectable(false)
                                                 }} key={key}>
-                                                    <Text>
-                                                        {item}
+                                                    <Text style={{ color: "#000" }}>
+                                                        {item.name}
                                                     </Text>
                                                 </TouchableOpacity>
                                             )
                                         })}
-                                    </View>
+                                    </ScrollView>
                                 )}
                             </View>
                             <View style={styles.uploadview}>

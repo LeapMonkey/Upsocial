@@ -116,6 +116,7 @@ const Home = (props) => {
                 return new Date(b.createdDate) - new Date(a.createdDate);
             });
             let result = res.data.PlaylistData.filter((item) => item.userEmail == props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser);
+            console.log(result);
             setPlaylist(result);
         }).catch((err) => {
             console.warn(err);
@@ -310,7 +311,6 @@ const Home = (props) => {
                     "Access-Control-Allow-Origin": "*",
                     'Access-Control-Allow-Headers': '*',
                 }).then((res) => {
-                    console.log(!isEmpty(resp.data.data) && !isEmpty(res.data.channelData))
                     if (!isEmpty(resp.data.data) && !isEmpty(res.data.channelData)) {
                         var videofeeds1 = resp.data.data;
                         const results = res.data.channelData.filter((item) => !isEmpty(item.contents) && item.contents);
