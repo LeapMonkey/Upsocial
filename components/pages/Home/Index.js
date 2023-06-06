@@ -302,6 +302,7 @@ const Home = (props) => {
     }
 
     useEffect(() => {
+        console.log(categoryName);
         if (categoryName == "NEWEST") {
             axios.post(apiURL + "/api/Upsocial/users/getAll/UploadedContent", { limit: limit }, {
                 "Access-Control-Allow-Origin": "*",
@@ -605,7 +606,7 @@ const Home = (props) => {
                                                 <Image source={require("../../../assets/logos/playvideo.png")} style={{ width: 50, height: 50, position: "absolute", top: "40%" }} />
                                             </TouchableOpacity>
                                             <View style={styles.maincontentview}>
-                                                <View>
+                                                <View style={{ width: "100%" }}>
                                                     <Text style={styles.metadata_title}>{index.title}</Text>
                                                     <Text style={styles.metadata_description}>{index.description}</Text>
                                                 </View>
@@ -641,7 +642,7 @@ const Home = (props) => {
                                                 <Image source={require("../../../assets/logos/playvideo.png")} style={{ width: 50, height: 50, position: "absolute", top: "40%" }} />
                                             </TouchableOpacity>
                                             <View style={styles.maincontentview}>
-                                                <View>
+                                                <View style={{ width: "100%" }}>
                                                     <Text style={styles.metadata_title}>{index.title}</Text>
                                                     <Text style={styles.metadata_description}>{index.description}</Text>
                                                 </View>

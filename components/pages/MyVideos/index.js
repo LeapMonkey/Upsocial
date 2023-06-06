@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { connect } from "react-redux";
-import { MaterialCommunityIcons, MaterialIcons, Feather, Ionicons, FontAwesome, AntDesign } from 'react-native-vector-icons';
+import { MaterialCommunityIcons, MaterialIcons, Feather, Ionicons, FontAwesome, AntDesign, Entypo } from 'react-native-vector-icons';
 import {
     Text, StyleSheet, Image, View, ScrollView, TouchableOpacity, Dimensions,
     Platform, TextInput, Button, ToastAndroid
@@ -146,6 +146,14 @@ const MyVideos = (props) => {
     const [playlistImagedata, setPlaylistImagedata] = useState(null);
 
     const [playlistData, setPlaylistData] = useState([]);
+
+    // video play modal
+    const [videoPlayOpened, setVideoPlayOpened] = useState(false);
+    const [source, SetSource] = useState();
+    const TopVideo = useRef(null);
+
+    const [isOpen, setIsOpen] = useState(-1);
+    const [dumpVar, setDumpVar] = useState(-1);
 
     const changeCategoryItem = (itemname) => {
         setCategoryName(itemname);
@@ -767,8 +775,22 @@ const MyVideos = (props) => {
             shareUrl = `https://upsocial.com/wp/v2/posts?url=${videoResult}`;
         }
         window.open(shareUrl, '_blank');
-    }
+    };
 
+    const watchVideo = (videoData, key) => {
+        setVideoPlayOpened(true);
+        SetSource({ uri: videoData.ipfsUrl });
+    };
+
+    const toggleModal = (keys) => {
+        if (dumpVar === keys) {
+            setDumpVar(-1);
+            setIsOpen(-1);
+        } else {
+            setDumpVar(keys);
+            setIsOpen(keys);
+        }
+    };
 
     useEffect(() => {
         const getAllCountries = async () => {
@@ -832,19 +854,19 @@ const MyVideos = (props) => {
                 "Access-Control-Allow-Origin": "*",
                 'Access-Control-Allow-Headers': '*',
             }).then((res) => {
-                if (!isEmpty(resp.data.data) && !isEmpty(res.data.channelData)) {
-                    var videofeeds1 = resp.data.data;
-                    const results = res.data.channelData.filter((item) => !isEmpty(item.contents) && item.contents);
-                    var arrayP = results.map(o => o.contents);
-                    var videofeeds2 = arrayP.flat();
-                    var resultVideo = [...videofeeds1, ...videofeeds2];
-                    resultVideo.sort((a, b) => {
-                        return new Date(b.postDate) - new Date(a.postDate);
-                    });
-                    setRecentUploads(resultVideo);
-                    setRecentAllUploads(resultVideo);
-                    setLoading(false);
-                }
+                var videofeeds1 = resp.data.data;
+                const results = res.data.channelData.filter((item) => !isEmpty(item.contents) && item.contents);
+                var arrayP = results.map(o => o.contents);
+                var videofeeds2 = arrayP.flat();
+                var res_videofeeds1 = videofeeds1.filter((item) => item.email == props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser);
+                var res_videofeeds2 = videofeeds2.filter((item) => item.email == props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser);
+                var resultVideo = [...res_videofeeds1, ...res_videofeeds2];
+                resultVideo.sort((a, b) => {
+                    return new Date(b.postDate) - new Date(a.postDate);
+                });
+                setRecentUploads(resultVideo);
+                setRecentAllUploads(resultVideo);
+                setLoading(false);
             }).catch((err) => {
                 console.warn(err);
             });
@@ -853,6 +875,31 @@ const MyVideos = (props) => {
             setLoading(false);
         });
     }, [limit]);
+
+    useEffect(() => {
+        if (props.lastDetailName === "channelDetail") {
+            setCategoryName("CHANNELS");
+            setOptionName("My Channels");
+            setOptions([
+                { id: 1, name: 'My Channels', icon: "list-sharp" },
+                { id: 2, name: 'Add a Channel', icon: "add-circle" },
+            ]);
+        } else if (props.lastDetailName === "playlistDetail") {
+            setCategoryName("PLAYLISTS");
+            setOptionName("Playlists");
+            setOptions([
+                { id: 1, name: 'Playlists', icon: "list-sharp" },
+                { id: 2, name: 'Add a playlist', icon: "add-circle" },
+            ]);
+        } else {
+            setCategoryName("CHANNELS");
+            setOptionName("My Channels");
+            setOptions([
+                { id: 1, name: 'My Channels', icon: "list-sharp" },
+                { id: 2, name: 'Add a Channel', icon: "add-circle" },
+            ]);
+        }
+    }, [props.lastDetailName])
 
     return (
         <View style={styles.main}>
@@ -995,8 +1042,8 @@ const MyVideos = (props) => {
                     <View style={styles.contentview}>
                         {result && result.map((index, key) => {
                             return (
-                                <TouchableOpacity key={key} style={isWide ? styles.wideitemview : isDesktop ? styles.desktopitemview : isTablet ? styles.tabletitemview : isTabletOrMobile ? styles.tabletormobileitemview : styles.mobileitemview} >
-                                    <TouchableOpacity style={{ position: "relative", alignItems: 'center', width: "100%" }} onPress={() => channelDetail(index)}>
+                                <TouchableOpacity key={key} style={isWide ? styles.wideitemview : isDesktop ? styles.desktopitemview : isTablet ? styles.tabletitemview : isTabletOrMobile ? styles.tabletormobileitemview : styles.mobileitemview} onPress={() => channelDetail(index)}>
+                                    <TouchableOpacity style={{ position: "relative", alignItems: 'center', width: "100%" }} onPress={() => channelDetail(index)} >
                                         <Image source={{ uri: index.photo }} style={{ width: "100%", height: Dimensions.get("window").height * 0.3, borderRadius: 8 }} />
                                     </TouchableOpacity>
                                     <View style={styles.channelDetail}>
@@ -1114,29 +1161,129 @@ const MyVideos = (props) => {
                 </ScrollView>
             </View >)}
             {categoryName == "RECENT UPLOADS" && optionName == "Recent Uploads" && (
-                <ScrollView style={{ flex: 1 }} onLayout={(event) => { find_scroll(event.nativeEvent.layout) }} onScroll={handleScroll}>
-                    <View style={styles.contentview} onLayout={(event) => { find_dimesions(event.nativeEvent.layout) }}>
-                        {recentUploads && recentUploads.map((index, key) => {
-                            return (
-                                <TouchableOpacity style={isWide ? styles.wideitemview : isDesktop ? styles.desktopitemview : isTablet ? styles.tabletitemview : isTabletOrMobile ? styles.tabletormobileitemview : styles.mobileView} key={key}>
-                                    <View style={{ alignItems: 'center', width: "100%" }}>
-                                        <Image source={{ uri: index.thumbnail }} style={{ width: "100%", height: Dimensions.get("window").height * 0.3, borderRadius: 12 }} />
-                                        <Image source={require("../../../assets/logos/playvideo.png")} style={{ width: 50, height: 50, position: "absolute", top: "40%" }} />
-                                    </View>
-                                    <Text style={styles.metadata_title}>{index.title}</Text>
-                                    <Text style={styles.metadata_description}>{index.description}</Text>
-                                </TouchableOpacity>
-                            )
-                        })}
-                        {isEmpty(recentUploads) && (
-                            <TouchableOpacity style={styles.nodataContainer} onPress={goToAddVideo}>
-                                <Text style={styles.nodata_title}>No Videos yet!</Text>
-                                <Text style={styles.nodata_content}>Upload your first video!</Text>
-                            </TouchableOpacity>
-                        )}
-                    </View>
+                <ScrollView style={{ flex: 1, backgroundColor: "#fff" }} showsHorizontalScrollIndicator={false} showsVerticalScrollIndicator={false} onLayout={(event) => { find_scroll(event.nativeEvent.layout) }} onScroll={handleScroll}>
+                    {isEmpty(recentUploads) ? (
+                        <TouchableOpacity style={styles.nodataContainer} onPress={goToAddVideo}>
+                            <Text style={styles.nodata_title}>No Videos yet!</Text>
+                            <Text style={styles.nodata_content}>Upload your first video!</Text>
+                        </TouchableOpacity>
+                    ) : (
+                        <View style={styles.videoLists}>
+                            <View style={styles.feeds_contentview}>
+                                {!isEmpty(recentUploads) && recentUploads.map((index, key) => {
+                                    if (Number(key + 1) <= Number(Math.ceil(recentUploads.length / 2))) {
+                                        return (
+                                            <View style={isWide ? styles.wideitemview : isDesktop ? styles.desktopitemview : isTablet ? styles.tabletitemview : isTabletOrMobile ? styles.tabletormobileitemview : styles.mobileitemview} key={key}>
+                                                <TouchableOpacity style={{ alignItems: 'center', width: "100%", borderRadius: 10 }} onPress={() => watchVideo(index, key)}>
+                                                    <img src={index.thumbnail} style={{ width: "100%", borderRadius: 10 }} />
+                                                    <Image source={require("../../../assets/logos/playvideo.png")} style={{ width: 50, height: 50, position: "absolute", top: "40%" }} />
+                                                </TouchableOpacity>
+                                                <View style={styles.maincontentview}>
+                                                    <View style={{ width: "100%" }}>
+                                                        <Text style={styles.metadata_title}>{index.title}</Text>
+                                                        <Text style={styles.metadata_description}>{index.description}</Text>
+                                                    </View>
+                                                    {isOpen == key && (
+                                                        <View style={styles.videoplaylistview}>
+                                                            <TouchableOpacity style={styles.videoplayitem}>
+                                                                <TouchableOpacity onPress={() => RemoveVideoToPlaylist(index)}>
+                                                                    <Text>Remove</Text>
+                                                                </TouchableOpacity>
+                                                            </TouchableOpacity>
+                                                            <TouchableOpacity style={styles.videoplayitem}>
+                                                                <TouchableOpacity onPress={() => RemoveVideoToPlaylist(index)}>
+                                                                    <Text>Edit</Text>
+                                                                </TouchableOpacity>
+                                                            </TouchableOpacity>
+                                                        </View>
+
+                                                    )}
+                                                    <TouchableOpacity onPress={(e) => toggleModal(key)}>
+                                                        <Entypo name="dots-three-vertical" color="#000" size={20} />
+                                                    </TouchableOpacity>
+                                                </View>
+                                            </View>
+                                        )
+                                    }
+                                })}
+                            </View>
+                            <View style={styles.feeds_contentview}>
+                                {!isEmpty(recentUploads) && recentUploads.map((index, key) => {
+                                    if (Number(key + 1) > Number(Math.ceil(recentUploads.length / 2))) {
+                                        return (
+                                            <View style={isWide ? styles.wideitemview : isDesktop ? styles.desktopitemview : isTablet ? styles.tabletitemview : isTabletOrMobile ? styles.tabletormobileitemview : styles.mobileitemview} key={key}>
+                                                <TouchableOpacity onPress={() => watchVideo(index, key)} style={{ alignItems: 'center', width: "100%", borderRadius: 10 }}>
+                                                    <img src={index.thumbnail} style={{ width: "100%", borderRadius: 10 }} />
+                                                    <Image source={require("../../../assets/logos/playvideo.png")} style={{ width: 50, height: 50, position: "absolute", top: "40%" }} />
+                                                </TouchableOpacity>
+                                                <View style={styles.maincontentview}>
+                                                    <View style={{ width: "100%" }}>
+                                                        <Text style={styles.metadata_title}>{index.title}</Text>
+                                                        <Text style={styles.metadata_description}>{index.description}</Text>
+                                                    </View>
+                                                    {isOpen == key && (
+                                                        <View style={styles.videoplaylistview}>
+                                                            <TouchableOpacity style={styles.videoplayitem}>
+                                                                <TouchableOpacity onPress={() => RemoveVideoToPlaylist(index)}>
+                                                                    <Text>Remove</Text>
+                                                                </TouchableOpacity>
+                                                            </TouchableOpacity>
+                                                            <TouchableOpacity style={styles.videoplayitem}>
+                                                                <TouchableOpacity onPress={() => RemoveVideoToPlaylist(index)}>
+                                                                    <Text>Edit</Text>
+                                                                </TouchableOpacity>
+                                                            </TouchableOpacity>
+                                                        </View>
+
+                                                    )}
+                                                    <TouchableOpacity onPress={(e) => toggleModal(key)}>
+                                                        <Entypo name="dots-three-vertical" color="#000" size={20} />
+                                                    </TouchableOpacity>
+                                                </View>
+                                            </View>
+                                        )
+                                    }
+                                })}
+                            </View>
+                        </View>)}
                 </ScrollView>
             )}
+            <Modal
+                isVisible={videoPlayOpened}
+                animationIn={'slideInRight'}
+                animationOut={'slideOutRight'}
+                style={{ margin: 0, padding: 0 }}
+            >
+                <View style={styles.videoPlayPage}>
+                    <View style={{ flexDirection: "row", justifyContent: "space-between", width: "100%", alignItems: "center", position: 'absolute', top: 0, left: 0, zIndex: 1000000 }}>
+                        <TouchableOpacity onPress={() => setVideoPlayOpened(false)}>
+                            <Ionicons name="arrow-back-sharp" color="#fff" size={30} />
+                        </TouchableOpacity>
+                        {/* <View style={{ flexDirection: "row", gap: 10, alignItems: "center" }}>
+                            <TouchableOpacity onPress={() => ShareFile(videoProps.ipfsUrl)}>
+                                <Ionicons name="md-share-social-outline" color="#fff" size={30} />
+                            </TouchableOpacity>
+                        </View> */}
+                    </View>
+                    <View style={{ height: Dimensions.get("window").height }}>
+                        <View style={{ width: "100%", position: 'relative', height: "100%" }}>
+                            <Video
+                                videoStyle={{ position: 'relative', width: Dimensions.get("window").width, height: Dimensions.get("window").height }}
+                                ref={TopVideo}
+                                style={{ width: "100%", height: Dimensions.get("window").height }}
+                                source={source}
+                                rate={1.0}
+                                isLooping
+                                volume={1.0}
+                                shouldPlay
+                                useNativeControls
+                                resizeMode={ResizeMode.CONTAIN}
+                                onPlaybackStatusUpdate={status => setStatus(() => status)}
+                            />
+                        </View>
+                    </View>
+                </View>
+            </Modal>
             {categoryName == "RECENT UPLOADS" && optionName == "Add a Video" && (<View style={styles.contentsection}>
                 <ScrollView style={styles.scrollcontentsection}>
                     <View style={styles.scrollviewcontent}>
@@ -1281,10 +1428,10 @@ const MyVideos = (props) => {
                     <View style={styles.contentview}>
                         {playlistData && playlistData.map((index, key) => {
                             return (
-                                <TouchableOpacity key={key} style={isWide ? styles.wideitemview : isDesktop ? styles.desktopitemview : isTablet ? styles.tabletitemview : isTabletOrMobile ? styles.tabletormobileitemview : styles.mobileitemview} >
-                                    <TouchableOpacity style={{ position: "relative", alignItems: 'center', width: "100%" }} onPress={() => playlistDetail(index)}>
+                                <TouchableOpacity key={key} style={isWide ? styles.wideitemview : isDesktop ? styles.desktopitemview : isTablet ? styles.tabletitemview : isTabletOrMobile ? styles.tabletormobileitemview : styles.mobileitemview} onPress={() => playlistDetail(index)}>
+                                    <View style={{ position: "relative", alignItems: 'center', width: "100%" }}>
                                         <Image source={{ uri: index.image }} style={{ width: "100%", height: Dimensions.get("window").height * 0.3, borderRadius: 8 }} />
-                                    </TouchableOpacity>
+                                    </View>
                                     <View style={styles.channelDetail}>
                                         <Text style={styles.channelTitle} >{index.title}</Text>
                                     </View>
@@ -1895,6 +2042,52 @@ const styles = StyleSheet.create({
         fontSize: 15,
         textAlign: 'center',
         marginBottom: 10
+    },
+    videoPlayPage: {
+        width: "100%",
+        height: Dimensions.get('window').height,
+        justifyContent: "center",
+        backgroundColor: "#000",
+        alignItems: "center",
+    },
+    videoLists: {
+        backgroundColor: "#fff",
+        width: "100%",
+        flexDirection: "row",
+        justifyContent: "center",
+        alignItems: 'flex-start'
+    },
+    emptycontentview: {
+        width: "100%",
+        flex: 1,
+        flexDirection: "row",
+        flexWrap: "wrap",
+    },
+    feeds_contentview: {
+        width: "50%",
+        flex: 1,
+        flexDirection: "row",
+        flexWrap: "wrap",
+    },
+    maincontentview: {
+        width: "100%",
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        padding: 20,
+        position: "relative"
+    },
+    videoplaylistview: {
+        position: "absolute",
+        bottom: 30,
+        right: 40,
+        flexDirection: "column",
+        backgroundColor: "#fff",
+        borderRadius: 5
+    },
+    videoplayitem: {
+        paddingVertical: 8,
+        paddingHorizontal: 15
     },
 });
 
