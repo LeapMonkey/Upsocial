@@ -137,16 +137,20 @@ const Details = (props) => {
         }
     };
 
-    const onFileChange = (event) => {
+    const onFileChange = async (event) => {
         const file = event.target.files[0];
         setFile({ file });
         const url = URL.createObjectURL(file);
         setVideoSrc({ uri: url });
         setOpened(false);
         if (file) {
-            generateVideoThumbnails(file, 0).then((res) => {
+            try {
+                const res = await generateVideoThumbnails(file, 3);
                 setThumbnails(res);
-            }).catch((err) => console.log(err));
+            } catch (error) {
+                console.log("**************error**********", error);
+                window.location.reload();
+            }
         }
     };
 
@@ -280,6 +284,7 @@ const Details = (props) => {
                             Thumbnail_formData.append('category', selected);
                             Thumbnail_formData.append('userEmail', props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser);
                             Thumbnail_formData.append('video_src', cid);
+                            Thumbnail_formData.append('channelName', "Personal Profile");
 
                             console.log('thumbnail', img_file);
                             console.log('title', v_title);
@@ -466,12 +471,12 @@ const Details = (props) => {
             </View>}
             <View style={styles.headersection}>
                 <View style={styles.subheadersection}>
-                    <View style={styles.headerimage}>
+                    <TouchableOpacity style={styles.headerimage} onPress={() => props.goToHome()}>
                         <Image
                             source={require("../../../assets/logos/logo_wh.png")}
                             style={{ height: 30, width: 158 }}
                         />
-                    </View>
+                    </TouchableOpacity>
                     <View style={styles.iconsection}>
                         <TouchableOpacity style={{ flexDirection: "row", alignItems: "center" }} onPress={() => { props.setflag("main"); props.setLastPageName("channelDetail") }}>
                             <Text style={{ color: "#fff", fontSize: 20, fontWeight: "bold" }}>BACK</Text>

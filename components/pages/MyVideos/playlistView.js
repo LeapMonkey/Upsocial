@@ -161,12 +161,12 @@ const PlaylistView = (props) => {
             </Modal> */}
             <View style={styles.headersection}>
                 <View style={styles.subheadersection}>
-                    <View style={styles.headerimage}>
+                    <TouchableOpacity style={styles.headerimage} onPress={() => props.goToHome()}>
                         <Image
                             source={require("../../../assets/logos/logo_wh.png")}
                             style={{ height: 30, width: 158 }}
                         />
-                    </View>
+                    </TouchableOpacity>
                     <View style={styles.iconsection}>
                         <TouchableOpacity style={{ flexDirection: "row", alignItems: "center" }} onPress={() => { props.setflag("main"); props.setLastPageName("playlistDetail") }}>
                             <Text style={{ color: "#fff", fontSize: 20, fontWeight: "bold" }}>BACK</Text>
@@ -264,7 +264,6 @@ const PlaylistView = (props) => {
                             </View>
                         </View>)}
                 </ScrollView>
-
             </ScrollView>
             <Modal
                 isVisible={videoPlayOpened}

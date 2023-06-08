@@ -185,7 +185,8 @@ const Upload = (props) => {
         setHashCode(cid);
         let URL = `${cid}`;
         setURL(URL);
-        let emb = `<iframe src="${cid}" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" style="border:none; width:100%; height:100%; min-height:500px;" frameborder="0" scrolling="no"></iframe>`
+        let cid_hash = cid.slice(28, 74);
+        let emb = `<iframe src="https://e.upsocial.com?ipfs=${cid_hash}" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" style="border:none; width:100%; height:100%; min-height:500px;" frameborder="0" scrolling="no"></iframe>`
         setEmbedCode(emb);
         axios
             .post(apiURL + "/api/Upsocial/users/content/uploadContent", contentData, {
@@ -297,7 +298,8 @@ const Upload = (props) => {
             setHashCode(cid);
             let URL = `${cid}`;
             setURL(URL);
-            let emb = `<iframe src="${cid}" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" style="border:none; width:100%; height:100%; min-height:500px;" frameborder="0" scrolling="no"></iframe>`
+            let cid_hash = cid.slice(28, 74);
+            let emb = `<iframe src="https://e.upsocial.com?ipfs=${cid_hash}" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" style="border:none; width:100%; height:100%; min-height:500px;" frameborder="0" scrolling="no"></iframe>`
             setEmbedCode(emb);
 
             var arr = thumbnails[0].split(','), mime = arr[0].match(/:(.*?);/)[1],
@@ -324,6 +326,7 @@ const Upload = (props) => {
             console.log('category', selectedItems);
             console.log('userEmail', props.auth.user.curUser);
             console.log('video_src', cid);
+            Thumbnail_formData.append('channelName', "Personal Profile");
 
             await axios.post(apiURL + "/api/Upsocial/users/content/web/uploadContent", Thumbnail_formData, headers).then((res) => {
                 if (res.data.status) {
@@ -340,16 +343,20 @@ const Upload = (props) => {
         }
     }
 
-    const onFileChange = (event) => {
+    const onFileChange = async (event) => {
         const file = event.target.files[0];
         setFile({ file, error: '' });
         const url = URL.createObjectURL(file);
         setImage({ uri: url });
 
         if (file) {
-            generateVideoThumbnails(file, 0).then((res) => {
+            try {
+                const res = await generateVideoThumbnails(file, 3);
                 setThumbnails(res);
-            }).catch((err) => console.log(err));
+            } catch (error) {
+                console.log("**************error**********", error);
+                window.location.reload();
+            }
         }
     }
 

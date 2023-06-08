@@ -61,7 +61,7 @@ const RecentsUploads = (props) => {
         <View style={styles.container}>
             <View style={styles.headersection}>
                 <View style={styles.subheadersection}>
-                    <TouchableOpacity style={styles.headerimage} onPress={() => changeCategoryItem("NEWEST")}>
+                    <TouchableOpacity style={styles.headerimage} onPress={() => props.navigation.navigate("Home")}>
                         <Image
                             source={require("../../../assets/logos/logo_wh.png")}
                             style={{ height: 30, width: 158 }}

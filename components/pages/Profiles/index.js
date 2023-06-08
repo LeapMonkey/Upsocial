@@ -8,20 +8,24 @@ const MainProfile = (props) => {
 
     const setflag = (flag) => {
         setRouteflag(flag);
-    }
+    };
 
     const setToggle = () => {
         props.navigation.toggleDrawer();
-    }
+    };
 
     const viewall = () => {
         props.navigation.navigate("RecentsUpload");
-    }
+    };
+
+    const goToHome = () => {
+        props.navigation.navigate("Home");
+    };
 
     return (
         <>
-            {routeflag === "Profile" && <Profile setflag={setflag} setToggle={setToggle} viewall={viewall} />}
-            {routeflag === "EditProfile" && <EditProfile setToggle={setToggle} setflag={setflag} />}
+            {routeflag === "Profile" && <Profile goToHome={goToHome} setflag={setflag} setToggle={setToggle} viewall={viewall} />}
+            {routeflag === "EditProfile" && <EditProfile goToHome={goToHome} setToggle={setToggle} setflag={setflag} />}
         </>
     );
 };

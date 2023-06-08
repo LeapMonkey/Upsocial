@@ -18,7 +18,8 @@ import axios from 'axios';
 import UploadChannel from '../upload/UploadChannel';
 import * as ImagePicker from "expo-image-picker";
 import { Country } from "country-state-city";
-
+import { confirmAlert } from 'react-confirm-alert'; // Import
+import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
 
 const items = [
     { id: 1, name: 'CHANNELS' },
@@ -155,6 +156,8 @@ const MyVideos = (props) => {
     const [isOpen, setIsOpen] = useState(-1);
     const [dumpVar, setDumpVar] = useState(-1);
 
+    const [historyData, setHistoryData] = useState([]);
+
     const changeCategoryItem = (itemname) => {
         setCategoryName(itemname);
         if (itemname == 'CHANNELS') {
@@ -245,6 +248,15 @@ const MyVideos = (props) => {
     };
 
     const addChannel = () => {
+        setCategoryName("CHANNELS");
+        setOptionName("Add a Channel");
+        setOptions([
+            { id: 1, name: 'My Channels', icon: "list-sharp" },
+            { id: 2, name: 'Add a Channel', icon: "add-circle" },
+        ]);
+    };
+
+    const addPlaylists = () => {
         setCategoryName("PLAYLISTS");
         setOptionName("Add a playlist");
         setOptions([
@@ -546,7 +558,8 @@ const MyVideos = (props) => {
                                 setHashCode(cid);
                                 let URL = `${cid}`;
                                 setVideoResult(URL);
-                                let emb = `<iframe src="${cid}" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" style="border:none; width:100%; height:100%; min-height:500px;" frameborder="0" scrolling="no"></iframe>`
+                                let cid_hash = cid.slice(28, 74);
+                                let emb = `<iframe src="https://e.upsocial.com?ipfs=${cid_hash}" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" style="border:none; width:100%; height:100%; min-height:500px;" frameborder="0" scrolling="no"></iframe>`
                                 setEmbedCode(emb);
 
                                 var arr = thumbnails[2].split(','), mime = arr[0].match(/:(.*?);/)[1],
@@ -567,14 +580,13 @@ const MyVideos = (props) => {
                                 Thumbnail_formData.append('category', selected);
                                 Thumbnail_formData.append('userEmail', props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser);
                                 Thumbnail_formData.append('video_src', cid);
+                                Thumbnail_formData.append('channelName', "Personal Profile");
 
                                 await axios.post(apiURL + "/api/Upsocial/users/content/web/uploadContent", Thumbnail_formData, headers).then((res) => {
                                     if (res.data.status) {
                                         setLoading(false);
-                                        resetValues();
                                         setConfirmModal(true);
                                         alert("Success");
-                                        window.location.reload();
                                     } else {
                                         setLoading(false);
                                     }
@@ -628,7 +640,8 @@ const MyVideos = (props) => {
                                 setHashCode(cid);
                                 let URL = `${cid}`;
                                 setVideoResult(URL);
-                                let emb = `<iframe src="${cid}" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" style="border:none; width:100%; height:100%; min-height:500px;" frameborder="0" scrolling="no"></iframe>`
+                                let cid_hash = cid.slice(28, 74);
+                                let emb = `<iframe src="https://e.upsocial.com?ipfs=${cid_hash}" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" style="border:none; width:100%; height:100%; min-height:500px;" frameborder="0" scrolling="no"></iframe>`
                                 setEmbedCode(emb);
 
                                 var arr = thumbnails[2].split(','), mime = arr[0].match(/:(.*?);/)[1],
@@ -654,10 +667,8 @@ const MyVideos = (props) => {
                                 await axios.post(apiURL + "/api/Upsocial/uploadContents/channel", Thumbnail_formData, headers).then((res) => {
                                     if (res.data.status) {
                                         setLoading(false);
-                                        resetValues();
                                         alert("Success");
                                         setConfirmModal(true);
-                                        window.location.reload();
                                     } else {
                                         setLoading(false);
                                     }
@@ -724,7 +735,7 @@ const MyVideos = (props) => {
         console.log(localUri, filename, match, type);
     };
 
-    const onFileChange = (event) => {
+    const onFileChange = async (event) => {
         const file = event.target.files[0];
         setFile({ file });
         const url = URL.createObjectURL(file);
@@ -732,11 +743,11 @@ const MyVideos = (props) => {
         setOpened(false);
         if (file) {
             try {
-                generateVideoThumbnails(file, 3).then((res) => {
-                    setThumbnails(res);
-                }).catch((err) => console.log(err));
+                const res = await generateVideoThumbnails(file, 3);
+                setThumbnails(res);
             } catch (error) {
-                console.log("*******error*********", error);
+                console.log("**************error**********", error);
+                window.location.reload();
             }
         }
     };
@@ -790,6 +801,52 @@ const MyVideos = (props) => {
             setDumpVar(keys);
             setIsOpen(keys);
         }
+    };
+
+    const EditVideos = (data) => {
+        console.log(data);
+    };
+
+    const RemoveVideos = (data) => {
+        confirmAlert({
+            title: 'Confirm to Delete',
+            message: 'Are you sure to do this.',
+            buttons: [
+                {
+                    label: 'Yes',
+                    onClick: () => deleteVideos(data)
+                },
+                {
+                    label: 'No',
+                    onClick: () => alert('Try Later !')
+                }
+            ]
+        });
+    };
+
+    const deleteVideos = async (data) => {
+        const datas = {
+            userEmail: props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser,
+            channelName: data.channelName,
+            ID: data.ID,
+        };
+
+        axios.post(apiURL + "/api/Upsocial/users/content/web/remove/uploadContent", datas, {
+            "Access-Control-Allow-Origin": "*",
+            'Access-Control-Allow-Headers': '*',
+        }).then((res) => {
+            if (res.data.status) {
+                alert(res.data.msg);
+                setLoading(false);
+                window.location.reload();
+            } else {
+                alert(res.data.msg);
+                setLoading(false);
+            }
+        }).catch((err) => {
+            console.warn(err);
+            setLoading(false);
+        });
     };
 
     useEffect(() => {
@@ -899,7 +956,24 @@ const MyVideos = (props) => {
                 { id: 2, name: 'Add a Channel', icon: "add-circle" },
             ]);
         }
-    }, [props.lastDetailName])
+    }, [props.lastDetailName]);
+
+    useEffect(() => {
+        axios.post(apiURL + "/api/Upsocial/users/content/getHistory", { curUser: props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser },
+            {
+                "Access-Control-Allow-Origin": "*",
+                'Access-Control-Allow-Headers': '*',
+            }).then((res) => {
+                if (res.data.status) {
+                    setHistoryData(res.data.data);
+                    res.data.data.sort((a, b) => {
+                        return new Date(b.viewDate) - new Date(a.viewDate);
+                    });
+                } else {
+                    setHistoryData([]);
+                }
+            }).catch((err) => console.log(err))
+    }, [categoryName])
 
     return (
         <View style={styles.main}>
@@ -909,13 +983,9 @@ const MyVideos = (props) => {
                 animationOut={'slideOutRight'}
                 style={{ margin: 0, padding: 0 }}
             >
-                <TouchableOpacity onPress={() => setConfirmModal(false)}>
-                    <Ionicons name="arrow-back-sharp" color="#000" size={30} />
-                </TouchableOpacity>
-
                 <View style={styles.videopage}>
                     <View style={{ flexDirection: "row", justifyContent: "space-between", width: "100%", alignItems: "center", position: 'absolute', top: 0, left: 0, zIndex: 1000000 }}>
-                        <TouchableOpacity onPress={() => setConfirmModal(false)}>
+                        <TouchableOpacity onPress={() => { setConfirmModal(false); window.location.reload(); }}>
                             <Ionicons name="arrow-back-sharp" color="#000" size={30} />
                         </TouchableOpacity>
                     </View>
@@ -987,12 +1057,12 @@ const MyVideos = (props) => {
             </View>}
             <View style={styles.headersection}>
                 <View style={styles.subheadersection}>
-                    <View style={styles.headerimage}>
+                    <TouchableOpacity style={styles.headerimage} onPress={() => props.goToHome()}>
                         <Image
                             source={require("../../../assets/logos/logo_wh.png")}
                             style={{ height: 30, width: 158 }}
                         />
-                    </View>
+                    </TouchableOpacity>
                     <View style={styles.iconsection}>
                         <TouchableOpacity style={styles.iconbtn}>
                             <MaterialCommunityIcons name="cast" color="#fff" size={35} />
@@ -1031,11 +1101,9 @@ const MyVideos = (props) => {
                         </TouchableOpacity>
                     )
                 })}
-                {isEmpty(options) && (
-                    <View style={styles.nodataContainer}>
-                        <Text style={styles.nodata_title}>Your History</Text>
-                    </View>
-                )}
+                {isEmpty(options) && (<View>
+                    <Text style={styles.active_optiontext}>My Histories</Text>
+                </View>)}
             </View>
             {categoryName == "CHANNELS" && optionName == "My Channels" && (<View style={styles.feedsContainer}>
                 <ScrollView style={styles.scrollview}>
@@ -1186,12 +1254,12 @@ const MyVideos = (props) => {
                                                     {isOpen == key && (
                                                         <View style={styles.videoplaylistview}>
                                                             <TouchableOpacity style={styles.videoplayitem}>
-                                                                <TouchableOpacity onPress={() => RemoveVideoToPlaylist(index)}>
+                                                                <TouchableOpacity onPress={() => RemoveVideos(index)}>
                                                                     <Text>Remove</Text>
                                                                 </TouchableOpacity>
                                                             </TouchableOpacity>
                                                             <TouchableOpacity style={styles.videoplayitem}>
-                                                                <TouchableOpacity onPress={() => RemoveVideoToPlaylist(index)}>
+                                                                <TouchableOpacity onPress={() => EditVideos(index)}>
                                                                     <Text>Edit</Text>
                                                                 </TouchableOpacity>
                                                             </TouchableOpacity>
@@ -1224,12 +1292,12 @@ const MyVideos = (props) => {
                                                     {isOpen == key && (
                                                         <View style={styles.videoplaylistview}>
                                                             <TouchableOpacity style={styles.videoplayitem}>
-                                                                <TouchableOpacity onPress={() => RemoveVideoToPlaylist(index)}>
+                                                                <TouchableOpacity onPress={() => RemoveVideos(index)}>
                                                                     <Text>Remove</Text>
                                                                 </TouchableOpacity>
                                                             </TouchableOpacity>
                                                             <TouchableOpacity style={styles.videoplayitem}>
-                                                                <TouchableOpacity onPress={() => RemoveVideoToPlaylist(index)}>
+                                                                <TouchableOpacity onPress={() => EditVideos(index)}>
                                                                     <Text>Edit</Text>
                                                                 </TouchableOpacity>
                                                             </TouchableOpacity>
@@ -1415,7 +1483,7 @@ const MyVideos = (props) => {
                                 <TouchableOpacity style={styles.uploadviewbtn} onPress={uploadVideo}>
                                     <Text style={{ fontSize: 20, color: "#fff" }}>Upload</Text>
                                 </TouchableOpacity>
-                                <TouchableOpacity style={{ marginTop: 10 }}>
+                                <TouchableOpacity style={{ marginTop: 10 }} onPress={resetValues}>
                                     <Text style={{ fontSize: 14, color: "#000" }}>Clear</Text>
                                 </TouchableOpacity>
                             </View>
@@ -1439,7 +1507,7 @@ const MyVideos = (props) => {
                             )
                         })}
                         {isEmpty(playlistData) && (
-                            <TouchableOpacity style={styles.nodataContainer} onPress={addChannel}>
+                            <TouchableOpacity style={styles.nodataContainer} onPress={addPlaylists}>
                                 <Text style={styles.nodata_title}>Add your first Playlists!</Text>
                             </TouchableOpacity>
                         )}
@@ -1486,6 +1554,66 @@ const MyVideos = (props) => {
                     </View>
                 </ScrollView>
             </View >)}
+            {categoryName == "HISTORY" && (
+                <ScrollView style={{ flex: 1, backgroundColor: "#fff" }} showsHorizontalScrollIndicator={false} showsVerticalScrollIndicator={false} onLayout={(event) => { find_scroll(event.nativeEvent.layout) }} onScroll={handleScroll}>
+                    {isEmpty(historyData) ? (
+                        <View style={styles.nodataContainer}>
+                            <Text style={styles.nodata_title}>No Histories yet!</Text>
+                            <Text style={styles.nodata_content}>Watch videos!</Text>
+                        </View>
+                    ) : (
+                        <View style={styles.videoLists}>
+                            <View style={styles.feeds_contentview}>
+                                {!isEmpty(historyData) && historyData.map((index, key) => {
+                                    if (Number(key + 1) <= Number(Math.ceil(historyData.length / 2))) {
+                                        return (
+                                            <View style={isWide ? styles.wideitemview : isDesktop ? styles.desktopitemview : isTablet ? styles.tabletitemview : isTabletOrMobile ? styles.tabletormobileitemview : styles.mobileitemview} key={key}>
+                                                <TouchableOpacity style={{ alignItems: 'center', width: "100%", borderRadius: 10 }} onPress={() => watchVideo(index, key)}>
+                                                    <img src={index.thumbnail} style={{ width: "100%", borderRadius: 10 }} />
+                                                    <Image source={require("../../../assets/logos/playvideo.png")} style={{ width: 50, height: 50, position: "absolute", top: "40%" }} />
+                                                </TouchableOpacity>
+                                                <View style={styles.maincontentview}>
+                                                    <View style={{ width: "100%" }}>
+                                                        <View style={{ flex: 1, flexDirection: "row", justifyContent: "space-between" }}>
+                                                            <Text style={styles.metadata_description}>Watched At:</Text>
+                                                            <Text style={styles.metadata_description}>{new Date(index.viewDate).toLocaleDateString()}</Text>
+                                                        </View>
+                                                        <Text style={styles.metadata_title}>{index.title}</Text>
+                                                        <Text style={styles.metadata_description}>{index.description}</Text>
+                                                    </View>
+                                                </View>
+                                            </View>
+                                        )
+                                    }
+                                })}
+                            </View>
+                            <View style={styles.feeds_contentview}>
+                                {!isEmpty(historyData) && historyData.map((index, key) => {
+                                    if (Number(key + 1) > Number(Math.ceil(historyData.length / 2))) {
+                                        return (
+                                            <View style={isWide ? styles.wideitemview : isDesktop ? styles.desktopitemview : isTablet ? styles.tabletitemview : isTabletOrMobile ? styles.tabletormobileitemview : styles.mobileitemview} key={key}>
+                                                <TouchableOpacity onPress={() => watchVideo(index, key)} style={{ alignItems: 'center', width: "100%", borderRadius: 10 }}>
+                                                    <img src={index.thumbnail} style={{ width: "100%", borderRadius: 10 }} />
+                                                    <Image source={require("../../../assets/logos/playvideo.png")} style={{ width: 50, height: 50, position: "absolute", top: "40%" }} />
+                                                </TouchableOpacity>
+                                                <View style={styles.maincontentview}>
+                                                    <View style={{ width: "100%" }}>
+                                                        <View style={{ flex: 1, flexDirection: "row", justifyContent: "space-between" }}>
+                                                            <Text style={styles.metadata_description}>Watched At:</Text>
+                                                            <Text style={styles.metadata_description}>{new Date(index.viewDate).toLocaleDateString()}</Text>
+                                                        </View>
+                                                        <Text style={styles.metadata_title}>{index.title}</Text>
+                                                        <Text style={styles.metadata_description}>{index.description}</Text>
+                                                    </View>
+                                                </View>
+                                            </View>
+                                        )
+                                    }
+                                })}
+                            </View>
+                        </View>)}
+                </ScrollView>
+            )}
             <Modal
                 isVisible={opened}
                 animationIn={'zoomInDown'}
@@ -1713,12 +1841,14 @@ const styles = StyleSheet.create({
     metadata_title: {
         color: "#000",
         fontSize: 14,
-        fontWeight: "bold"
+        fontWeight: "bold",
+        textAlign: "center"
     },
     metadata_description: {
         color: "#000",
         fontSize: 14,
-        fontWeight: "bold"
+        fontWeight: "bold",
+        textAlign: "center"
     },
     channelDetail: {
         flexDirection: "row",

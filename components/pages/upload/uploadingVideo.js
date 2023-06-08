@@ -119,7 +119,7 @@ const UploadingVideo = (props) => {
         setUploadVideoType(true);
     };
 
-    const onFileChange = (event) => {
+    const onFileChange = async (event) => {
         const file = event.target.files[0];
         setFile({ file });
         setUploadVideoType(false);
@@ -128,11 +128,11 @@ const UploadingVideo = (props) => {
         setOpened(false);
         if (file) {
             try {
-                generateVideoThumbnails(file, 3).then((res) => {
-                    setThumbnails(res);
-                }).catch((err) => console.log("**************err**********", err));
+                const res = await generateVideoThumbnails(file, 3);
+                setThumbnails(res);
             } catch (error) {
-                console.log("**************error**********", error)
+                console.log("**************error**********", error);
+                window.location.reload();
             }
 
         }
@@ -240,18 +240,17 @@ const UploadingVideo = (props) => {
                 let formData = new FormData();
 
                 formData.append('video', data.file);
-                console.log("*********video**********", data.file);
 
                 await axios.post(apiURL + "/api/Upsocial/upload/generate-ipfs", formData, headers)
                     .then(async (response) => {
                         if (response.data.data) {
                             cid = response.data.data.ipfsUrl;
-                            console.log("**************cid*****************", cid);
 
                             setHashCode(cid);
                             let URL = `${cid}`;
                             setVideoResult(URL);
-                            let emb = `<iframe src="${cid}" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" style="border:none; width:100%; height:100%; min-height:500px;" frameborder="0" scrolling="no"></iframe>`
+                            let cid_hash = cid.slice(28, 74);
+                            let emb = `<iframe src="https://e.upsocial.com?ipfs=${cid_hash}" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" style="border:none; width:100%; height:100%; min-height:500px;" frameborder="0" scrolling="no"></iframe>`
                             setEmbedCode(emb);
 
                             var arr = thumbnails[2].split(','), mime = arr[0].match(/:(.*?);/)[1],
@@ -260,8 +259,6 @@ const UploadingVideo = (props) => {
                                 u8arr[n] = bstr.charCodeAt(n);
                             }
                             let img_file = new File([u8arr], `${v_title}.jpg`, { type: mime });
-
-                            console.log("**************thumbnail*****************", img_file);
 
                             let Thumbnail_formData = new FormData();
 
@@ -272,6 +269,7 @@ const UploadingVideo = (props) => {
                             Thumbnail_formData.append('category', selected);
                             Thumbnail_formData.append('userEmail', props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser);
                             Thumbnail_formData.append('video_src', cid);
+                            Thumbnail_formData.append('channelName', "Personal Profile");
                             await axios.post(apiURL + "/api/Upsocial/users/content/web/uploadContent", Thumbnail_formData, headers).then((res) => {
                                 if (res.data.status) {
                                     setLoading(false);
@@ -323,7 +321,8 @@ const UploadingVideo = (props) => {
                             setHashCode(cid);
                             let URL = `${cid}`;
                             setVideoResult(URL);
-                            let emb = `<iframe src="${cid}" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" style="border:none; width:100%; height:100%; min-height:500px;" frameborder="0" scrolling="no"></iframe>`
+                            let cid_hash = cid.slice(28, 74);
+                            let emb = `<iframe src="https://e.upsocial.com?ipfs=${cid_hash}" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" style="border:none; width:100%; height:100%; min-height:500px;" frameborder="0" scrolling="no"></iframe>`
                             setEmbedCode(emb);
 
                             var arr = thumbnails[2].split(','), mime = arr[0].match(/:(.*?);/)[1],
@@ -484,12 +483,12 @@ const UploadingVideo = (props) => {
             </Modal>
             <View style={styles.headersection}>
                 <View style={styles.subheadersection}>
-                    <View style={styles.headerimage}>
+                    <TouchableOpacity style={styles.headerimage} onPress={() => props.navigation.navigate("Home")}>
                         <Image
                             source={require("../../../assets/logos/logo_wh.png")}
                             style={{ height: 30, width: 158 }}
                         />
-                    </View>
+                    </TouchableOpacity>
                     <View style={styles.iconsection}>
                         <TouchableOpacity style={styles.iconbtn}>
                             <MaterialCommunityIcons name="cast" color="#fff" size={35} />
@@ -650,13 +649,9 @@ const UploadingVideo = (props) => {
                 animationOut={'slideOutRight'}
                 style={{ margin: 0, padding: 0 }}
             >
-                <TouchableOpacity onPress={() => setConfirmModal(false)}>
-                    <Ionicons name="arrow-back-sharp" color="#000" size={30} />
-                </TouchableOpacity>
-
                 <View style={styles.videopage}>
                     <View style={{ flexDirection: "row", justifyContent: "space-between", width: "100%", alignItems: "center", position: 'absolute', top: 0, left: 0, zIndex: 1000000 }}>
-                        <TouchableOpacity onPress={() => setConfirmModal(false)}>
+                        <TouchableOpacity onPress={() => window.location.reload()}>
                             <Ionicons name="arrow-back-sharp" color="#000" size={30} />
                         </TouchableOpacity>
                     </View>

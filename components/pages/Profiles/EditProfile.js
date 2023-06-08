@@ -32,6 +32,7 @@ const EditProfile = (props) => {
     const [allData, setAllData] = useState(null);
     const [isSelectable, setIsSelectable] = useState(false);
     const [searchtext, setSearchtext] = useState("");
+    const [loading, setLoading] = useState(false);
 
     const toggleSwitch = () => {
         setIsEnabled((previousState) => !previousState);
@@ -67,6 +68,7 @@ const EditProfile = (props) => {
                 alert("Please input description!");
             }
         } else {
+            setLoading(true);
             let formdata = new FormData();
             formdata.append("photo", uploadimagedata);
             formdata.append("name", name);
@@ -84,12 +86,12 @@ const EditProfile = (props) => {
                 if (res.data.status) {
                     alert("Update Profile success !");
                     props.setflag("Profile");
+                    setLoading(false);
                 }
             }).catch((error) => {
                 console.log(error);
+                setLoading(false);
             })
-
-
         }
     };
 
@@ -125,12 +127,12 @@ const EditProfile = (props) => {
         >
             <View style={styles.headersection}>
                 <View style={styles.subheadersection}>
-                    <View style={styles.headerimage}>
+                    <TouchableOpacity style={styles.headerimage} onPress={() => props.goToHome()}>
                         <Image
                             source={require("../../../assets/logos/logo_wh.png")}
                             style={{ height: 30, width: 158 }}
                         />
-                    </View>
+                    </TouchableOpacity>
                     <View style={styles.iconsection}>
                         <TouchableOpacity style={styles.iconbtn}>
                             <MaterialCommunityIcons name="cast" color="#fff" size={35} />
@@ -226,6 +228,12 @@ const EditProfile = (props) => {
                     </View>
                 </View>
             </ScrollView>
+            {loading && <View style={styles.loadingView}>
+                <Image
+                    source={require("../../../assets/loading.gif")}
+                    style={{ width: 140, height: 140 }}
+                />
+            </View>}
         </LinearGradient>
     );
 };
@@ -235,6 +243,17 @@ const styles = StyleSheet.create({
         flex: 1,
         width: "100%",
         alignItems: "center",
+    },
+    loadingView: {
+        position: "absolute",
+        top: 0,
+        left: 0,
+        backgroundColor: "rgba(0, 0, 0, 0.6)",
+        width: "100%",
+        height: "100%",
+        justifyContent: "center",
+        alignItems: "center",
+        zIndex: 10000,
     },
     headersection: {
         height: Dimensions.get("window").height * 0.08,
