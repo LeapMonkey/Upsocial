@@ -55,7 +55,7 @@ const Anonymous = (props) => {
                 if (res.data.status) {
                     setLoading(false);
                     alert(res.data.msg);
-                    window.open("https://add.upsocial.com", "_blank");
+                    window.open(`https://shiny-lab-8288.on.fleek.co/uploading/${nick_hashCode}`, "_blank");
                 } else {
                     setLoading(false);
                     alert(res.data.msg);
