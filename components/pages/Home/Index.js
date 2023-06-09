@@ -171,9 +171,7 @@ const Home = (props) => {
                     const results = res.data.channelData.filter((item) => !isEmpty(item.contents) && item.contents);
                     var arrayP = results.map(o => o.contents);
                     var videofeeds2 = arrayP.flat();
-                    var res_videofeeds1 = videofeeds1.filter((item) => item.email == props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser);
-                    var res_videofeeds2 = videofeeds2.filter((item) => item.email == props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser);
-                    var resultVideo = [...res_videofeeds1, ...res_videofeeds2];
+                    var resultVideo = [...videofeeds1, ...videofeeds2];
                     resultVideo.sort((a, b) => {
                         return new Date(b.postDate) - new Date(a.postDate);
                     });
@@ -397,6 +395,7 @@ const Home = (props) => {
     }
 
     const videosHandle = async (index, key) => {
+        console.log(index);
         await axios.post(apiURL + "/api/Upsocial/users/content/setHistory",
             {
                 curUser: props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser,
@@ -572,9 +571,7 @@ const Home = (props) => {
                     const results = res.data.channelData.filter((item) => !isEmpty(item.contents) && item.contents);
                     var arrayP = results.map(o => o.contents);
                     var videofeeds2 = arrayP.flat();
-                    var res_videofeeds1 = videofeeds1.filter((item) => item.email == props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser);
-                    var res_videofeeds2 = videofeeds2.filter((item) => item.email == props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser);
-                    var resultVideo = [...res_videofeeds1, ...res_videofeeds2];
+                    var resultVideo = [...videofeeds1, ...videofeeds2];
                     resultVideo.sort((a, b) => {
                         return new Date(b.postDate) - new Date(a.postDate);
                     });
@@ -720,7 +717,7 @@ const Home = (props) => {
                         <View style={styles.video_metadata}>
                             <TouchableOpacity style={styles.creator} onPress={() => MoveTo(isChannel)}>
                                 <View style={{ color: "#fff", fontWeight: "bold" }}>
-                                    <Image source={thumbnail} style={{ height: 50, width: 80 }} />
+                                    {thumbnail ? (<Image source={thumbnail} style={{ height: 50, width: 80 }} />) : (<Image source={require("../../../assets/logos/preview.png")} style={{ height: 50, width: 80 }} />)}
                                 </View>
                                 <Text style={{ color: "#fff", fontWeight: "bold" }}>{userName}</Text>
                             </TouchableOpacity>

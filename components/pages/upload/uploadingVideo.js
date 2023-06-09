@@ -243,6 +243,7 @@ const UploadingVideo = (props) => {
 
                 await axios.post(apiURL + "/api/Upsocial/upload/generate-ipfs", formData, headers)
                     .then(async (response) => {
+                        console.log(response.data.data)
                         if (response.data.data) {
                             cid = response.data.data.ipfsUrl;
 
@@ -270,7 +271,9 @@ const UploadingVideo = (props) => {
                             Thumbnail_formData.append('userEmail', props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser);
                             Thumbnail_formData.append('video_src', cid);
                             Thumbnail_formData.append('channelName', "Personal Profile");
+                            console.log(selected);
                             await axios.post(apiURL + "/api/Upsocial/users/content/web/uploadContent", Thumbnail_formData, headers).then((res) => {
+                                console.log(res.data)
                                 if (res.data.status) {
                                     setLoading(false);
                                     resetValues();
