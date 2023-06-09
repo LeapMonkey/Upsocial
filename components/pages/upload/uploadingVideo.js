@@ -948,7 +948,7 @@ const styles = StyleSheet.create({
     },
     videopage: {
         width: "100%",
-        height: Dimensions.get('window').height,
+        height: "100%",
         justifyContent: "center",
         backgroundColor: "#fff",
         alignItems: "center",
