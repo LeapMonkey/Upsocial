@@ -249,69 +249,61 @@ const UploadingVideo = (props) => {
 
                 formData.append('video', data.file);
 
-                if (typeof data.file == "object") {
-                    alert(data.file);
-                }
+                await axios.post(apiURL + "/api/Upsocial/upload/generate-ipfs", formData, headers)
+                    .then(async (response) => {
+                        alert(response.data.data)
+                        if (response.data.data) {
+                            cid = response.data.data.ipfsUrl;
 
-                if (data.file.name == "marketing.mp4") {
-                    alert(data.file.name)
-                }
+                            setHashCode(cid);
+                            let URL = `${cid}`;
+                            setVideoResult(URL);
+                            let cid_hash = cid.slice(28, 74);
+                            let emb = `<iframe src="https://e.upsocial.com?ipfs=${cid_hash}" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" style="border:none; width:100%; height:100%; min-height:500px;" frameborder="0" scrolling="no"></iframe>`
+                            setEmbedCode(emb);
 
-                // await axios.post(apiURL + "/api/Upsocial/upload/generate-ipfs", formData, headers)
-                //     .then(async (response) => {
-                //         console.log(response.data.data)
-                //         if (response.data.data) {
-                //             cid = response.data.data.ipfsUrl;
+                            var arr = thumbnails[2].split(','), mime = arr[0].match(/:(.*?);/)[1],
+                                bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
+                            while (n--) {
+                                u8arr[n] = bstr.charCodeAt(n);
+                            }
+                            let img_file = new File([u8arr], `${v_title}.jpg`, { type: mime });
 
-                //             setHashCode(cid);
-                //             let URL = `${cid}`;
-                //             setVideoResult(URL);
-                //             let cid_hash = cid.slice(28, 74);
-                //             let emb = `<iframe src="https://e.upsocial.com?ipfs=${cid_hash}" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" style="border:none; width:100%; height:100%; min-height:500px;" frameborder="0" scrolling="no"></iframe>`
-                //             setEmbedCode(emb);
+                            let Thumbnail_formData = new FormData();
 
-                //             var arr = thumbnails[2].split(','), mime = arr[0].match(/:(.*?);/)[1],
-                //                 bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
-                //             while (n--) {
-                //                 u8arr[n] = bstr.charCodeAt(n);
-                //             }
-                //             let img_file = new File([u8arr], `${v_title}.jpg`, { type: mime });
+                            Thumbnail_formData.append('thumbnail', img_file);
+                            Thumbnail_formData.append('title', v_title);
+                            Thumbnail_formData.append('description', v_description);
+                            Thumbnail_formData.append('keywords', videoKeywords);
+                            Thumbnail_formData.append('category', selected);
+                            Thumbnail_formData.append('userEmail', props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser);
+                            Thumbnail_formData.append('video_src', cid);
+                            Thumbnail_formData.append('channelName', "Personal Profile");
+                            alert(selected);
+                            await axios.post(apiURL + "/api/Upsocial/users/content/web/uploadContent", Thumbnail_formData, headers).then((res) => {
+                                alert(res.data)
+                                if (res.data.status) {
+                                    setLoading(false);
+                                    resetValues();
+                                    alert("Success");
+                                    setConfirmModal(true);
+                                } else {
+                                    setLoading(false);
+                                }
 
-                //             let Thumbnail_formData = new FormData();
-
-                //             Thumbnail_formData.append('thumbnail', img_file);
-                //             Thumbnail_formData.append('title', v_title);
-                //             Thumbnail_formData.append('description', v_description);
-                //             Thumbnail_formData.append('keywords', videoKeywords);
-                //             Thumbnail_formData.append('category', selected);
-                //             Thumbnail_formData.append('userEmail', props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser);
-                //             Thumbnail_formData.append('video_src', cid);
-                //             Thumbnail_formData.append('channelName', "Personal Profile");
-                //             console.log(selected);
-                //             await axios.post(apiURL + "/api/Upsocial/users/content/web/uploadContent", Thumbnail_formData, headers).then((res) => {
-                //                 console.log(res.data)
-                //                 if (res.data.status) {
-                //                     setLoading(false);
-                //                     resetValues();
-                //                     alert("Success");
-                //                     setConfirmModal(true);
-                //                 } else {
-                //                     setLoading(false);
-                //                 }
-
-                //             }).catch((err) => {
-                //                 console.log(err);
-                //                 setLoading(false);
-                //             });
-                //         } else {
-                //             console.log(response.data.error);
-                //             setLoading(false);
-                //         }
-                //     })
-                //     .catch((error) => {
-                //         console.log(error);
-                //         setLoading(false);
-                //     });
+                            }).catch((err) => {
+                                console.log(err);
+                                setLoading(false);
+                            });
+                        } else {
+                            console.log(response.data.error);
+                            setLoading(false);
+                        }
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                        setLoading(false);
+                    });
 
             } else {
                 setLoading(true);
