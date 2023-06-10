@@ -117,6 +117,7 @@ const MyVideos = (props) => {
     // Video Data
     const [videoKeyword, setVideoKeyword] = useState("");
     const [videoKeywords, setVideoKeywords] = useState([]);
+    const tagRef = useRef(null);
 
     const [v_title, setV_title] = useState("");
     const [v_description, setV_description] = useState("");
@@ -305,6 +306,8 @@ const MyVideos = (props) => {
             if (videoKeywords.length == 10) {
                 alert("Max keywords number is 10 !");
                 setVideoKeyword("");
+                tagRef.current.focus();
+                tagRef.current.blur();
                 return;
             } else {
                 var tempkeys = videoKeyword.split(/\s*,\s*/);
@@ -313,6 +316,8 @@ const MyVideos = (props) => {
                 } else {
                     setVideoKeywords(keyword => [...keyword, ...tempkeys]);
                     setVideoKeyword("");
+                    tagRef.current.focus();
+                    tagRef.current.blur();
                 }
             }
         }
@@ -471,6 +476,8 @@ const MyVideos = (props) => {
         setV_title("");
         setV_description("");
         setVideoKeyword("");
+        tagRef.current.focus();
+        tagRef.current.blur();
         setVideoKeywords([]);
         setSelected([]);
         setVideoSrc(null);
@@ -1382,8 +1389,8 @@ const MyVideos = (props) => {
                                 <TextInput placeholder="Description" placeholderTextColor="#adb2b6"
                                     style={styles.TextArea} value={v_description} onChangeText={(e) => setV_description(e)} multiline={true} />
                             </View>
-                            {/* <View style={styles.TextView}>
-                                <TextInput placeholder='Tags' placeholderTextColor="#adb2b6" style={styles.TextInput} value={videoKeyword} onKeyPress={(e) => addVideoKeyword(e)} onChangeText={(e) => setVideoKeyword(e)} />
+                            <View style={styles.TextView}>
+                                <TextInput placeholder='Tags' multiline={true} numberOfLines={1} ref={tagRef} placeholderTextColor="#adb2b6" style={styles.TextArea} value={videoKeyword} onKeyPress={(e) => addVideoKeyword(e)} onChangeText={(e) => setVideoKeyword(e)} />
                                 <View style={{ flexDirection: "row", gap: 10, width: '100%', flexWrap: "wrap", marginTop: 5 }}>
                                     {videoKeywords.map((index, key) => {
                                         return (
@@ -1391,7 +1398,7 @@ const MyVideos = (props) => {
                                         )
                                     })}
                                 </View>
-                            </View> */}
+                            </View>
                             <View style={styles.DropView}>
                                 <SelectDropdown
                                     data={channels}

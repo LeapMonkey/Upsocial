@@ -547,11 +547,13 @@ const Home = (props) => {
             //     feeds: [],
             //     image: "https://g.upsocial.com/ipfs/QmTdpgTimmqySennryQsfp2b56H4QwqF6JZULHYgxK7txp"
             // };
-            res.data.PlaylistData.sort((a, b) => {
-                return new Date(b.createdDate) - new Date(a.createdDate);
-            });
-            let result = res.data.PlaylistData.filter((item) => item.userEmail == props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser);
-            setPlaylist(result);
+            if (res.data.PlaylistData) {
+                res.data.PlaylistData.sort((a, b) => {
+                    return new Date(b.createdDate) - new Date(a.createdDate);
+                });
+                let result = res.data.PlaylistData.filter((item) => item.userEmail == props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser);
+                setPlaylist(result);
+            }
         }).catch((err) => {
             console.warn(err);
         });

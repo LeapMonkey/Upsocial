@@ -80,6 +80,7 @@ const Details = (props) => {
     const [v_channelAdmin, setV_channelAdmin] = useState("");
     const [videoKeyword, setVideoKeyword] = useState("");
     const [videoKeywords, setVideoKeywords] = useState([]);
+    const tagRef = useRef(null);
     // Video Picker
     const [cameraStatus, requestPermission] = ImagePicker.useCameraPermissions();
     const [videoSrc, setVideoSrc] = useState(null);
@@ -124,6 +125,8 @@ const Details = (props) => {
             if (videoKeywords.length == 10) {
                 alert("Max keywords number is 10 !");
                 setVideoKeyword("");
+                tagRef.current.focus();
+                tagRef.current.blur();
                 return;
             } else {
                 var tempkeys = videoKeyword.split(/\s*,\s*/);
@@ -132,6 +135,8 @@ const Details = (props) => {
                 } else {
                     setVideoKeywords(keyword => [...keyword, ...tempkeys]);
                     setVideoKeyword("");
+                    tagRef.current.focus();
+                    tagRef.current.blur();
                 }
             }
         }
@@ -186,6 +191,8 @@ const Details = (props) => {
         setV_title("");
         setV_description("");
         setVideoKeyword("");
+        tagRef.current.focus();
+        tagRef.current.blur();
         setVideoKeywords([]);
         setSelected([]);
         setVideoSrc(null);
@@ -225,15 +232,15 @@ const Details = (props) => {
                 AlertIOS.alert("Please input Video Description!");
             }
         }
-        // else if (videoKeywords.length == 0) {
-        //     if (Platform.OS === "android") {
-        //         ToastAndroid.show("Please input at least 1 keywords, tags!", ToastAndroid.SHORT);
-        //     } else if (Platform.OS === "web") {
-        //         alert("Please input at least 1 keywords, tags!");
-        //     } else {
-        //         AlertIOS.alert("Please input at least 1 keywords, tags!");
-        //     }
-        // }
+        else if (videoKeywords.length == 0) {
+            if (Platform.OS === "android") {
+                ToastAndroid.show("Please input at least 1 keywords, tags!", ToastAndroid.SHORT);
+            } else if (Platform.OS === "web") {
+                alert("Please input at least 1 keywords, tags!");
+            } else {
+                AlertIOS.alert("Please input at least 1 keywords, tags!");
+            }
+        }
         else if (selected.length == 0) {
             if (Platform.OS === "android") {
                 ToastAndroid.show("Please input at least 1 category!", ToastAndroid.SHORT);
@@ -644,8 +651,8 @@ const Details = (props) => {
                                 <TextInput placeholder="Description" placeholderTextColor="#adb2b6"
                                     style={styles.TextArea} value={v_description} onChangeText={(e) => setV_description(e)} multiline={true} />
                             </View>
-                            {/* <View style={styles.TextView}>
-                                <TextInput placeholder='Tags' placeholderTextColor="#adb2b6" style={styles.TextInput} value={videoKeyword} onKeyPress={(e) => addVideoKeyword(e)} onChangeText={(e) => setVideoKeyword(e)} />
+                            <View style={styles.TextView}>
+                                <TextInput placeholder='Tags' multiline={true} numberOfLines={1} ref={tagRef} placeholderTextColor="#adb2b6" style={styles.TextArea} value={videoKeyword} onKeyPress={(e) => addVideoKeyword(e)} onChangeText={(e) => setVideoKeyword(e)} />
                                 <View style={{ flexDirection: "row", gap: 10, width: '100%', flexWrap: "wrap", marginTop: 5 }}>
                                     {videoKeywords.map((index, key) => {
                                         return (
@@ -653,7 +660,7 @@ const Details = (props) => {
                                         )
                                     })}
                                 </View>
-                            </View> */}
+                            </View>
                             <View style={styles.DropView}>
                                 <SelectDropdown
                                     data={channels}
