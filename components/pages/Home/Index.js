@@ -719,7 +719,7 @@ const Home = (props) => {
                         <View style={styles.video_metadata}>
                             <TouchableOpacity style={styles.creator} onPress={() => MoveTo(isChannel)}>
                                 <View style={{ color: "#fff", fontWeight: "bold" }}>
-                                    {thumbnail ? (<Image source={thumbnail} style={{ height: 50, width: 80 }} />) : (<Image source={require("../../../assets/logos/preview.png")} style={{ height: 50, width: 80 }} />)}
+                                    {!isEmpty(thumbnail.uri) ? (<Image source={thumbnail} style={{ height: 50, width: 80 }} />) : (<Image source={require("../../../assets/logos/preview.png")} style={{ height: 50, width: 80 }} />)}
                                 </View>
                                 <Text style={{ color: "#fff", fontWeight: "bold" }}>{userName}</Text>
                             </TouchableOpacity>
