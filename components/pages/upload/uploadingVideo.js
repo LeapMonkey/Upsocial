@@ -281,7 +281,7 @@ const UploadingVideo = (props) => {
                             Thumbnail_formData.append('channelName', "Personal Profile");
                             alert(selected);
                             await axios.post(apiURL + "/api/Upsocial/users/content/web/uploadContent", Thumbnail_formData, headers).then((res) => {
-                                alert(res.data)
+                                alert(res.data.status);
                                 if (res.data.status) {
                                     setLoading(false);
                                     resetValues();
