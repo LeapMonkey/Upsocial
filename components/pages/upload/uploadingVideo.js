@@ -140,7 +140,6 @@ const UploadingVideo = (props) => {
 
 
     const addVideoKeyword = (e) => {
-        alert(e.nativeEvent.key);
         if (e.nativeEvent.key == "Enter") {
             if (videoKeywords.length == 10) {
                 alert("Max keywords number is 10 !");
@@ -534,14 +533,14 @@ const UploadingVideo = (props) => {
                             </TouchableOpacity>)}
                         <View style={styles.TextView}>
                             <TextInput placeholder="Title" placeholderTextColor="#adb2b6"
-                                style={styles.TextInput} value={v_title} onChangeText={(e) => setV_title(e)} />
+                                style={styles.TextArea} value={v_title} onChangeText={(e) => setV_title(e)} multiline={true} numberOfLines={1} />
                         </View>
                         <View style={styles.TextView}>
                             <TextInput placeholder="Description" placeholderTextColor="#adb2b6"
                                 style={styles.TextArea} value={v_description} onChangeText={(e) => setV_description(e)} multiline={true} />
                         </View>
                         <View style={styles.TextView}>
-                            <TextInput placeholder='Tags' placeholderTextColor="#adb2b6" style={styles.TextInput} value={videoKeyword} onKeyPress={(e) => addVideoKeyword(e)} onChangeText={(e) => setVideoKeyword(e)} />
+                            <TextInput placeholder='Tags' placeholderTextColor="#adb2b6" style={styles.TextArea} multiline={true} numberOfLines={1} value={videoKeyword} onKeyPress={(e) => addVideoKeyword(e)} onChangeText={(e) => setVideoKeyword(e)} />
                             <View style={{ flexDirection: "row", gap: 15, width: '100%', flexWrap: "wrap", marginTop: 5 }}>
                                 {videoKeywords.map((index, key) => {
                                     return (
