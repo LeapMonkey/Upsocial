@@ -140,6 +140,7 @@ const UploadingVideo = (props) => {
 
 
     const addVideoKeyword = (e) => {
+        alert(e.nativeEvent.key);
         if (e.nativeEvent.key == "Enter") {
             if (videoKeywords.length == 10) {
                 alert("Max keywords number is 10 !");
