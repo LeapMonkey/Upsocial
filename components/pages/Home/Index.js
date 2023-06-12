@@ -176,30 +176,35 @@ const Home = (props) => {
                         return new Date(b.postDate) - new Date(a.postDate);
                     });
                     if (resultVideo[0].channelName == "Personal Profile") {
-                        axios.post(apiURL + "/api/Upsocial/admin/getUsers",
-                            { userEmail: props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser },
-                            {
-                                'Content-Type': 'application/json',
-                                'Access-Control-Allow-Origin': '*'
-                            }).then((res) => {
-                                if (res.data.data.photo) {
-                                    setThumbnail({ uri: res.data.data.photo });
+                        if ((resultVideo[0].email).includes("@")) {
+                            axios.post(apiURL + "/api/Upsocial/admin/getUsers",
+                                { userEmail: resultVideo[0].email },
+                                {
+                                    'Content-Type': 'application/json',
+                                    'Access-Control-Allow-Origin': '*'
+                                }).then((res) => {
                                     setIsChannel(resultVideo[0].channelName);
-                                }
-                                if (res.data.data.username) {
-                                    setUserName(res.data.data.username);
-                                }
-                            }).catch((err) => console.warn(err));
+                                    if (res.data.data.photo) {
+                                        setThumbnail({ uri: res.data.data.photo });
+                                    }
+                                    if (res.data.data.username) {
+                                        setUserName(res.data.data.username);
+                                    }
+                                }).catch((err) => console.warn(err));
+                        } else {
+                            setUserName(resultVideo[0].email);
+                            setIsChannel(resultVideo[0].channelName);
+                        }
                     } else {
                         axios.post(apiURL + "/api/Upsocial/getAll/channels", {
                             "Access-Control-Allow-Origin": "*",
                             'Access-Control-Allow-Headers': '*',
                         }).then((res) => {
-                            let result = res.data.channelData.filter((item) => item.email == props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser);
-                            let resultChannel = result.filter(obj => obj["channelName"] === item.channelName);
+                            let result = res.data.channelData.filter((item) => item.email == (props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser));
+                            let resultChannel = result.filter(obj => obj["channelName"] === resultVideo[0].channelName);
+                            setIsChannel(resultVideo[0].channelName);
                             if (resultChannel[0].photo) {
                                 setThumbnail({ uri: resultChannel[0].photo });
-                                setIsChannel(resultVideo[0].channelName);
                             }
                             if (resultChannel[0].channelName) {
                                 setUserName(resultChannel[0].channelName);
@@ -255,30 +260,34 @@ const Home = (props) => {
                         return new Date(b.postDate) - new Date(a.postDate);
                     });
                     if (res.data.data[0].channelName == "Personal Profile") {
-                        axios.post(apiURL + "/api/Upsocial/admin/getUsers",
-                            { userEmail: props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser },
-                            {
-                                'Content-Type': 'application/json',
-                                'Access-Control-Allow-Origin': '*'
-                            }).then((res) => {
-                                if (res.data.data.photo) {
-                                    setThumbnail({ uri: res.data.data.photo });
-                                    setIsChannel(res.data.data[0].channelName);
-                                }
-                                if (res.data.data.username) {
-                                    setUserName(res.data.data.username);
-                                }
-                            }).catch((err) => console.warn(err));
+                        setIsChannel(res.data.data[0].channelName);
+                        if ((res.data.data[0].email).includes("@")) {
+                            axios.post(apiURL + "/api/Upsocial/admin/getUsers",
+                                { userEmail: res.data.data[0].email },
+                                {
+                                    'Content-Type': 'application/json',
+                                    'Access-Control-Allow-Origin': '*'
+                                }).then((response) => {
+                                    if (response.data.data.photo) {
+                                        setThumbnail({ uri: response.data.data.photo });
+                                    }
+                                    if (res.data.data.username) {
+                                        setUserName(response.data.data.username);
+                                    }
+                                }).catch((err) => console.warn(err));
+                        } else {
+                            setUserName(res.data.data[0].email);
+                        }
                     } else {
                         axios.post(apiURL + "/api/Upsocial/getAll/channels", {
                             "Access-Control-Allow-Origin": "*",
                             'Access-Control-Allow-Headers': '*',
-                        }).then((res) => {
-                            let result = res.data.channelData.filter((item) => item.email == props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser);
-                            let resultChannel = result.filter(obj => obj["channelName"] === item.channelName);
+                        }).then((resp) => {
+                            let result = resp.data.channelData.filter((item) => item.email == (props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser));
+                            let resultChannel = result.filter(obj => obj["channelName"] === res.data.data[0].channelName);
+                            setIsChannel(res.data.data[0].channelName);
                             if (resultChannel[0].photo) {
                                 setThumbnail({ uri: resultChannel[0].photo });
-                                setIsChannel(res.data.data[0].channelName);
                             }
                             if (resultChannel[0].channelName) {
                                 setUserName(resultChannel[0].channelName);
@@ -306,30 +315,34 @@ const Home = (props) => {
         setDescription(item.description);
         SetVideoSource({ uri: item.ipfsUrl });
         if (item.channelName == "Personal Profile") {
-            axios.post(apiURL + "/api/Upsocial/admin/getUsers",
-                { userEmail: props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser },
-                {
-                    'Content-Type': 'application/json',
-                    'Access-Control-Allow-Origin': '*'
-                }).then((res) => {
-                    if (res.data.data.photo) {
-                        setThumbnail({ uri: res.data.data.photo });
+            if ((item.email).includes("@")) {
+                axios.post(apiURL + "/api/Upsocial/admin/getUsers",
+                    { userEmail: item.email },
+                    {
+                        'Content-Type': 'application/json',
+                        'Access-Control-Allow-Origin': '*'
+                    }).then((res) => {
                         setIsChannel(item.channelName);
-                    }
-                    if (res.data.data.username) {
-                        setUserName(res.data.data.username);
-                    }
-                }).catch((err) => console.warn(err));
+                        if (res.data.data.photo) {
+                            setThumbnail({ uri: res.data.data.photo });
+                        }
+                        if (res.data.data.username) {
+                            setUserName(res.data.data.username);
+                        }
+                    }).catch((err) => console.warn(err));
+            } else {
+                setUserName(item.email);
+            }
         } else {
             axios.post(apiURL + "/api/Upsocial/getAll/channels", {
                 "Access-Control-Allow-Origin": "*",
                 'Access-Control-Allow-Headers': '*',
             }).then((res) => {
-                let result = res.data.channelData.filter((item) => item.email == props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser);
+                let result = res.data.channelData.filter((item) => item.email == (props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser));
                 let resultChannel = result.filter(obj => obj["channelName"] === item.channelName);
+                setIsChannel(item.channelName);
                 if (resultChannel[0].photo) {
                     setThumbnail({ uri: resultChannel[0].photo });
-                    setIsChannel(item.channelName);
                 }
                 if (resultChannel[0].channelName) {
                     setUserName(resultChannel[0].channelName);
@@ -545,7 +558,7 @@ const Home = (props) => {
                 res.data.PlaylistData.sort((a, b) => {
                     return new Date(b.createdDate) - new Date(a.createdDate);
                 });
-                let result = res.data.PlaylistData.filter((item) => item.userEmail == props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser);
+                let result = res.data.PlaylistData.filter((item) => item.userEmail == (props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser));
                 setPlaylist(result);
             }
         }).catch((err) => {
@@ -572,30 +585,34 @@ const Home = (props) => {
                         return new Date(b.postDate) - new Date(a.postDate);
                     });
                     if (resultVideo[0].channelName == "Personal Profile") {
-                        axios.post(apiURL + "/api/Upsocial/admin/getUsers",
-                            { userEmail: props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser },
-                            {
-                                'Content-Type': 'application/json',
-                                'Access-Control-Allow-Origin': '*'
-                            }).then((res) => {
-                                if (res.data.data.photo) {
-                                    setThumbnail({ uri: res.data.data.photo });
+                        if ((resultVideo[0].email).includes("@")) {
+                            axios.post(apiURL + "/api/Upsocial/admin/getUsers",
+                                { userEmail: resultVideo[0].email },
+                                {
+                                    'Content-Type': 'application/json',
+                                    'Access-Control-Allow-Origin': '*'
+                                }).then((res) => {
                                     setIsChannel(resultVideo[0].channelName);
-                                }
-                                if (res.data.data.username) {
-                                    setUserName(res.data.data.username);
-                                }
-                            }).catch((err) => console.warn(err));
+                                    if (res.data.data.photo) {
+                                        setThumbnail({ uri: res.data.data.photo });
+                                    }
+                                    if (res.data.data.username) {
+                                        setUserName(res.data.data.username);
+                                    }
+                                }).catch((err) => console.warn(err));
+                        } else {
+                            setUserName(resultVideo[0].email);
+                        }
                     } else {
                         axios.post(apiURL + "/api/Upsocial/getAll/channels", {
                             "Access-Control-Allow-Origin": "*",
                             'Access-Control-Allow-Headers': '*',
                         }).then((res) => {
-                            let result = res.data.channelData.filter((item) => item.email == props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser);
-                            let resultChannel = result.filter(obj => obj["channelName"] === item.channelName);
+                            let result = res.data.channelData.filter((item) => item.email == (props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser));
+                            let resultChannel = result.filter(obj => obj["channelName"] === resultVideo[0].channelName);
+                            setIsChannel(resultVideo[0].channelName);
                             if (resultChannel[0].photo) {
                                 setThumbnail({ uri: resultChannel[0].photo });
-                                setIsChannel(resultVideo[0].channelName);
                             }
                             if (resultChannel[0].channelName) {
                                 setUserName(resultChannel[0].channelName);
@@ -642,7 +659,7 @@ const Home = (props) => {
                         <Text>{videoId}</Text>
                         {!isEmpty(modalResult) && modalResult.map((profile, key) => {
                             return (
-                                <Card setTopCardVideos={setTopCardVideo} key={profile.ipfsUrl} profile={profile} keys={key} onSwipeOff={nextCard} />
+                                <Card setTopCardVideos={setTopCardVideo} key={key} profile={profile} keys={key} onSwipeOff={nextCard} />
                             )
                         })}
                     </View>
@@ -711,9 +728,7 @@ const Home = (props) => {
                         />
                         <View style={styles.video_metadata}>
                             <TouchableOpacity style={styles.creator} onPress={() => MoveTo(isChannel)}>
-                                <View style={{ color: "#fff", fontWeight: "bold" }}>
-                                    {!isEmpty(thumbnail.uri) ? (<Image source={thumbnail} style={{ height: 50, width: 80 }} />) : (<Image source={require("../../../assets/logos/preview.png")} style={{ height: 50, width: 80 }} />)}
-                                </View>
+                                {!isEmpty(thumbnail.uri) ? (<Image source={thumbnail} style={{ height: 50, width: 80 }} />) : (<Image source={require("../../../assets/logos/preview.png")} style={{ height: 30, width: 30 }} />)}
                                 <Text style={{ color: "#fff", fontWeight: "bold" }}>{userName}</Text>
                             </TouchableOpacity>
                             <View style={{ flex: 1, flexDirection: "column", gap: 10 }}>

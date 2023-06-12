@@ -415,7 +415,7 @@ const Details = (props) => {
             "Access-Control-Allow-Origin": "*",
             'Access-Control-Allow-Headers': '*',
         }).then((res) => {
-            const result = res.data.channelData.filter((item) => item.email == props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser);
+            const result = res.data.channelData.filter((item) => item.email == (props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser));
             setChannels([...channels, ...result]);
         }).catch((err) => {
             console.warn(err);

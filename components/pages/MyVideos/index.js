@@ -228,7 +228,7 @@ const MyVideos = (props) => {
                 "Access-Control-Allow-Origin": "*",
                 'Access-Control-Allow-Headers': '*',
             }).then((res) => {
-                let result = res.data.channelData.filter((item) => item.email == props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser);
+                let result = res.data.channelData.filter((item) => item.email == (props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser));
                 let feeds = result.reverse();
                 setResult(feeds);
                 setChannelAllData(feeds);
@@ -881,7 +881,7 @@ const MyVideos = (props) => {
                 res.data.PlaylistData.sort((a, b) => {
                     return new Date(b.createdDate) - new Date(a.createdDate);
                 });
-                let result = res.data.PlaylistData.filter((item) => item.userEmail == props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser);
+                let result = res.data.PlaylistData.filter((item) => item.userEmail == (props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser));
                 setPlaylistData(result);
             }).catch((err) => {
                 console.warn(err);
@@ -894,7 +894,7 @@ const MyVideos = (props) => {
             "Access-Control-Allow-Origin": "*",
             'Access-Control-Allow-Headers': '*',
         }).then((res) => {
-            let result = res.data.channelData.filter((item) => item.email == props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser);
+            let result = res.data.channelData.filter((item) => item.email == (props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser));
             let feeds = result.reverse();
             setResult(feeds);
             setChannelAllData(feeds);
@@ -917,8 +917,8 @@ const MyVideos = (props) => {
                 const results = res.data.channelData.filter((item) => !isEmpty(item.contents) && item.contents);
                 var arrayP = results.map(o => o.contents);
                 var videofeeds2 = arrayP.flat();
-                var res_videofeeds1 = videofeeds1.filter((item) => item.email == props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser);
-                var res_videofeeds2 = videofeeds2.filter((item) => item.email == props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser);
+                var res_videofeeds1 = videofeeds1.filter((item) => item.email == (props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser));
+                var res_videofeeds2 = videofeeds2.filter((item) => item.email == (props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser));
                 var resultVideo = [...res_videofeeds1, ...res_videofeeds2];
                 resultVideo.sort((a, b) => {
                     return new Date(b.postDate) - new Date(a.postDate);
