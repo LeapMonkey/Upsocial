@@ -186,7 +186,7 @@ const Upload = (props) => {
         let URL = `${cid}`;
         setURL(URL);
         let cid_hash = cid.slice(28, 74);
-        let emb = `<iframe src="https://e.upsocial.com?ipfs=${cid_hash}" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" style="border:none; width:100%; height:100%; min-height:500px;" frameborder="0" scrolling="no"></iframe>`
+        let emb = `<iframe src="https://e.upsocial.com/?ipfs=${cid_hash}" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" style="border:none; width:100%; height:100%; min-height:500px;" frameborder="0" scrolling="no"></iframe>`
         setEmbedCode(emb);
         axios
             .post(apiURL + "/api/Upsocial/users/content/uploadContent", contentData, {
@@ -299,7 +299,7 @@ const Upload = (props) => {
             let URL = `${cid}`;
             setURL(URL);
             let cid_hash = cid.slice(28, 74);
-            let emb = `<iframe src="https://e.upsocial.com?ipfs=${cid_hash}" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" style="border:none; width:100%; height:100%; min-height:500px;" frameborder="0" scrolling="no"></iframe>`
+            let emb = `<iframe src="https://e.upsocial.com/?ipfs=${cid_hash}" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" style="border:none; width:100%; height:100%; min-height:500px;" frameborder="0" scrolling="no"></iframe>`
             setEmbedCode(emb);
 
             var arr = thumbnails[0].split(','), mime = arr[0].match(/:(.*?);/)[1],
@@ -427,7 +427,7 @@ const Upload = (props) => {
                                     editable={false}
                                 />
                                 <CopyToClipboard text={url}
-                                    onCopy={() => console.log('copied')}>
+                                    onCopy={() => alert('Copied')}>
                                     <Image style={styles.actionImage} source={require("../../../assets/modal/icon_copy_link.png")} />
                                 </CopyToClipboard>
                             </View>
@@ -444,7 +444,7 @@ const Upload = (props) => {
                                     />
                                     <View style={styles.actionsWrapper}>
                                         <CopyToClipboard text={embedCode}
-                                            onCopy={() => console.log('copied')}>
+                                            onCopy={() => alert('Copied')}>
                                             <Image style={styles.actionImage} source={require("../../../assets/modal/icon_copy_link.png")} />
                                         </CopyToClipboard>
                                         <Image style={styles.actionImage} source={require("../../../assets/modal/icon_wordpress.png")} onClick={() => onShareSocial('wordpress')} />

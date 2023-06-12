@@ -55,7 +55,7 @@ const Anonymous = (props) => {
                 if (res.data.status) {
                     setLoading(false);
                     alert(res.data.msg);
-                    window.open(`https://shiny-lab-8288.on.fleek.co/uploading/${nick_hashCode}`, "_blank");
+                    window.open(`https://add.upsocial.com/uploading/${nick_hashCode}`, "_blank");
                 } else {
                     setLoading(false);
                     alert(res.data.msg);
@@ -119,7 +119,7 @@ const Anonymous = (props) => {
                         {!isEmpty(hashCodeFromAPI) && <View style={styles.ResultView}>
                             <Text style={styles.create_account_title}>{hashCodeFromAPI}</Text>
                             <CopyToClipboard text={hashCodeFromAPI}
-                                onCopy={() => console.log('copied')}>
+                                onCopy={() => alert('Copied')}>
                                 <Image style={styles.actionImage} source={require("../../assets/modal/icon_copy_link.png")} />
                             </CopyToClipboard>
                         </View>}
