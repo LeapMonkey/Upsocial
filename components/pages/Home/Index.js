@@ -189,7 +189,7 @@ const Home = (props) => {
                                 if (res.data.data.username) {
                                     setUserName(res.data.data.username);
                                 }
-                            }).catch((err) => console.log(err));
+                            }).catch((err) => console.warn(err));
                     } else {
                         axios.post(apiURL + "/api/Upsocial/getAll/channels", {
                             "Access-Control-Allow-Origin": "*",
@@ -197,7 +197,6 @@ const Home = (props) => {
                         }).then((res) => {
                             let result = res.data.channelData.filter((item) => item.email == props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser);
                             let resultChannel = result.filter(obj => obj["channelName"] === item.channelName);
-                            console.log(resultChannel);
                             if (resultChannel[0].photo) {
                                 setThumbnail({ uri: resultChannel[0].photo });
                                 setIsChannel(resultVideo[0].channelName);
@@ -262,7 +261,6 @@ const Home = (props) => {
                                 'Content-Type': 'application/json',
                                 'Access-Control-Allow-Origin': '*'
                             }).then((res) => {
-                                console.log(res.data.data);
                                 if (res.data.data.photo) {
                                     setThumbnail({ uri: res.data.data.photo });
                                     setIsChannel(res.data.data[0].channelName);
@@ -270,7 +268,7 @@ const Home = (props) => {
                                 if (res.data.data.username) {
                                     setUserName(res.data.data.username);
                                 }
-                            }).catch((err) => console.log(err));
+                            }).catch((err) => console.warn(err));
                     } else {
                         axios.post(apiURL + "/api/Upsocial/getAll/channels", {
                             "Access-Control-Allow-Origin": "*",
@@ -278,7 +276,6 @@ const Home = (props) => {
                         }).then((res) => {
                             let result = res.data.channelData.filter((item) => item.email == props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser);
                             let resultChannel = result.filter(obj => obj["channelName"] === item.channelName);
-                            console.log(resultChannel);
                             if (resultChannel[0].photo) {
                                 setThumbnail({ uri: resultChannel[0].photo });
                                 setIsChannel(res.data.data[0].channelName);
@@ -315,7 +312,6 @@ const Home = (props) => {
                     'Content-Type': 'application/json',
                     'Access-Control-Allow-Origin': '*'
                 }).then((res) => {
-                    console.log(res.data.data);
                     if (res.data.data.photo) {
                         setThumbnail({ uri: res.data.data.photo });
                         setIsChannel(item.channelName);
@@ -323,7 +319,7 @@ const Home = (props) => {
                     if (res.data.data.username) {
                         setUserName(res.data.data.username);
                     }
-                }).catch((err) => console.log(err));
+                }).catch((err) => console.warn(err));
         } else {
             axios.post(apiURL + "/api/Upsocial/getAll/channels", {
                 "Access-Control-Allow-Origin": "*",
@@ -331,7 +327,6 @@ const Home = (props) => {
             }).then((res) => {
                 let result = res.data.channelData.filter((item) => item.email == props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser);
                 let resultChannel = result.filter(obj => obj["channelName"] === item.channelName);
-                console.log(resultChannel);
                 if (resultChannel[0].photo) {
                     setThumbnail({ uri: resultChannel[0].photo });
                     setIsChannel(item.channelName);
@@ -395,7 +390,6 @@ const Home = (props) => {
     }
 
     const videosHandle = async (index, key) => {
-        console.log(index);
         await axios.post(apiURL + "/api/Upsocial/users/content/setHistory",
             {
                 curUser: props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser,
@@ -420,7 +414,7 @@ const Home = (props) => {
                 "Access-Control-Allow-Origin": "*",
                 'Access-Control-Allow-Headers': '*',
             }).then((res) => {
-                console.log(res.data);
+                // console.log(res.data);
             }).catch((err) => {
                 console.warn(err);
             });
@@ -438,7 +432,7 @@ const Home = (props) => {
                     "Access-Control-Allow-Origin": "*",
                     'Access-Control-Allow-Headers': '*',
                 }).then((res) => {
-                    console.log(res.data);
+                    // console.log(res.data);
                 }).catch((err) => {
                     console.warn(err);
                 });
@@ -446,7 +440,7 @@ const Home = (props) => {
                     "Access-Control-Allow-Origin": "*",
                     'Access-Control-Allow-Headers': '*',
                 }).then((res) => {
-                    console.log(res.data);
+                    // console.log(res.data);
                 }).catch((err) => {
                     console.warn(err);
                 });
@@ -459,7 +453,7 @@ const Home = (props) => {
                     "Access-Control-Allow-Origin": "*",
                     'Access-Control-Allow-Headers': '*',
                 }).then((res) => {
-                    console.log(res.data);
+                    // console.log(res.data);
                 }).catch((err) => {
                     console.warn(err);
                 });
@@ -467,7 +461,7 @@ const Home = (props) => {
                     "Access-Control-Allow-Origin": "*",
                     'Access-Control-Allow-Headers': '*',
                 }).then((res) => {
-                    console.log(res.data);
+                    // console.log(res.data);
                 }).catch((err) => {
                     console.warn(err);
                 });
@@ -482,7 +476,7 @@ const Home = (props) => {
                     "Access-Control-Allow-Origin": "*",
                     'Access-Control-Allow-Headers': '*',
                 }).then((res) => {
-                    console.log(res.data);
+                    // console.log(res.data);
                 }).catch((err) => {
                     console.warn(err);
                 });
@@ -490,7 +484,7 @@ const Home = (props) => {
                     "Access-Control-Allow-Origin": "*",
                     'Access-Control-Allow-Headers': '*',
                 }).then((res) => {
-                    console.log(res.data);
+                    // console.log(res.data);
                 }).catch((err) => {
                     console.warn(err);
                 });
@@ -503,7 +497,7 @@ const Home = (props) => {
                     "Access-Control-Allow-Origin": "*",
                     'Access-Control-Allow-Headers': '*',
                 }).then((res) => {
-                    console.log(res.data);
+                    // console.log(res.data);
                 }).catch((err) => {
                     console.warn(err);
                 });
@@ -511,7 +505,7 @@ const Home = (props) => {
                     "Access-Control-Allow-Origin": "*",
                     'Access-Control-Allow-Headers': '*',
                 }).then((res) => {
-                    console.log(res.data);
+                    // console.log(res.data);
                 }).catch((err) => {
                     console.warn(err);
                 });
@@ -591,7 +585,7 @@ const Home = (props) => {
                                 if (res.data.data.username) {
                                     setUserName(res.data.data.username);
                                 }
-                            }).catch((err) => console.log(err));
+                            }).catch((err) => console.warn(err));
                     } else {
                         axios.post(apiURL + "/api/Upsocial/getAll/channels", {
                             "Access-Control-Allow-Origin": "*",
@@ -599,7 +593,6 @@ const Home = (props) => {
                         }).then((res) => {
                             let result = res.data.channelData.filter((item) => item.email == props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser);
                             let resultChannel = result.filter(obj => obj["channelName"] === item.channelName);
-                            console.log(resultChannel);
                             if (resultChannel[0].photo) {
                                 setThumbnail({ uri: resultChannel[0].photo });
                                 setIsChannel(resultVideo[0].channelName);

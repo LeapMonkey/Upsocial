@@ -145,7 +145,7 @@ const Upload = (props) => {
         await axios.post(apiURL + "/api/Upsocial/upload/generate-ipfs", VideoFormData, headers).then((res) => {
             cid = res.data.data.ipfsUrl;
         }).catch((err) => {
-            console.log(err);
+            console.warn(err);
             setLoading(false);
         });
 
@@ -170,7 +170,7 @@ const Upload = (props) => {
         await axios.post(apiURL + "/api/Upsocial/upload/generate-ipfs", ThumbnailFormData, headers).then((res) => {
             thumbnail = res.data.data.ipfsUrl;
         }).catch((err) => {
-            console.log(err);
+            console.warn(err);
         });
 
         const contentData = {
@@ -279,19 +279,17 @@ const Upload = (props) => {
             let formData = new FormData();
 
             formData.append('video', data.file);
-            console.log('video', data.file);
-
             await axios.post(apiURL + "/api/Upsocial/upload/generate-ipfs", formData, headers)
                 .then((response) => {
                     if (response.data.data) {
                         cid = response.data.data.ipfsUrl;
                     } else {
-                        console.log(response.data.error);
+                        console.warn(response.data.error);
                         setLoading(false);
                     }
                 })
                 .catch((error) => {
-                    console.log(error);
+                    console.warn(error);
                     setLoading(false);
                 });
 
@@ -319,13 +317,6 @@ const Upload = (props) => {
             Thumbnail_formData.append('userEmail', props.auth.user.curUser);
             Thumbnail_formData.append('video_src', cid);
 
-            console.log('thumbnail', img_file);
-            console.log('title', title);
-            console.log('description', description);
-            console.log('keywords', keywords);
-            console.log('category', selectedItems);
-            console.log('userEmail', props.auth.user.curUser);
-            console.log('video_src', cid);
             Thumbnail_formData.append('channelName', "Personal Profile");
 
             await axios.post(apiURL + "/api/Upsocial/users/content/web/uploadContent", Thumbnail_formData, headers).then((res) => {
@@ -337,7 +328,7 @@ const Upload = (props) => {
                 }
 
             }).catch((err) => {
-                console.log(err);
+                console.warn(err);
                 setLoading(false);
             });
         }
@@ -354,7 +345,6 @@ const Upload = (props) => {
                 const res = await generateVideoThumbnails(file, 3);
                 setThumbnails(res);
             } catch (error) {
-                console.log("**************error**********", error);
                 window.location.reload();
             }
         }

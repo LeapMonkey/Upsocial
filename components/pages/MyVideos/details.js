@@ -153,7 +153,6 @@ const Details = (props) => {
                 const res = await generateVideoThumbnails(file, 3);
                 setThumbnails(res);
             } catch (error) {
-                console.log("**************error**********", error);
                 window.location.reload();
             }
         }
@@ -182,7 +181,6 @@ const Details = (props) => {
         let match = /\.(\w+)$/.exec(filename);
         let type = match ? `video/${match[1]}` : `video`;
 
-        console.log(localUri, filename, match, type);
     };
 
     // Reset function
@@ -269,12 +267,10 @@ const Details = (props) => {
                 let formData = new FormData();
 
                 formData.append('video', data.file);
-                console.log('video', data.file);
 
                 await axios.post(apiURL + "/api/Upsocial/upload/generate-ipfs", formData, headers)
                     .then(async (response) => {
                         if (response.data.data) {
-                            console.log(cid);
                             var arr = thumbnails[0].split(','), mime = arr[0].match(/:(.*?);/)[1],
                                 bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
                             while (n--) {
@@ -293,14 +289,6 @@ const Details = (props) => {
                             Thumbnail_formData.append('video_src', cid);
                             Thumbnail_formData.append('channelName', "Personal Profile");
 
-                            console.log('thumbnail', img_file);
-                            console.log('title', v_title);
-                            console.log('description', v_description);
-                            console.log('keywords', videoKeywords);
-                            console.log('category', selected);
-                            console.log('userEmail', props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser);
-                            console.log('video_src', cid);
-
                             await axios.post(apiURL + "/api/Upsocial/users/content/web/uploadContent", Thumbnail_formData, headers).then((res) => {
                                 if (res.data.status) {
                                     setLoading(false);
@@ -313,16 +301,15 @@ const Details = (props) => {
                                 }
 
                             }).catch((err) => {
-                                console.log(err);
+                                console.warn(err);
                                 setLoading(false);
                             });
                         } else {
-                            console.log(response.data.error);
                             setLoading(false);
                         }
                     })
                     .catch((error) => {
-                        console.log(error);
+                        console.warn(error);
                         setLoading(false);
                     });
 
@@ -384,12 +371,11 @@ const Details = (props) => {
                                 setLoading(false);
                             });
                         } else {
-                            console.log(response.data.error);
                             setLoading(false);
                         }
                     })
                     .catch((error) => {
-                        console.log(error);
+                        console.warn(error);
                         setLoading(false);
                     });
             }
@@ -462,7 +448,7 @@ const Details = (props) => {
                 setOptionLists(countries);
                 setAllData(countries);
             } catch (err) {
-                console.log(err);
+                console.warn(err);
             }
         };
         getAllCountries();
@@ -665,7 +651,6 @@ const Details = (props) => {
                                 <SelectDropdown
                                     data={channels}
                                     onSelect={(selectedItem, index) => {
-                                        console.log(selectedItem.channelName);
                                         setV_channelName(selectedItem.channelName);
                                         setV_channelAdmin(selectedItem.email);
                                     }}

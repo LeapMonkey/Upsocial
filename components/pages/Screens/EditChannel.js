@@ -128,7 +128,6 @@ const EditChannel = (props) => {
             };
 
             await axios.post(apiURL + "/api/Upsocial/create/channel", formdata, headers).then((res) => {
-                console.log(res.data);
                 if (res.data.status) {
                     setLoading(false);
                     alert("Creating Channel success !");
@@ -138,7 +137,7 @@ const EditChannel = (props) => {
                     alert(res.data.msg);
                 }
             }).catch((error) => {
-                console.log(error);
+                console.warn(error);
                 setLoading(false);
             })
 

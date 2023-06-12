@@ -119,7 +119,6 @@ const ViewChannel = (props) => {
         await axios.post(apiURL + "/api/Upsocial/upload/generate-ipfs", VideoFormData, headers).then((res) => {
             cid = res.data.data.ipfsUrl;
         }).catch((err) => {
-            console.log(err);
             setLoading(false);
         });
 
@@ -144,7 +143,7 @@ const ViewChannel = (props) => {
         await axios.post(apiURL + "/api/Upsocial/upload/generate-ipfs", ThumbnailFormData, headers).then((res) => {
             thumbnail = res.data.data.ipfsUrl;
         }).catch((err) => {
-            console.log(err);
+            console.warn(err);
         });
 
         const contentData = {
@@ -231,7 +230,6 @@ const ViewChannel = (props) => {
                 const res = await generateVideoThumbnails(file, 3);
                 setThumbnails(res);
             } catch (error) {
-                console.log("**************error**********", error);
                 window.location.reload();
             }
         }
@@ -262,12 +260,10 @@ const ViewChannel = (props) => {
                     if (response.data.data) {
                         cid = response.data.data.ipfsUrl;
                     } else {
-                        console.log(response.data.error);
                         setLoading(false);
                     }
                 })
                 .catch((error) => {
-                    console.log(error);
                     setLoading(false);
                 });
 

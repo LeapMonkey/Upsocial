@@ -78,7 +78,7 @@ const Profile = (props) => {
                     setLocation(res.data.data.location);
                 }
 
-            }).catch((err) => console.log(err));
+            }).catch((err) => console.warn(err));
     }, []);
 
     return (

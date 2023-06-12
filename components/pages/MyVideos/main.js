@@ -47,7 +47,7 @@ const MainVideos = (props) => {
                 let result = res.data.channelData.filter((item) => item.email == props.auth.user.curUser ? props.auth.user.curUser : localStorage.isUser);
                 let resultChannel = result.filter(obj => obj["channelName"] == localStorage.getItem("channelName"));
                 setData(resultChannel[0]);
-            }).catch((err) => console.log(err));
+            }).catch((err) => console.warn(err));
         }
     }, [localStorage.getItem("channelName")])
 

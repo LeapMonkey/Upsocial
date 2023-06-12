@@ -23,7 +23,6 @@ const Users = (props) => {
     }, [followingFlag]);
 
     const unfollow = (tarUser) => {
-        console.log(tarUser, props.auth.user.curUser);
         axios.post(apiURL + "/api/Upsocial/users/unfollow", {
             curUser: props.auth.user.curUser,
             tarUser: tarUser
@@ -31,7 +30,6 @@ const Users = (props) => {
             "Access-Control-Allow-Origin": "*",
             'Access-Control-Allow-Headers': '*',
         }).then((res) => {
-            console.log(res.data);
             if (res.data.status) {
                 alert(res.data.msg);
                 setFollowingFlag(true);
@@ -45,7 +43,6 @@ const Users = (props) => {
     };
 
     const follow = (tarUser) => {
-        console.log(tarUser, props.auth.user.curUser);
         axios.post(apiURL + "/api/Upsocial/users/follow", {
             curUser: props.auth.user.curUser,
             tarUser: tarUser
@@ -53,7 +50,6 @@ const Users = (props) => {
             "Access-Control-Allow-Origin": "*",
             'Access-Control-Allow-Headers': '*',
         }).then((res) => {
-            console.log(res.data);
             if (res.data.status) {
                 alert(res.data.msg);
                 setFollowingFlag(true);

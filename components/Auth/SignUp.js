@@ -178,7 +178,6 @@ const SignUP = (props) => {
             "Access-Control-Allow-Origin": "*",
             'Access-Control-Allow-Headers': '*',
         }).then((res) => {
-            console.log(res.data);
             if (res.data.status) {
                 alert(res.data.msg);
                 setVerified(true);

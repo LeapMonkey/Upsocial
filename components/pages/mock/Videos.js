@@ -63,7 +63,6 @@ const Videos = () => {
 
     const handleMenu = async (name, item) => {
         if (name == "Play next in queue") {
-            console.log(name, item);
             alert("Success!");
         } else if (name == "Save to Watch later") {
             alert("Success!");
@@ -75,8 +74,8 @@ const Videos = () => {
             Share.share({
                 message: item.ipfsUrl.toString()
             }).then((res) => {
-                console.log(res);
-            }).catch((err) => console.log(err));
+                // console.log(res);
+            }).catch((err) => console.warn(err));
 
         }
     };

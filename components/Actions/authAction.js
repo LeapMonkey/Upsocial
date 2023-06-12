@@ -51,7 +51,6 @@ export const registerUser = (userData) => (dispatch) => {
             'Access-Control-Allow-Headers': '*',
         })
         .then((res) => {
-            console.log(res.data);
             dispatch({
                 type: SET_USERS,
                 payload: res.data,

@@ -97,7 +97,7 @@ const Browse = (props) => {
         Share.share({
             message: url.toString()
         }).then((res) => {
-            console.log(res);
+            // console.log(res);
         }).catch((err) => console.log(err));
     };
 
@@ -134,16 +134,14 @@ const Browse = (props) => {
     const handleReaction = async (e) => {
         if (e.value > 300 && confirm("You DisLike this video") == true) {
             if (curIndex == result.length - 1) {
-                console.log("here 1", videoId);
                 SetSource({ uri: result[0].ipfsUrl });
                 setVideoId(0);
                 setCurIndex(0);
-                console.log(videoId, props.auth.user.curUser);
                 await axios.post(apiURL + "/api/Upsocial/users/content/dislike", { videoId: videoId, userEmail: props.auth.user.curUser }, {
                     "Access-Control-Allow-Origin": "*",
                     'Access-Control-Allow-Headers': '*',
                 }).then((res) => {
-                    console.log(res.data);
+                    // console.log(res.data);
                 }).catch((err) => {
                     console.warn(err);
                 });
@@ -157,16 +155,14 @@ const Browse = (props) => {
                 });
                 return;
             } else {
-                console.log("here 2", videoId);
                 SetSource({ uri: result[curIndex + 1].ipfsUrl });
                 setVideoId(curIndex + 1);
                 setCurIndex(curIndex + 1);
-                console.log(videoId, props.auth.user.curUser);
                 await axios.post(apiURL + "/api/Upsocial/users/content/dislike", { videoId: videoId, userEmail: props.auth.user.curUser }, {
                     "Access-Control-Allow-Origin": "*",
                     'Access-Control-Allow-Headers': '*',
                 }).then((res) => {
-                    console.log(res.data);
+                    // console.log(res.data);
                 }).catch((err) => {
                     console.warn(err);
                 });
@@ -174,7 +170,7 @@ const Browse = (props) => {
                     "Access-Control-Allow-Origin": "*",
                     'Access-Control-Allow-Headers': '*',
                 }).then((res) => {
-                    console.log(res.data);
+                    // console.log(res.data);
                 }).catch((err) => {
                     console.warn(err);
                 });
@@ -182,16 +178,14 @@ const Browse = (props) => {
             }
         } else if (e.value < -300 && confirm("You Like this video") == true) {
             if (curIndex == result.length - 1) {
-                console.log("here 3", videoId);
                 SetSource({ uri: result[0].ipfsUrl });
                 setVideoId(0);
                 setCurIndex(0);
-                console.log(videoId, props.auth.user.curUser);
                 await axios.post(apiURL + "/api/Upsocial/users/content/like", { videoId: videoId, userEmail: props.auth.user.curUser }, {
                     "Access-Control-Allow-Origin": "*",
                     'Access-Control-Allow-Headers': '*',
                 }).then((res) => {
-                    console.log(res.data);
+                    // console.log(res.data);
                 }).catch((err) => {
                     console.warn(err);
                 });
@@ -199,13 +193,12 @@ const Browse = (props) => {
                     "Access-Control-Allow-Origin": "*",
                     'Access-Control-Allow-Headers': '*',
                 }).then((res) => {
-                    console.log(res.data);
+                    // console.log(res.data);
                 }).catch((err) => {
                     console.warn(err);
                 });
                 return;
             } else {
-                console.log("here 4", videoId);
                 SetSource({ uri: result[curIndex + 1].ipfsUrl });
                 setVideoId(curIndex + 1);
                 setCurIndex(curIndex + 1);
@@ -213,7 +206,7 @@ const Browse = (props) => {
                     "Access-Control-Allow-Origin": "*",
                     'Access-Control-Allow-Headers': '*',
                 }).then((res) => {
-                    console.log(res.data);
+                    // console.log(res.data);
                 }).catch((err) => {
                     console.warn(err);
                 });
@@ -221,7 +214,7 @@ const Browse = (props) => {
                     "Access-Control-Allow-Origin": "*",
                     'Access-Control-Allow-Headers': '*',
                 }).then((res) => {
-                    console.log(res.data);
+                    // console.log(res.data);
                 }).catch((err) => {
                     console.warn(err);
                 });
@@ -247,7 +240,6 @@ const Browse = (props) => {
     }
     const handleScroll = (event) => {
         if (event.nativeEvent.contentOffset.y + scrollVal == viewVal) {
-            console.log("load more....");
             setLoading(true);
             setLimit(limit + 5);
         }

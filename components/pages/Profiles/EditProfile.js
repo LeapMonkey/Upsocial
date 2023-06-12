@@ -89,7 +89,7 @@ const EditProfile = (props) => {
                     setLoading(false);
                 }
             }).catch((error) => {
-                console.log(error);
+                console.warn(error);
                 setLoading(false);
             })
         }
@@ -102,7 +102,7 @@ const EditProfile = (props) => {
                 setOptionLists(countries);
                 setAllData(countries);
             } catch (err) {
-                console.log(err);
+                console.warn(err);
             }
         };
         getAllCountries();

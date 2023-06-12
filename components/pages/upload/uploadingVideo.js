@@ -132,7 +132,6 @@ const UploadingVideo = (props) => {
                 const res = await generateVideoThumbnails(file, 3);
                 setThumbnails(res);
             } catch (error) {
-                console.log("**************error**********", error);
                 window.location.reload();
             }
 
@@ -288,16 +287,16 @@ const UploadingVideo = (props) => {
                                 }
 
                             }).catch((err) => {
-                                console.log(err);
+                                console.warn(err);
                                 setLoading(false);
                             });
                         } else {
-                            console.log(response.data.error);
+                            console.warn(response.data.error);
                             setLoading(false);
                         }
                     })
                     .catch((error) => {
-                        console.log(error);
+                        console.warn(error);
                         setLoading(false);
                     });
 
@@ -365,12 +364,12 @@ const UploadingVideo = (props) => {
                                 setLoading(false);
                             });
                         } else {
-                            console.log(response.data.error);
+                            console.warn(response.data.error);
                             setLoading(false);
                         }
                     })
                     .catch((error) => {
-                        console.log(error);
+                        console.warn(error);
                         setLoading(false);
                     });
             }
@@ -424,7 +423,7 @@ const UploadingVideo = (props) => {
                 setOptionLists(countries);
                 setAllData(countries);
             } catch (err) {
-                console.log(err);
+                console.warn(err);
             }
         };
         getAllCountries();

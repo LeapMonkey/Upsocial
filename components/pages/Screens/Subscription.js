@@ -45,9 +45,6 @@ const Subscription = (props) => {
             var arrayP = result.map(o => o.contents);
             var videofeeds = Object.values(arrayP.reduce(((r, c) => Object.assign(r, c)), {}));
             setSubscribedFeed(videofeeds);
-
-            console.log(result);
-            console.log(videofeeds);
         }).catch((err) => {
             console.warn(err);
         });

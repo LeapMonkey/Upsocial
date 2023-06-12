@@ -408,7 +408,7 @@ const MyVideos = (props) => {
                     alert(res.data.msg);
                 }
             }).catch((error) => {
-                console.log(error);
+                console.warn(error);
                 setLoading(false);
             });
         }
@@ -464,7 +464,7 @@ const MyVideos = (props) => {
                     alert(res.data.msg);
                 }
             }).catch((error) => {
-                console.log(error);
+                console.warn(error);
                 setLoading(false);
             });
         }
@@ -576,8 +576,6 @@ const MyVideos = (props) => {
                                 }
                                 let img_file = new File([u8arr], `${v_title}.jpg`, { type: mime });
 
-                                console.log("********thumbnail*********", img_file);
-
                                 let Thumbnail_formData = new FormData();
 
                                 Thumbnail_formData.append('thumbnail', img_file);
@@ -599,17 +597,17 @@ const MyVideos = (props) => {
                                     }
 
                                 }).catch((err) => {
-                                    console.log(err);
+                                    console.warn(err);
                                     setLoading(false);
                                 });
 
                             } else {
-                                console.log(response.data.error);
+                                console.warn(response.data.error);
                                 setLoading(false);
                             }
                         })
                         .catch((error) => {
-                            console.log(error);
+                            console.warn(error);
                             setLoading(false);
                         });
                 } else {
@@ -684,12 +682,12 @@ const MyVideos = (props) => {
                                 });
 
                             } else {
-                                console.log(response.data.error);
+                                console.warn(response.data.error);
                                 setLoading(false);
                             }
                         })
                         .catch((error) => {
-                            console.log(error);
+                            console.warn(error);
                             setLoading(false);
                         });
                 } else {
@@ -739,7 +737,6 @@ const MyVideos = (props) => {
         let match = /\.(\w+)$/.exec(filename);
         let type = match ? `video/${match[1]}` : `video`;
 
-        console.log(localUri, filename, match, type);
     };
 
     const onFileChange = async (event) => {
@@ -753,7 +750,6 @@ const MyVideos = (props) => {
                 const res = await generateVideoThumbnails(file, 3);
                 setThumbnails(res);
             } catch (error) {
-                console.log("**************error**********", error);
                 window.location.reload();
             }
         }
@@ -771,7 +767,6 @@ const MyVideos = (props) => {
 
     const handleScroll = (event) => {
         if (event.nativeEvent.contentOffset.y + scrollVal == viewVal) {
-            console.log("load more....");
             setLoading(true);
             setLimit(limit + 5);
         }
@@ -811,7 +806,7 @@ const MyVideos = (props) => {
     };
 
     const EditVideos = (data) => {
-        console.log(data);
+        // console.log(data);
     };
 
     const RemoveVideos = (data) => {
@@ -863,7 +858,7 @@ const MyVideos = (props) => {
                 setOptionLists(countries);
                 setAllData(countries);
             } catch (err) {
-                console.log(err);
+                console.warn(err);
             }
         };
         getAllCountries();
@@ -1403,7 +1398,6 @@ const MyVideos = (props) => {
                                 <SelectDropdown
                                     data={channels}
                                     onSelect={(selectedItem, index) => {
-                                        console.log(selectedItem.channelName);
                                         setV_channelName(selectedItem.channelName);
                                         setV_channelAdmin(selectedItem.email);
                                     }}
