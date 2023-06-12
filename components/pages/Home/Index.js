@@ -12,6 +12,7 @@ import { Video, ResizeMode } from "expo-av";
 import isEmpty from '../../config/is-empty';
 import { apiURL } from '../../config/config';
 import axios from 'axios';
+import toast from 'react-hot-toast';
 import { SwipeListView } from 'react-native-swipe-list-view';
 
 import { Card } from './Card';
@@ -134,10 +135,10 @@ const Home = (props) => {
             'Access-Control-Allow-Headers': '*',
         }).then((res) => {
             if (res.data.status) {
-                alert(res.data.msg);
+                toast(res.data.msg);
                 setLoading(false);
             } else {
-                alert(res.data.msg);
+                toast(res.data.msg);
                 setLoading(false);
             }
         }).catch((err) => {
@@ -374,7 +375,7 @@ const Home = (props) => {
         //     console.log(res);
         // }).catch((err) => console.log(err));
         // if (!(await Sharing.isAvailableAsync())) {
-        //     alert(`Uh oh, sharing isn't available on your platform`);
+        //     toast(`Uh oh, sharing isn't available on your platform`);
         //     return;
         // }
 

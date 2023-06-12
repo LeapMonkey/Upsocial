@@ -9,6 +9,7 @@ import { apiURL } from "../config/config";
 import { useMediaQuery } from "react-responsive";
 import isEmpty from "../config/is-empty";
 import { CopyToClipboard } from 'react-copy-to-clipboard';
+import toast from 'react-hot-toast';
 
 const Anonymous = (props) => {
     const isDesktopOrLaptop = useMediaQuery({
@@ -24,7 +25,7 @@ const Anonymous = (props) => {
 
     const gethashCode = () => {
         if (nick_name == "") {
-            alert("Please Enter your Nick Name!")
+            toast("Please Enter your Nick Name!")
         } else {
             setLoading(true);
             axios.post(apiURL + "/api/Upsocial/anonymouse/get-hash-code", { nick_name: nick_name }, {
@@ -33,7 +34,7 @@ const Anonymous = (props) => {
             }).then((res) => {
                 if (res.data.code) {
                     setHashCodeFromAPI(res.data.code);
-                    alert(res.data.code);
+                    toast(res.data.code);
                     setLoading(false);
                 }
             }).catch((err) => {
@@ -45,7 +46,7 @@ const Anonymous = (props) => {
 
     const verify20HashCode = () => {
         if (nick_name == "" || nick_hashCode == "") {
-            alert("Please Enter your Nick Name and Hash Code!")
+            toast("Please Enter your Nick Name and Hash Code!")
         } else {
             setLoading(true);
             axios.post(apiURL + "/api/Upsocial/anonymouse/verify-hash-code", { nick_name: nick_name, code: nick_hashCode }, {
@@ -54,11 +55,11 @@ const Anonymous = (props) => {
             }).then((res) => {
                 if (res.data.status) {
                     setLoading(false);
-                    alert(res.data.msg);
+                    toast(res.data.msg);
                     window.open(`https://add.upsocial.com/uploading/${nick_hashCode}`, "_blank");
                 } else {
                     setLoading(false);
-                    alert(res.data.msg);
+                    toast(res.data.msg);
                 }
             }).catch((err) => {
                 console.warn(err);
@@ -119,7 +120,7 @@ const Anonymous = (props) => {
                         {!isEmpty(hashCodeFromAPI) && <View style={styles.ResultView}>
                             <Text style={styles.create_account_title}>{hashCodeFromAPI}</Text>
                             <CopyToClipboard text={hashCodeFromAPI}
-                                onCopy={() => alert('Copied')}>
+                                onCopy={() => toast('Copied')}>
                                 <Image style={styles.actionImage} source={require("../../assets/modal/icon_copy_link.png")} />
                             </CopyToClipboard>
                         </View>}

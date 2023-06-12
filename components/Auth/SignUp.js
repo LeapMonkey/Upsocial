@@ -9,6 +9,7 @@ import { apiURL } from "../config/config";
 import { ToastAndroid, Platform } from 'react-native';
 import { useMediaQuery } from "react-responsive";
 import { validate } from 'email-validator';
+import toast from 'react-hot-toast';
 
 const SignUP = (props) => {
     const isDesktopOrLaptop = useMediaQuery({
@@ -52,19 +53,19 @@ const SignUP = (props) => {
             if (Platform.OS === "android" || Platform.OS === "ios") {
                 ToastAndroid.show("Please input username!", ToastAndroid.SHORT);
             } else {
-                alert("Please input username!");
+                toast("Please input username!");
             }
         } else if (email.trim() === "") {
             if (Platform.OS === "android" || Platform.OS === "ios") {
                 ToastAndroid.show("Please input email!", ToastAndroid.SHORT);
             } else {
-                alert("Please input email!");
+                toast("Please input email!");
             }
         } else if (password.trim() === "") {
             if (Platform.OS === "android" || Platform.OS === "ios") {
                 ToastAndroid.show("Please input password!", ToastAndroid.SHORT);
             } else {
-                alert("Please input password!");
+                toast("Please input password!");
             }
         } else {
             e.preventDefault();
@@ -98,13 +99,13 @@ const SignUP = (props) => {
             if (Platform.OS === "android" || Platform.OS === "ios") {
                 ToastAndroid.show("Please input email!", ToastAndroid.SHORT);
             } else {
-                alert("Please input email!");
+                toast("Please input email!");
             }
         } else if (uPassword.trim() === "") {
             if (Platform.OS === "android" || Platform.OS === "ios") {
                 ToastAndroid.show("Please input password!", ToastAndroid.SHORT);
             } else {
-                alert("Please input password!");
+                toast("Please input password!");
             }
         } else {
             e.preventDefault();
@@ -163,10 +164,10 @@ const SignUP = (props) => {
             'Access-Control-Allow-Headers': '*',
         }).then((res) => {
             if (res.data.status) {
-                alert(res.data.msg);
+                toast(res.data.msg);
                 setCodeFlag(true);
             } else {
-                alert(res.data.msg);
+                toast(res.data.msg);
             }
         }).catch((err) => {
             console.warn(err);
@@ -179,10 +180,10 @@ const SignUP = (props) => {
             'Access-Control-Allow-Headers': '*',
         }).then((res) => {
             if (res.data.status) {
-                alert(res.data.msg);
+                toast(res.data.msg);
                 setVerified(true);
             } else {
-                alert(res.data.msg);
+                toast(res.data.msg);
                 setCodeFlag(false);
             }
         }).catch((err) => {
@@ -198,19 +199,19 @@ const SignUP = (props) => {
                 'Access-Control-Allow-Headers': '*',
             }).then((res) => {
                 if (res.data.status) {
-                    alert(res.data.msg);
+                    toast(res.data.msg);
                     setCodeFlag(false);
                     SetIsLogin(true);
                     setVerified(false);
                     setForgotPassword(false);
                 } else {
-                    alert(res.data.msg);
+                    toast(res.data.msg);
                 }
             }).catch((err) => {
                 console.warn(err);
             });
         } else {
-            alert("Please input correct confirm password!")
+            toast("Please input correct confirm password!")
         }
     }
 

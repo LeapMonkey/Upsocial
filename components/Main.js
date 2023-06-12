@@ -3,6 +3,7 @@ import { StyleSheet, View, StatusBar, Image, Dimensions } from "react-native";
 import { connect } from "react-redux";
 import ProfileManage from "./pages/ProfileManage";
 import Dashboard from "./pages/Dashboard";
+import toast, { Toaster } from 'react-hot-toast';
 
 const Main = (props) => {
     const [isAuth, setIsAuth] = useState(false);
@@ -15,6 +16,7 @@ const Main = (props) => {
     }, [props]);
     return (
         <View style={styles.container}>
+            <Toaster />
             <StatusBar />
             {isAuth ? <ProfileManage /> : <Dashboard />}
             {props.loading.loading && (

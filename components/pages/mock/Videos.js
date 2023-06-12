@@ -6,6 +6,7 @@ import { Video, ResizeMode } from "expo-av";
 import Modal from "react-native-modal";
 import axios from "axios";
 import { apiURL } from "../../config/config";
+import toast from 'react-hot-toast';
 
 const Videos = () => {
     const video = useRef(null);
@@ -63,11 +64,11 @@ const Videos = () => {
 
     const handleMenu = async (name, item) => {
         if (name == "Play next in queue") {
-            alert("Success!");
+            toast("Success!");
         } else if (name == "Save to Watch later") {
-            alert("Success!");
+            toast("Success!");
         } else if (name == "Save to Playlist") {
-            alert("Success!");
+            toast("Success!");
         } else if (name == "Download Video") {
             window.open(item.ipfsUrl, '_blank')
         } else {

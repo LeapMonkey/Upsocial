@@ -16,6 +16,7 @@ import UploadChannel from "../upload/UploadChannel";
 import { connect } from "react-redux";
 import { apiURL } from "../../config/config";
 import axios from "axios";
+import toast from 'react-hot-toast';
 
 const EditChannel = (props) => {
     const [channelName, setChannelName] = useState("");
@@ -38,13 +39,13 @@ const EditChannel = (props) => {
     const addKeyword = (e) => {
         if (e.nativeEvent.key == "Enter") {
             if (keywords.length == 10) {
-                alert("Max keywords number is 10 !");
+                toast("Max keywords number is 10 !");
                 setKeyword("");
                 return;
             } else {
                 var tempkeys = keyword.split(/\s*,\s*/);
                 if (tempkeys.length + keywords.length > 10) {
-                    alert("Max keywords number is 10 !");
+                    toast("Max keywords number is 10 !");
                 } else {
                     setKeywords(keywords => [...keywords, ...tempkeys]);
                     setKeyword("");
@@ -58,7 +59,7 @@ const EditChannel = (props) => {
             if (Platform.OS === "android") {
                 ToastAndroid.show("Please select Image!", ToastAndroid.SHORT);
             } else if (Platform.OS === "web") {
-                alert("Please select image!");
+                toast("Please select image!");
             } else {
                 AlertIOS.alert("Please select image!");
             }
@@ -66,7 +67,7 @@ const EditChannel = (props) => {
             if (Platform.OS === "android") {
                 ToastAndroid.show("Please input Channel Name!", ToastAndroid.SHORT);
             } else if (Platform.OS === "web") {
-                alert("Please input Channel Name!");
+                toast("Please input Channel Name!");
             } else {
                 AlertIOS.alert("Please Channel Name!");
             }
@@ -74,7 +75,7 @@ const EditChannel = (props) => {
             if (Platform.OS === "android") {
                 ToastAndroid.show("Please input handle Url!", ToastAndroid.SHORT);
             } else if (Platform.OS === "web") {
-                alert("Please input handle Url!");
+                toast("Please input handle Url!");
             } else {
                 AlertIOS.alert("Please handle Url!");
             }
@@ -82,7 +83,7 @@ const EditChannel = (props) => {
             if (Platform.OS === "android") {
                 ToastAndroid.show("Please input description!", ToastAndroid.SHORT);
             } else if (Platform.OS === "web") {
-                alert("Please input description!");
+                toast("Please input description!");
             } else {
                 AlertIOS.alert("Please input description!");
             }
@@ -90,7 +91,7 @@ const EditChannel = (props) => {
             if (Platform.OS === "android") {
                 ToastAndroid.show("Please input location!", ToastAndroid.SHORT);
             } else if (Platform.OS === "web") {
-                alert("Please input location!");
+                toast("Please input location!");
             } else {
                 AlertIOS.alert("Please input location!");
             }
@@ -98,7 +99,7 @@ const EditChannel = (props) => {
             if (Platform.OS === "android") {
                 ToastAndroid.show("Please input at least 1 tag!", ToastAndroid.SHORT);
             } else if (Platform.OS === "web") {
-                alert("Please input at least 1 tag!");
+                toast("Please input at least 1 tag!");
             } else {
                 AlertIOS.alert("Please input at least 1 tag!");
             }
@@ -106,7 +107,7 @@ const EditChannel = (props) => {
             if (Platform.OS === "android") {
                 ToastAndroid.show("Please input url!", ToastAndroid.SHORT);
             } else if (Platform.OS === "web") {
-                alert("Please input url!");
+                toast("Please input url!");
             } else {
                 AlertIOS.alert("Please input url!");
             }
@@ -130,11 +131,11 @@ const EditChannel = (props) => {
             await axios.post(apiURL + "/api/Upsocial/create/channel", formdata, headers).then((res) => {
                 if (res.data.status) {
                     setLoading(false);
-                    alert("Creating Channel success !");
+                    toast("Creating Channel success !");
                     props.navigation.navigate("Channel Lists");
                 } else {
                     setLoading(false);
-                    alert(res.data.msg);
+                    toast(res.data.msg);
                 }
             }).catch((error) => {
                 console.warn(error);

@@ -2,6 +2,7 @@ import { CLEAR_ERRORS, GET_ERRORS, LOADING_DATA, SET_USERS } from "./constants";
 import { apiURL } from "../config/config";
 import axios from "axios";
 import { ToastAndroid, Platform } from 'react-native';
+import toast from 'react-hot-toast';
 
 // Login user
 export const loginUser = (userData) => (dispatch) => {
@@ -17,7 +18,7 @@ export const loginUser = (userData) => (dispatch) => {
                 if (Platform.OS === "android") {
                     ToastAndroid.show(res.data.msg, ToastAndroid.SHORT);
                 }
-                alert(res.data.msg);
+                toast(res.data.msg);
                 dispatch({
                     type: SET_USERS,
                     payload: res.data,
@@ -29,7 +30,7 @@ export const loginUser = (userData) => (dispatch) => {
                 if (Platform.OS === "android") {
                     ToastAndroid.show(res.data.msg, ToastAndroid.SHORT);
                 }
-                alert(res.data.msg);
+                toast(res.data.msg);
                 dispatch(setLoadingdata(false));
             }
         })

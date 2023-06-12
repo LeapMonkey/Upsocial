@@ -13,6 +13,7 @@ import { apiURL } from '../../config/config';
 import axios from 'axios';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { Country } from "country-state-city";
+import toast from 'react-hot-toast';
 
 const DATA = [
     { value: '1', label: 'Animation' },
@@ -142,7 +143,7 @@ const UploadingVideo = (props) => {
     const addVideoKeyword = (e) => {
         if (e.nativeEvent.key == "Enter") {
             if (videoKeywords.length == 10) {
-                alert("Max keywords number is 10 !");
+                toast("Max keywords number is 10 !");
                 setVideoKeyword("");
                 tagRef.current.focus();
                 tagRef.current.blur();
@@ -150,7 +151,7 @@ const UploadingVideo = (props) => {
             } else {
                 var tempkeys = videoKeyword.split(/\s*,\s*/);
                 if (tempkeys.length + videoKeywords.length > 10) {
-                    alert("Max keywords number is 10 !");
+                    toast("Max keywords number is 10 !");
                 } else {
                     setVideoKeywords(keyword => [...keyword, ...tempkeys]);
                     setVideoKeyword("");
@@ -180,7 +181,7 @@ const UploadingVideo = (props) => {
         if (Platform.OS === "android") {
             ToastAndroid.show("All values are cleared! Try again!", ToastAndroid.SHORT);
         } else {
-            alert("All values are cleared! Try again!");
+            toast("All values are cleared! Try again!");
         }
     };
 
@@ -189,7 +190,7 @@ const UploadingVideo = (props) => {
             if (Platform.OS === "android") {
                 ToastAndroid.show("Please upload your video!", ToastAndroid.SHORT);
             } else if (Platform.OS === "web") {
-                alert("Please upload your video!");
+                toast("Please upload your video!");
             } else {
                 AlertIOS.alert("Please upload your video!");
             }
@@ -197,7 +198,7 @@ const UploadingVideo = (props) => {
             if (Platform.OS === "android") {
                 ToastAndroid.show("Please input Video title!", ToastAndroid.SHORT);
             } else if (Platform.OS === "web") {
-                alert("Please input Video title!");
+                toast("Please input Video title!");
             } else {
                 AlertIOS.alert("Please input Video title!");
             }
@@ -205,7 +206,7 @@ const UploadingVideo = (props) => {
             if (Platform.OS === "android") {
                 ToastAndroid.show("Please input Video Description!", ToastAndroid.SHORT);
             } else if (Platform.OS === "web") {
-                alert("Please input Video Description!");
+                toast("Please input Video Description!");
             } else {
                 AlertIOS.alert("Please input Video Description!");
             }
@@ -214,7 +215,7 @@ const UploadingVideo = (props) => {
             if (Platform.OS === "android") {
                 ToastAndroid.show("Please input at least 1 keywords, tags!", ToastAndroid.SHORT);
             } else if (Platform.OS === "web") {
-                alert("Please input at least 1 keywords, tags!");
+                toast("Please input at least 1 keywords, tags!");
             } else {
                 AlertIOS.alert("Please input at least 1 keywords, tags!");
             }
@@ -223,7 +224,7 @@ const UploadingVideo = (props) => {
             if (Platform.OS === "android") {
                 ToastAndroid.show("Please input at least 1 category!", ToastAndroid.SHORT);
             } else if (Platform.OS === "web") {
-                alert("Please input at least 1 category!");
+                toast("Please input at least 1 category!");
             } else {
                 AlertIOS.alert("Please input at least 1 category!");
             }
@@ -280,7 +281,7 @@ const UploadingVideo = (props) => {
                                 if (res.data.status) {
                                     setLoading(false);
                                     resetValues();
-                                    alert("Success");
+                                    toast("Success");
                                     setConfirmModal(true);
                                 } else {
                                     setLoading(false);
@@ -355,7 +356,7 @@ const UploadingVideo = (props) => {
                                 if (res.data.status) {
                                     setLoading(false);
                                     resetValues();
-                                    alert("Success");
+                                    toast("Success");
                                     setConfirmModal(true);
                                 } else {
                                     setLoading(false);
@@ -673,7 +674,7 @@ const UploadingVideo = (props) => {
                                 editable={false}
                             />
                             <CopyToClipboard text={videoResult}
-                                onCopy={() => alert('Copied')}>
+                                onCopy={() => toast('Copied')}>
                                 <Image style={styles.actionImage} source={require("../../../assets/modal/icon_copy_link.png")} />
                             </CopyToClipboard>
                         </View>
@@ -690,7 +691,7 @@ const UploadingVideo = (props) => {
                                 />
                                 <View style={styles.actionsWrapper}>
                                     <CopyToClipboard text={embedCode}
-                                        onCopy={() => alert('Copied')}>
+                                        onCopy={() => toast('Copied')}>
                                         <Image style={styles.actionImage} source={require("../../../assets/modal/icon_copy_link.png")} />
                                     </CopyToClipboard>
                                     <Image style={styles.actionImage} source={require("../../../assets/modal/icon_wordpress.png")} onClick={() => onShareSocial('wordpress')} />

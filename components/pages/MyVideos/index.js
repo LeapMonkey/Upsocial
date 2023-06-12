@@ -20,6 +20,7 @@ import * as ImagePicker from "expo-image-picker";
 import { Country } from "country-state-city";
 import { confirmAlert } from 'react-confirm-alert'; // Import
 import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
+import toast from 'react-hot-toast';
 
 const items = [
     { id: 1, name: 'CHANNELS' },
@@ -286,13 +287,13 @@ const MyVideos = (props) => {
     const addKeyword = (e) => {
         if (e.nativeEvent.key == "Enter") {
             if (keywords.length == 10) {
-                alert("Max keywords number is 10 !");
+                toast("Max keywords number is 10 !");
                 setKeyword("");
                 return;
             } else {
                 var tempkeys = keyword.split(/\s*,\s*/);
                 if (tempkeys.length + keywords.length > 10) {
-                    alert("Max keywords number is 10 !");
+                    toast("Max keywords number is 10 !");
                 } else {
                     setKeywords(keywords => [...keywords, ...tempkeys]);
                     setKeyword("");
@@ -304,7 +305,7 @@ const MyVideos = (props) => {
     const addVideoKeyword = (e) => {
         if (e.nativeEvent.key == "Enter") {
             if (videoKeywords.length == 10) {
-                alert("Max keywords number is 10 !");
+                toast("Max keywords number is 10 !");
                 setVideoKeyword("");
                 tagRef.current.focus();
                 tagRef.current.blur();
@@ -312,7 +313,7 @@ const MyVideos = (props) => {
             } else {
                 var tempkeys = videoKeyword.split(/\s*,\s*/);
                 if (tempkeys.length + videoKeywords.length > 10) {
-                    alert("Max keywords number is 10 !");
+                    toast("Max keywords number is 10 !");
                 } else {
                     setVideoKeywords(keyword => [...keyword, ...tempkeys]);
                     setVideoKeyword("");
@@ -328,7 +329,7 @@ const MyVideos = (props) => {
             if (Platform.OS === "android") {
                 ToastAndroid.show("Please select Image!", ToastAndroid.SHORT);
             } else if (Platform.OS === "web") {
-                alert("Please select image!");
+                toast("Please select image!");
             } else {
                 AlertIOS.alert("Please select image!");
             }
@@ -336,7 +337,7 @@ const MyVideos = (props) => {
             if (Platform.OS === "android") {
                 ToastAndroid.show("Please input Channel Name!", ToastAndroid.SHORT);
             } else if (Platform.OS === "web") {
-                alert("Please input Channel Name!");
+                toast("Please input Channel Name!");
             } else {
                 AlertIOS.alert("Please Channel Name!");
             }
@@ -344,7 +345,7 @@ const MyVideos = (props) => {
             if (Platform.OS === "android") {
                 ToastAndroid.show("Please input handle Url!", ToastAndroid.SHORT);
             } else if (Platform.OS === "web") {
-                alert("Please input handle Url!");
+                toast("Please input handle Url!");
             } else {
                 AlertIOS.alert("Please handle Url!");
             }
@@ -352,7 +353,7 @@ const MyVideos = (props) => {
             if (Platform.OS === "android") {
                 ToastAndroid.show("Please input description!", ToastAndroid.SHORT);
             } else if (Platform.OS === "web") {
-                alert("Please input description!");
+                toast("Please input description!");
             } else {
                 AlertIOS.alert("Please input description!");
             }
@@ -360,7 +361,7 @@ const MyVideos = (props) => {
             if (Platform.OS === "android") {
                 ToastAndroid.show("Please input location!", ToastAndroid.SHORT);
             } else if (Platform.OS === "web") {
-                alert("Please input location!");
+                toast("Please input location!");
             } else {
                 AlertIOS.alert("Please input location!");
             }
@@ -368,7 +369,7 @@ const MyVideos = (props) => {
             if (Platform.OS === "android") {
                 ToastAndroid.show("Please input at least 1 tag!", ToastAndroid.SHORT);
             } else if (Platform.OS === "web") {
-                alert("Please input at least 1 tag!");
+                toast("Please input at least 1 tag!");
             } else {
                 AlertIOS.alert("Please input at least 1 tag!");
             }
@@ -376,7 +377,7 @@ const MyVideos = (props) => {
             if (Platform.OS === "android") {
                 ToastAndroid.show("Please input url!", ToastAndroid.SHORT);
             } else if (Platform.OS === "web") {
-                alert("Please input url!");
+                toast("Please input url!");
             } else {
                 AlertIOS.alert("Please input url!");
             }
@@ -400,12 +401,12 @@ const MyVideos = (props) => {
             await axios.post(apiURL + "/api/Upsocial/create/channel", formdata, headers).then((res) => {
                 if (res.data.status) {
                     setLoading(false);
-                    alert("Creating Channel success !");
+                    toast("Creating Channel success !");
                     setOptionName("My Channels");
                     window.location.reload();
                 } else {
                     setLoading(false);
-                    alert(res.data.msg);
+                    toast(res.data.msg);
                 }
             }).catch((error) => {
                 console.warn(error);
@@ -419,23 +420,23 @@ const MyVideos = (props) => {
             if (Platform.OS === "android") {
                 ToastAndroid.show("Please Select Image !", ToastAndroid.SHORT);
             } else if (Platform.OS === "web") {
-                alert("Please Select Image !");
+                toast("Please Select Image !");
             } else {
-                AlertIOS.alert("Please Select Image !")
+                AlertIOS.toast("Please Select Image !")
             }
         } else if (playlist_title.trim() === "") {
             if (Platform.OS === "android") {
                 ToastAndroid.show("Please Input Playlist Name !", ToastAndroid.SHORT);
             } else if (Platform.OS === "web") {
-                alert("Please Input Playlist Name !");
+                toast("Please Input Playlist Name !");
             } else {
-                AlertIOS.alert("Please Input Playlist Name !")
+                AlertIOS.toast("Please Input Playlist Name !")
             }
         } else if (playlist_description.trim() === "") {
             if (Platform.OS === "android") {
                 ToastAndroid.show("Please Input Playlist Description!", ToastAndroid.SHORT);
             } else if (Platform.OS === "web") {
-                alert("Please Input Playlist Description!");
+                toast("Please Input Playlist Description!");
             } else {
                 AlertIOS.alert("Please Input Playlist Description!")
             }
@@ -456,12 +457,12 @@ const MyVideos = (props) => {
             await axios.post(apiURL + "/api/Upsocial/create/playlist", formdata, headers).then((res) => {
                 if (res.data.status) {
                     setLoading(false);
-                    alert("Creating Playlist success !");
+                    toast("Creating Playlist success !");
                     setOptionName("Playlists");
                     window.location.reload();
                 } else {
                     setLoading(false);
-                    alert(res.data.msg);
+                    toast(res.data.msg);
                 }
             }).catch((error) => {
                 console.warn(error);
@@ -490,7 +491,7 @@ const MyVideos = (props) => {
         if (Platform.OS === "android") {
             ToastAndroid.show("All values are cleared! Try again!", ToastAndroid.SHORT);
         } else {
-            alert("All values are cleared! Try again!");
+            toast("All values are cleared! Try again!");
             window.location.reload();
         }
     };
@@ -500,7 +501,7 @@ const MyVideos = (props) => {
             if (Platform.OS === "android") {
                 ToastAndroid.show("Please upload your video!", ToastAndroid.SHORT);
             } else if (Platform.OS === "web") {
-                alert("Please upload your video!");
+                toast("Please upload your video!");
             } else {
                 AlertIOS.alert("Please upload your video!");
             }
@@ -508,7 +509,7 @@ const MyVideos = (props) => {
             if (Platform.OS === "android") {
                 ToastAndroid.show("Please input Video title!", ToastAndroid.SHORT);
             } else if (Platform.OS === "web") {
-                alert("Please input Video title!");
+                toast("Please input Video title!");
             } else {
                 AlertIOS.alert("Please input Video title!");
             }
@@ -516,7 +517,7 @@ const MyVideos = (props) => {
             if (Platform.OS === "android") {
                 ToastAndroid.show("Please input Video Description!", ToastAndroid.SHORT);
             } else if (Platform.OS === "web") {
-                alert("Please input Video Description!");
+                toast("Please input Video Description!");
             } else {
                 AlertIOS.alert("Please input Video Description!");
             }
@@ -534,7 +535,7 @@ const MyVideos = (props) => {
             if (Platform.OS === "android") {
                 ToastAndroid.show("Please input at least 1 category!", ToastAndroid.SHORT);
             } else if (Platform.OS === "web") {
-                alert("Please input at least 1 category!");
+                toast("Please input at least 1 category!");
             } else {
                 AlertIOS.alert("Please input at least 1 category!");
             }
@@ -591,7 +592,7 @@ const MyVideos = (props) => {
                                     if (res.data.status) {
                                         setLoading(false);
                                         setConfirmModal(true);
-                                        alert("Success");
+                                        toast("Success");
                                     } else {
                                         setLoading(false);
                                     }
@@ -611,7 +612,7 @@ const MyVideos = (props) => {
                             setLoading(false);
                         });
                 } else {
-                    alert("Your network is slow, Try again!");
+                    toast("Your network is slow, Try again!");
                     resetValues();
                     setLoading(false);
                     window.location.reload();
@@ -672,7 +673,7 @@ const MyVideos = (props) => {
                                 await axios.post(apiURL + "/api/Upsocial/uploadContents/channel", Thumbnail_formData, headers).then((res) => {
                                     if (res.data.status) {
                                         setLoading(false);
-                                        alert("Success");
+                                        toast("Success");
                                         setConfirmModal(true);
                                     } else {
                                         setLoading(false);
@@ -691,7 +692,7 @@ const MyVideos = (props) => {
                             setLoading(false);
                         });
                 } else {
-                    alert("Your network is slow, Try again!")
+                    toast("Your network is slow, Try again!")
                     resetValues();
                     setLoading(false);
                     window.location.reload();
@@ -820,7 +821,7 @@ const MyVideos = (props) => {
                 },
                 {
                     label: 'No',
-                    onClick: () => alert('Try Later !')
+                    onClick: () => toast('Try Later !')
                 }
             ]
         });
@@ -838,11 +839,11 @@ const MyVideos = (props) => {
             'Access-Control-Allow-Headers': '*',
         }).then((res) => {
             if (res.data.status) {
-                alert(res.data.msg);
+                toast(res.data.msg);
                 setLoading(false);
                 window.location.reload();
             } else {
-                alert(res.data.msg);
+                toast(res.data.msg);
                 setLoading(false);
             }
         }).catch((err) => {
@@ -1001,7 +1002,7 @@ const MyVideos = (props) => {
                                 editable={false}
                             />
                             <CopyToClipboard text={videoResult}
-                                onCopy={() => alert('Copied')}>
+                                onCopy={() => toast('Copied')}>
                                 <Image style={styles.actionImage} source={require("../../../assets/modal/icon_copy_link.png")} />
                             </CopyToClipboard>
                         </View>
@@ -1018,7 +1019,7 @@ const MyVideos = (props) => {
                                 />
                                 <View style={styles.actionsWrapper}>
                                     <CopyToClipboard text={embedCode}
-                                        onCopy={() => alert('Copied')}>
+                                        onCopy={() => toast('Copied')}>
                                         <Image style={styles.actionImage} source={require("../../../assets/modal/icon_copy_link.png")} />
                                     </CopyToClipboard>
                                     <Image style={styles.actionImage} source={require("../../../assets/modal/icon_wordpress.png")} onClick={() => onShareSocial('wordpress')} />

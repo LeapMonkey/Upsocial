@@ -14,6 +14,7 @@ import axios from 'axios';
 import { apiURL } from '../../config/config';
 import { confirmAlert } from 'react-confirm-alert'; // Import
 import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
+import toast from 'react-hot-toast';
 
 const PlaylistView = (props) => {
 
@@ -74,7 +75,7 @@ const PlaylistView = (props) => {
                 },
                 {
                     label: 'No',
-                    onClick: () => alert('Try Later !')
+                    onClick: () => toast('Try Later !')
                 }
             ]
         });
@@ -91,11 +92,11 @@ const PlaylistView = (props) => {
             'Access-Control-Allow-Headers': '*',
         }).then((res) => {
             if (res.data.status) {
-                alert(res.data.msg);
+                toast(res.data.msg);
                 setLoading(false);
                 window.location.reload();
             } else {
-                alert(res.data.msg);
+                toast(res.data.msg);
                 setLoading(false);
             }
         }).catch((err) => {
@@ -126,11 +127,11 @@ const PlaylistView = (props) => {
             'Access-Control-Allow-Headers': '*',
         }).then((res) => {
             if (res.data.status) {
-                alert(res.data.msg);
+                toast(res.data.msg);
                 setLoading(false);
                 window.location.reload();
             } else {
-                alert(res.data.msg);
+                toast(res.data.msg);
                 setLoading(false);
                 window.location.reload();
             }

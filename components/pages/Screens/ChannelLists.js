@@ -4,6 +4,7 @@ import axios from 'axios';
 import { useMediaQuery } from "react-responsive";
 import { connect } from "react-redux";
 import { apiURL } from '../../config/config';
+import toast from 'react-hot-toast';
 
 const ChannelLists = (props) => {
 
@@ -62,7 +63,7 @@ const ChannelLists = (props) => {
             if (res.data.channelData.followers.includes(props.auth.user.curUser)) {
                 setFollowed(true);
             }
-            alert("success!")
+            toast("success!")
         }).catch((err) => {
             console.warn(err);
         });
@@ -86,7 +87,7 @@ const ChannelLists = (props) => {
             if (!res.data.channelData.followers.includes(props.auth.user.curUser)) {
                 setFollowed(false);
             }
-            alert("success!")
+            toast("success!")
         }).catch((err) => {
             console.warn(err);
         });

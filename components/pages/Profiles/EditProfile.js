@@ -19,6 +19,7 @@ import { Country } from "country-state-city";
 import { LinearGradient } from "expo-linear-gradient";
 import UploadLogo from "../upload/UploadLogo";
 import { apiURL } from "../../config/config";
+import toast from 'react-hot-toast';
 
 const EditProfile = (props) => {
     const [result, setResult] = useState([]);
@@ -47,25 +48,25 @@ const EditProfile = (props) => {
             if (Platform.OS === "android" || Platform.OS === "ios") {
                 ToastAndroid.show("Please select Image!", ToastAndroid.SHORT);
             } else {
-                alert("Please select image!");
+                toast("Please select image!");
             }
         } else if (name.trim() === "") {
             if (Platform.OS === "android" || Platform.OS === "ios") {
                 ToastAndroid.show("Please input name!", ToastAndroid.SHORT);
             } else {
-                alert("Please input name!");
+                toast("Please input name!");
             }
         } else if (handle.trim() === "") {
             if (Platform.OS === "android" || Platform.OS === "ios") {
                 ToastAndroid.show("Please input date!", ToastAndroid.SHORT);
             } else {
-                alert("Please input handle!");
+                toast("Please input handle!");
             }
         } else if (description.trim() === "") {
             if (Platform.OS === "android" || Platform.OS === "ios") {
                 ToastAndroid.show("Please input description!", ToastAndroid.SHORT);
             } else {
-                alert("Please input description!");
+                toast("Please input description!");
             }
         } else {
             setLoading(true);
@@ -84,7 +85,7 @@ const EditProfile = (props) => {
 
             await axios.post(apiURL + "/api/Upsocial/upload/photo", formdata, headers).then((res) => {
                 if (res.data.status) {
-                    alert("Update Profile success !");
+                    toast("Update Profile success !");
                     props.setflag("Profile");
                     setLoading(false);
                 }

@@ -13,6 +13,7 @@ import { useMediaQuery } from "react-responsive";
 import { Country } from "country-state-city";
 import axios from 'axios';
 import { apiURL } from '../../config/config';
+import toast from 'react-hot-toast';
 
 const DATA = [
     { value: '1', label: 'Animation' },
@@ -123,7 +124,7 @@ const Details = (props) => {
     const addVideoKeyword = (e) => {
         if (e.nativeEvent.key == "Enter") {
             if (videoKeywords.length == 10) {
-                alert("Max keywords number is 10 !");
+                toast("Max keywords number is 10 !");
                 setVideoKeyword("");
                 tagRef.current.focus();
                 tagRef.current.blur();
@@ -131,7 +132,7 @@ const Details = (props) => {
             } else {
                 var tempkeys = videoKeyword.split(/\s*,\s*/);
                 if (tempkeys.length + videoKeywords.length > 10) {
-                    alert("Max keywords number is 10 !");
+                    toast("Max keywords number is 10 !");
                 } else {
                     setVideoKeywords(keyword => [...keyword, ...tempkeys]);
                     setVideoKeyword("");
@@ -200,7 +201,7 @@ const Details = (props) => {
         if (Platform.OS === "android") {
             ToastAndroid.show("All values are cleared! Try again!", ToastAndroid.SHORT);
         } else {
-            alert("All values are cleared! Try again!");
+            toast("All values are cleared! Try again!");
         }
     };
 
@@ -209,43 +210,43 @@ const Details = (props) => {
             if (Platform.OS === "android") {
                 ToastAndroid.show("Please upload your video!", ToastAndroid.SHORT);
             } else if (Platform.OS === "web") {
-                alert("Please upload your video!");
+                toast("Please upload your video!");
             } else {
-                AlertIOS.alert("Please upload your video!");
+                AlertIOS.toast("Please upload your video!");
             }
         } else if (v_title.trim() == "") {
             if (Platform.OS === "android") {
                 ToastAndroid.show("Please input Video title!", ToastAndroid.SHORT);
             } else if (Platform.OS === "web") {
-                alert("Please input Video title!");
+                toast("Please input Video title!");
             } else {
-                AlertIOS.alert("Please input Video title!");
+                AlertIOS.toast("Please input Video title!");
             }
         } else if (v_description.trim() == "") {
             if (Platform.OS === "android") {
                 ToastAndroid.show("Please input Video Description!", ToastAndroid.SHORT);
             } else if (Platform.OS === "web") {
-                alert("Please input Video Description!");
+                toast("Please input Video Description!");
             } else {
-                AlertIOS.alert("Please input Video Description!");
+                AlertIOS.toast("Please input Video Description!");
             }
         }
         else if (videoKeywords.length == 0) {
             if (Platform.OS === "android") {
                 ToastAndroid.show("Please input at least 1 keywords, tags!", ToastAndroid.SHORT);
             } else if (Platform.OS === "web") {
-                alert("Please input at least 1 keywords, tags!");
+                toast("Please input at least 1 keywords, tags!");
             } else {
-                AlertIOS.alert("Please input at least 1 keywords, tags!");
+                AlertIOS.toast("Please input at least 1 keywords, tags!");
             }
         }
         else if (selected.length == 0) {
             if (Platform.OS === "android") {
                 ToastAndroid.show("Please input at least 1 category!", ToastAndroid.SHORT);
             } else if (Platform.OS === "web") {
-                alert("Please input at least 1 category!");
+                toast("Please input at least 1 category!");
             } else {
-                AlertIOS.alert("Please input at least 1 category!");
+                AlertIOS.toast("Please input at least 1 category!");
             }
         } else {
 
@@ -293,7 +294,7 @@ const Details = (props) => {
                                 if (res.data.status) {
                                     setLoading(false);
                                     resetValues();
-                                    alert("Success");
+                                    toast("Success");
                                     window.location.reload();
                                 } else {
                                     setLoading(false);
@@ -361,7 +362,7 @@ const Details = (props) => {
                                 if (res.data.status) {
                                     setLoading(false);
                                     resetValues();
-                                    alert("Success");
+                                    toast("Success");
                                     window.location.reload();
                                 } else {
                                     setLoading(false);

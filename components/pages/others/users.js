@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import axios from "axios";
 import { apiURL } from "../../config/config";
-
+import toast from 'react-hot-toast';
 
 const Users = (props) => {
 
@@ -31,10 +31,10 @@ const Users = (props) => {
             'Access-Control-Allow-Headers': '*',
         }).then((res) => {
             if (res.data.status) {
-                alert(res.data.msg);
+                toast(res.data.msg);
                 setFollowingFlag(true);
             } else {
-                alert(res.data.msg);
+                toast(res.data.msg);
                 setFollowingFlag(true);
             }
         }).catch((err) => {
@@ -51,10 +51,10 @@ const Users = (props) => {
             'Access-Control-Allow-Headers': '*',
         }).then((res) => {
             if (res.data.status) {
-                alert(res.data.msg);
+                toast(res.data.msg);
                 setFollowingFlag(true);
             } else {
-                alert(res.data.msg);
+                toast(res.data.msg);
                 setFollowingFlag(true);
             }
         }).catch((err) => {

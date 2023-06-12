@@ -15,6 +15,7 @@ import axios from 'axios';
 import { apiURL } from '../../config/config';
 import Modal from "react-native-modal";
 import { generateVideoThumbnails } from "@rajesh896/video-thumbnails-generator";
+import toast from 'react-hot-toast';
 
 const Upload = (props) => {
 
@@ -55,13 +56,13 @@ const Upload = (props) => {
     const addKeyword = (e) => {
         if (e.nativeEvent.key == "Enter") {
             if (keywords.length == 10) {
-                alert("Max keywords number is 10 !");
+                toast("Max keywords number is 10 !");
                 setKeyword("");
                 return;
             } else {
                 var tempkeys = keyword.split(/\s*,\s*/);
                 if (tempkeys.length + keywords.length > 10) {
-                    alert("Max keywords number is 10 !");
+                    toast("Max keywords number is 10 !");
                 } else {
                     setKeywords(keywords => [...keywords, ...tempkeys]);
                     setKeyword("");
@@ -98,7 +99,7 @@ const Upload = (props) => {
     ];
     const onSelectedItemsChange = (selectedItems) => {
         if (selectedItems.length > 3) {
-            alert("Max category is 3 !");
+            toast("Max category is 3 !");
         } else {
             setSelectedItems(selectedItems);
         }
@@ -117,7 +118,7 @@ const Upload = (props) => {
         if (Platform.OS === "android") {
             ToastAndroid.show("All values are cleared! Try again!", ToastAndroid.SHORT);
         } else {
-            alert("All values are cleared! Try again!");
+            toast("All values are cleared! Try again!");
         }
     };
 
@@ -417,7 +418,7 @@ const Upload = (props) => {
                                     editable={false}
                                 />
                                 <CopyToClipboard text={url}
-                                    onCopy={() => alert('Copied')}>
+                                    onCopy={() => toast('Copied')}>
                                     <Image style={styles.actionImage} source={require("../../../assets/modal/icon_copy_link.png")} />
                                 </CopyToClipboard>
                             </View>
@@ -434,7 +435,7 @@ const Upload = (props) => {
                                     />
                                     <View style={styles.actionsWrapper}>
                                         <CopyToClipboard text={embedCode}
-                                            onCopy={() => alert('Copied')}>
+                                            onCopy={() => toast('Copied')}>
                                             <Image style={styles.actionImage} source={require("../../../assets/modal/icon_copy_link.png")} />
                                         </CopyToClipboard>
                                         <Image style={styles.actionImage} source={require("../../../assets/modal/icon_wordpress.png")} onClick={() => onShareSocial('wordpress')} />

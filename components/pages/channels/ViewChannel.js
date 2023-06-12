@@ -10,6 +10,7 @@ import { generateVideoThumbnails } from "@rajesh896/video-thumbnails-generator";
 import Videos from "../mock/Videos";
 import axios from "axios";
 import { apiURL } from "../../config/config";
+import toast from 'react-hot-toast';
 
 const Tab = createMaterialTopTabNavigator();
 const ViewChannel = (props) => {
@@ -89,7 +90,7 @@ const ViewChannel = (props) => {
 
     const onSelectedItemsChange = (selectedItems) => {
         if (selectedItems.length > 3) {
-            alert("Max category is 3 !");
+            toast("Max category is 3 !");
         } else {
             setSelectedItems(selectedItems);
         }
@@ -197,20 +198,20 @@ const ViewChannel = (props) => {
         if (Platform.OS === "android") {
             ToastAndroid.show("All values are cleared! Try again!", ToastAndroid.SHORT);
         } else {
-            alert("All values are cleared! Try again!");
+            toast("All values are cleared! Try again!");
         }
     };
 
     const addKeyword = (e) => {
         if (e.nativeEvent.key == "Enter") {
             if (keywords.length == 10) {
-                alert("Max keywords number is 10 !");
+                toast("Max keywords number is 10 !");
                 setKeyword("");
                 return;
             } else {
                 var tempkeys = keyword.split(/\s*,\s*/);
                 if (tempkeys.length + keywords.length > 10) {
-                    alert("Max keywords number is 10 !");
+                    toast("Max keywords number is 10 !");
                 } else {
                     setKeywords(keywords => [...keywords, ...tempkeys]);
                     setKeyword("");
@@ -291,7 +292,7 @@ const ViewChannel = (props) => {
                 if (res.data.status) {
                     setLoading(false);
                     resetValues();
-                    alert("Success");
+                    toast("Success");
                 } else {
                     setLoading(false);
                 }
