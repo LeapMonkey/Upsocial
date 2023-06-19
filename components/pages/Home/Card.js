@@ -7,8 +7,18 @@ const { width, height } = Dimensions.get('window');
 export const Card = (props) => {
     const topVideo = useRef(null);
     useEffect(() => {
-        props.setTopCardVideos(topVideo)
-    }, [topVideo])
+        props.setTopCardVideos(topVideo);
+        if (props.currentProfileID == props.profile.ID) {
+            topVideo.current.playAsync();
+        }
+    }, [topVideo]);
+
+    useEffect(() => {
+        if (props.currentProfileID == props.profile.ID) {
+            topVideo.current.playAsync();
+        }
+    }, [props.currentProfileID])
+
     var pan = new Animated.ValueXY();
     const [status, setStatus] = useState({});
     var cardPanResponder = PanResponder.create({
@@ -25,7 +35,7 @@ export const Card = (props) => {
                 Animated.decay(pan, {
                     velocity: { x: 3 * direction, y: 0 },
                     deceleration: 0.995,
-                }).start(props.onSwipeOff)
+                }).start(props.onSwipeOff(props.profile))
             } else {
                 Animated.spring(pan, {
                     toValue: { x: 0, y: 0 },

@@ -528,8 +528,10 @@ const Home = (props) => {
         }
     };
 
-    const nextCard = () => {
-        setVideoId(videoId);
+    const nextCard = (nextProfile) => {
+        if (modalResult.indexOf(nextProfile) > 0) {
+            setVideoId(modalResult[modalResult.indexOf(nextProfile) - 1].ID);
+        }
         TopCardVideo.current.pauseAsync();
     };
 
@@ -660,7 +662,7 @@ const Home = (props) => {
                         <Text>{videoId}</Text>
                         {!isEmpty(modalResult) && modalResult.map((profile, key) => {
                             return (
-                                <Card setTopCardVideos={setTopCardVideo} key={key} profile={profile} keys={key} onSwipeOff={nextCard} />
+                                <Card setTopCardVideos={setTopCardVideo} currentProfileID={videoId} key={key} profile={profile} keys={key} onSwipeOff={nextCard} />
                             )
                         })}
                     </View>
