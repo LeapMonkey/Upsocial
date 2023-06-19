@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Text, Dimensions, PanResponder, Animated, StyleSheet } from 'react-native';
 import { Video, ResizeMode } from "expo-av";
 
@@ -19,31 +19,35 @@ export const Card = (props) => {
         }
     }, [props.currentProfileID])
 
-    var pan = new Animated.ValueXY();
+    var pan = useRef(new Animated.ValueXY()).current;
     const [status, setStatus] = useState({});
-    var cardPanResponder = PanResponder.create({
-        onStartShouldSetPanResponder: () => true,
-        onPanResponderMove: Animated.event([
-            null,
-            { dx: pan.x, dy: pan.y },
-        ]),
-        onPanResponderRelease: (e, { dx }) => {
-            const absDx = Math.abs(dx)
-            const direction = absDx / dx
+    const cardPanResponder =
+        PanResponder.create({
+            onStartShouldSetPanResponder: () => true,
+            onPanResponderMove: Animated.event(
+                [null, { dx: pan.x, dy: pan.y }],
+                { useNativeDriver: false }
+            ),
+            onPanResponderRelease: (event, { dx }) => {
+                const absDx = Math.abs(dx);
+                const direction = absDx / dx;
 
-            if (absDx > 120) {
-                Animated.decay(pan, {
-                    velocity: { x: 3 * direction, y: 0 },
-                    deceleration: 0.995,
-                }).start(props.onSwipeOff(props.profile))
-            } else {
-                Animated.spring(pan, {
-                    toValue: { x: 0, y: 0 },
-                    friction: 4.5,
-                }).start()
-            }
-        },
-    });
+                if (absDx > 120) {
+                    Animated.decay(pan, {
+                        velocity: { x: 3 * direction, y: 0 },
+                        deceleration: 0.995,
+                        useNativeDriver: false,
+                    }).start(() => props.onSwipeOff(props.profile));
+                } else {
+                    Animated.spring(pan, {
+                        toValue: { x: 0, y: 0 },
+                        friction: 4.5,
+                        useNativeDriver: false,
+                    }).start();
+                }
+            },
+        });
+
 
     const rotateCard = pan.x.interpolate({
         inputRange: [-200, 0, 200],
@@ -131,6 +135,9 @@ export const Card = (props) => {
                 useNativeControls
                 resizeMode={ResizeMode.CONTAIN}
                 onPlaybackStatusUpdate={status => { setStatus(() => status); props.setTopCardVideos(topVideo) }}
+                panResponderIsEnabled={
+                    pan.x.__getValue() === 0 && pan.y.__getValue() === 0
+                }
             />
         </Animated.View>
     )
