@@ -28,16 +28,16 @@ const Settings = (props) => {
                     </TouchableOpacity>
                     <View style={styles.iconsection}>
                         <TouchableOpacity style={styles.iconbtn}>
-                            <MaterialCommunityIcons name="cast" color="#fff" size={35} />
+                            <MaterialCommunityIcons name="cast" color="#fff" size={22} />
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.iconbtn}>
-                            <MaterialCommunityIcons name="bell" color="#fff" size={35} />
+                            <MaterialCommunityIcons name="bell" color="#fff" size={22} />
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.iconbtn}>
-                            <MaterialIcons name="search" color="#fff" size={35} />
+                            <MaterialIcons name="search" color="#fff" size={22} />
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.iconbtn} onPress={() => props.navigation.toggleDrawer()}>
-                            <Feather name="menu" color="#fff" size={35} />
+                            <Feather name="menu" color="#fff" size={22} />
                         </TouchableOpacity>
                     </View>
                 </View>
