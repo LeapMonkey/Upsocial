@@ -76,7 +76,7 @@ const Home = (props) => {
     const [result, setResult] = useState([]);
     const [modalResult, setModalResult] = useState([]);
     const [allData, setAllData] = useState([]);
-    const [limit, setLimit] = useState(10);
+    const [limit, setLimit] = useState(100);
     const [searchflag, setSearchflag] = useState(false);
     const [searchtext, setSearchtext] = useState("");
     // Video config

@@ -13,7 +13,7 @@ const Videos = () => {
     const [status, setStatus] = useState({});
     const [opened, setOpened] = useState(false);
     const [alldata, setAlldata] = useState([]);
-    const [limit, setLimit] = useState(5);
+    const [limit, setLimit] = useState(100);
 
     // Responsive
     const isMobile = useMediaQuery({

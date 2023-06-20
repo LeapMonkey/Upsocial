@@ -37,7 +37,7 @@ const Browse = (props) => {
     const [result, setResult] = useState([]);
 
     const [opened, setOpened] = useState(false);
-    const [limit, setLimit] = useState(5);
+    const [limit, setLimit] = useState(100);
 
     const [videoId, setVideoId] = useState("");
 

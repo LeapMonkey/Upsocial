@@ -97,7 +97,6 @@ const Watch = (props) => {
             "description": "Elon Musk launched SpaceX"
         },
     ]);
-    const [limit, setLimit] = useState(5);
 
     // useEffect(() => {
     //     axios.post(apiURL + "/api/Upsocial/users/getAll/UploadedContent", { limit: limit }).then((res) => {

@@ -25,7 +25,7 @@ const Profile = (props) => {
     const [username, setUsername] = useState(null);
     const [location, setLocation] = useState(null);
 
-    const [limit, setLimit] = useState(5);
+    const [limit, setLimit] = useState(100);
     const [result, setResult] = useState([]);
 
     // mobile and desktop variable for responsive

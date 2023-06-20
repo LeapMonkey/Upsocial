@@ -81,7 +81,7 @@ const MyVideos = (props) => {
     const [channelAllData, setChannelAllData] = useState([]);
     const [recentUploads, setRecentUploads] = useState([]);
     const [recentAllUploads, setRecentAllUploads] = useState([]);
-    const [limit, setLimit] = useState(5);
+    const [limit, setLimit] = useState(100);
     const [searchflag, setSearchflag] = useState(false);
     const [searchtext, setSearchtext] = useState("");
     const [searchLocation, setSearchLocation] = useState("");
