@@ -677,11 +677,11 @@ const Home = (props) => {
                         <TouchableOpacity onPress={() => setOpened(false)}>
                             <Ionicons name="arrow-back-sharp" color="#fff" size={30} />
                         </TouchableOpacity>
-                        <View style={{ flexDirection: "row", gap: 10, alignItems: "center" }}>
+                        {/* <View style={{ flexDirection: "row", gap: 10, alignItems: "center" }}>
                             <TouchableOpacity onPress={() => ShareFile(videoProps.ipfsUrl)}>
                                 <Ionicons name="md-share-social-outline" color="#fff" size={30} />
                             </TouchableOpacity>
-                        </View>
+                        </View> */}
                     </View>
                     <View style={{ height: Dimensions.get("window").height, width: width }}>
                         <Text>{videoId}</Text>

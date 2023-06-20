@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { View, Text, StyleSheet, Dimensions, TouchableOpacity, Image } from "react-native";
-import { MaterialCommunityIcons, MaterialIcons, Feather } from 'react-native-vector-icons';
+import { MaterialCommunityIcons, MaterialIcons, Feather, Ionicons } from 'react-native-vector-icons';
 import { apiURL } from "../../config/config";
 import { useMediaQuery } from "react-responsive";
 import { connect } from "react-redux";
 import axios from "axios";
+import { Video, ResizeMode } from "expo-av";
+import Modal from "react-native-modal";
 import isEmpty from "../../config/is-empty";
 
 const RecentsUploads = (props) => {
@@ -32,18 +34,16 @@ const RecentsUploads = (props) => {
         query: "(min-device-width: 1441px)"
     });
     // end
-    const [videoId, setVideoId] = useState("");
-    const [opened, setOpened] = useState(false);
-    const [videoProps, setVideoProps] = useState(null);
+
+
+    const [videoPlayOpened, setVideoPlayOpened] = useState(false);
     const [source, SetSource] = useState();
-    const [curIndex, setCurIndex] = useState(null);
+    const TopVideo = useRef(null);
+    const [status, setStatus] = useState({});
 
     const watchVideo = (videoData, key) => {
-        setVideoId(videoData.ID);
-        setOpened(true);
-        setVideoProps(videoData);
+        setVideoPlayOpened(true);
         SetSource({ uri: videoData.ipfsUrl });
-        setCurIndex(key);
     };
 
     useEffect(() => {
@@ -59,6 +59,42 @@ const RecentsUploads = (props) => {
 
     return (
         <View style={styles.container}>
+            <Modal
+                isVisible={videoPlayOpened}
+                animationIn={'slideInRight'}
+                animationOut={'slideOutRight'}
+                style={{ margin: 0, padding: 0 }}
+            >
+                <View style={styles.videoPlayPage}>
+                    <View style={{ flexDirection: "row", justifyContent: "space-between", width: "100%", alignItems: "center", position: 'absolute', top: 0, left: 0, zIndex: 1000000 }}>
+                        <TouchableOpacity onPress={() => setVideoPlayOpened(false)}>
+                            <Ionicons name="arrow-back-sharp" color="#fff" size={30} />
+                        </TouchableOpacity>
+                        {/* <View style={{ flexDirection: "row", gap: 10, alignItems: "center" }}>
+                            <TouchableOpacity onPress={() => ShareFile(videoProps.ipfsUrl)}>
+                                <Ionicons name="md-share-social-outline" color="#fff" size={30} />
+                            </TouchableOpacity>
+                        </View> */}
+                    </View>
+                    <View style={{ height: Dimensions.get("window").height }}>
+                        <View style={{ width: "100%", position: 'relative', height: "100%" }}>
+                            <Video
+                                videoStyle={{ position: 'relative', width: Dimensions.get("window").width, height: Dimensions.get("window").height }}
+                                ref={TopVideo}
+                                style={{ width: "100%", height: Dimensions.get("window").height }}
+                                source={source}
+                                rate={1.0}
+                                isLooping
+                                volume={1.0}
+                                shouldPlay
+                                useNativeControls
+                                resizeMode={ResizeMode.CONTAIN}
+                                onPlaybackStatusUpdate={status => setStatus(() => status)}
+                            />
+                        </View>
+                    </View>
+                </View>
+            </Modal>
             <View style={styles.headersection}>
                 <View style={styles.subheadersection}>
                     <TouchableOpacity style={styles.headerimage} onPress={() => props.navigation.navigate("Home")}>
@@ -90,7 +126,7 @@ const RecentsUploads = (props) => {
                 <View style={styles.board}>
                     {result && result.map((index, key) => {
                         return (
-                            <TouchableOpacity style={isWide ? styles.wideitemview : isDesktop ? styles.desktopitemview : isTablet ? styles.tabletitemview : isTabletOrMobile ? styles.tabletormobileitemview : styles.mobileitemview} key={key} onPress={() => watchVideo(index)}>
+                            <TouchableOpacity style={isWide ? styles.wideitemview : isDesktop ? styles.desktopitemview : isTablet ? styles.tabletitemview : isTabletOrMobile ? styles.tabletormobileitemview : styles.mobileitemview} key={key} onPress={() => watchVideo(index, key)}>
                                 <View style={{ alignItems: 'center', width: "100%" }}>
                                     <Image source={{ uri: index.thumbnail }} style={{ width: "100%", height: Dimensions.get("window").height * 0.3, borderRadius: 12 }} />
                                     <Image source={require("../../../assets/logos/playvideo.png")} style={{ width: 50, height: 50, position: "absolute", top: "40%" }} />
@@ -220,6 +256,13 @@ const styles = StyleSheet.create({
     },
     iconbtn: {
         marginLeft: 10
+    },
+    videoPlayPage: {
+        width: "100%",
+        height: Dimensions.get('window').height,
+        justifyContent: "center",
+        backgroundColor: "#000",
+        alignItems: "center",
     },
 });
 
